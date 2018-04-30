@@ -1207,12 +1207,12 @@ public function dizhiAdd(){
             import ( "@.ORG.ZQPage" );  //导入分页类
             $count = $shopping->where($map)->count();//总页数
             $listrows = C('PAGE_LISTROWS')  ;//每页显示的记录数
-		    $page_where = '&type='.$ss_type;//分页条件
+		    $page_where = '&s_type='.$ss_type;//分页条件
             $Page = new ZQPage($count, $listrows, 1, 0, 3, $page_where);
             //===============(总页数,每页显示记录数,css样式 0-9)
             $show = $Page->show();//分页变量
             $this->assign('page',$show);//分页变量输出到模板
-            $list = $shopping ->where($map)->field($field)->page($Page->getPage().','.$listrows)->select();
+            $list = $shopping ->where($map)->field($field)->order('pdt desc')->page($Page->getPage().','.$listrows)->select();
             $this->assign('list',$list);//数据输出到模板
             //=================================================
             foreach($list as $vv){
