@@ -65,30 +65,30 @@ class PublicAction extends CommonAction
     public function main()
     {
         $this->_checkUser();
-        $ppfg = $_POST['ppfg'];
+//         $ppfg = $_POST['ppfg'];
         $id = $_SESSION[C('USER_AUTH_KEY')]; // 登录AutoId
         $fck = M('fck');
         $jiadan = M('Jiadan');
-        $cash = M('cash');
-        $form = M('form');
-        $map = array();
-        $map['status'] = array(
-            'eq',
-            1
-        );
-        $field = '*';
-        $newslist = $form->where($map)
-            ->field($field)
-            ->order('baile desc,id desc')
-            ->limit(10)
-            ->select();
-        $this->assign('newslist', $newslist); // 数据输出到模板
+//         $cash = M('cash');
+//         $form = M('form');
+//         $map = array();
+//         $map['status'] = array(
+//             'eq',
+//             1
+//         );
+//         $field = '*';
+//         $newslist = $form->where($map)
+//             ->field($field)
+//             ->order('baile desc,id desc')
+//             ->limit(10)
+//             ->select();
+//         $this->assign('newslist', $newslist); // 数据输出到模板
         
-        $map = array();
-        $map['s_uid'] = $id; // 会员ID
-        $map['s_read'] = 0; // 0 为未读
-        $info_count = M('msg')->where($map)->count(); // 总记录数
-        $this->assign('info_count', $info_count);
+//         $map = array();
+//         $map['s_uid'] = $id; // 会员ID
+//         $map['s_read'] = 0; // 0 为未读
+//         $info_count = M('msg')->where($map)->count(); // 总记录数
+//         $this->assign('info_count', $info_count);
         
         // 会员级别
         $urs = $fck->where('id=' . $id)
@@ -124,45 +124,45 @@ class PublicAction extends CommonAction
             $in_counts = 0;
         }
         $this->assign('in_counts', $in_counts);
-        // 直推人数
-        $one = $fck->where('id=1')
-            ->field('tz_nums')
-            ->find();
-        $this->assign('tz_nums', $one['tz_nums']);
+//         // 直推人数
+//         $one = $fck->where('id=1')
+//             ->field('tz_nums')
+//             ->find();
+//         $this->assign('tz_nums', $one['tz_nums']);
         
-        $fee = M('fee');
-        $fee_rs = $fee->field('s3,s12,str1,str7,str9,str21,str22,str23,gp_one')->find();
-        $str21 = $fee_rs['str21'];
-        $str22 = $fee_rs['str22'];
-        $str23 = $fee_rs['str23'];
-        $all_img = $str21 . "|" . $str22 . "|" . $str23;
-        $this->assign('all_img', $all_img);
-        $s3 = explode("|", $fee_rs['s3']);
-        $s12 = $fee_rs['s12'];
-        $str1 = $fee_rs['str1'];
-        $str5 = explode("|", $fee_rs['str7']);
-        $str9 = $fee_rs['str9'];
-        $one_price = $fee_rs['gp_one'];
-        $this->assign('s3', $s3);
-        $this->assign('s12', $s12);
-        $this->assign('str1', $str1);
-        $this->assign('str9', $str9);
+//         $fee = M('fee');
+//         $fee_rs = $fee->field('s3,s12,str1,str7,str9,str21,str22,str23,gp_one')->find();
+//         $str21 = $fee_rs['str21'];
+//         $str22 = $fee_rs['str22'];
+//         $str23 = $fee_rs['str23'];
+//         $all_img = $str21 . "|" . $str22 . "|" . $str23;
+//         $this->assign('all_img', $all_img);
+//         $s3 = explode("|", $fee_rs['s3']);
+//         $s12 = $fee_rs['s12'];
+//         $str1 = $fee_rs['str1'];
+//         $str5 = explode("|", $fee_rs['str7']);
+//         $str9 = $fee_rs['str9'];
+// //         $one_price = $fee_rs['gp_one'];
+//         $this->assign('s3', $s3);
+//         $this->assign('s12', $s12);
+//         $this->assign('str1', $str1);
+//         $this->assign('str9', $str9);
         
-        // 股票价格
-        $this->assign('one_price', $one_price);
-        $gupiaojz = $one_price * $urs['live_gupiao'];
-        $this->assign('gupiaojz', $gupiaojz);
+//         // 股票价格
+//         $this->assign('one_price', $one_price);
+//         $gupiaojz = $one_price * $urs['live_gupiao'];
+//         $this->assign('gupiaojz', $gupiaojz);
         
-        $maxqq = 4;
-        if (count($str5) > $maxqq) {
-            $lenn = $maxqq;
-        } else {
-            $lenn = count($str5);
-        }
-        for ($i = 0; $i < $lenn; $i ++) {
-            $qqlist[$i] = $str5[$i];
-        }
-        $this->assign('qlist', $qqlist);
+//         $maxqq = 4;
+//         if (count($str5) > $maxqq) {
+//             $lenn = $maxqq;
+//         } else {
+//             $lenn = count($str5);
+//         }
+//         for ($i = 0; $i < $lenn; $i ++) {
+//             $qqlist[$i] = $str5[$i];
+//         }
+//         $this->assign('qlist', $qqlist);
         
         $HYJJ = "";
         $this->_levelConfirm($HYJJ, 1);
@@ -172,59 +172,59 @@ class PublicAction extends CommonAction
         $see = str_replace("//", "/", $see);
         $this->assign('server', $see);
         
-        $cp = M('product');
-        $fck = M('fck');
-        $map['id'] = $_SESSION[C('USER_AUTH_KEY')];
-        $f_rs = $fck->where($map)->find();
+//         $cp = M('product');
+//         $fck = M('fck');
+//         $map['id'] = $_SESSION[C('USER_AUTH_KEY')];
+//         $f_rs = $fck->where($map)->find();
         
-        $where = array();
-        $ss_type = (int) $_REQUEST['tp'];
-        if ($ss_type > 0) {
-            $where['cptype'] = array(
-                'eq',
-                $ss_type
-            );
-        }
-        $this->assign('tp', $ss_type);
+//         $where = array();
+//         $ss_type = (int) $_REQUEST['tp'];
+//         if ($ss_type > 0) {
+//             $where['cptype'] = array(
+//                 'eq',
+//                 $ss_type
+//             );
+//         }
+//         $this->assign('tp', $ss_type);
         
-        $where['yc_cp'] = array(
-            'eq',
-            0
-        );
+//         $where['yc_cp'] = array(
+//             'eq',
+//             0
+//         );
         
-        $cptype = M('cptype');
-        $tplist = $cptype->where('status=0')
-            ->order('id asc')
-            ->select();
-        $this->assign('tplist', $tplist);
+//         $cptype = M('cptype');
+//         $tplist = $cptype->where('status=0')
+//             ->order('id asc')
+//             ->select();
+//         $this->assign('tplist', $tplist);
         
-        $order = 'id asc';
-        $field = '*';
-        // =====================分页开始==============================================
-        import("@.ORG.ZQPage"); // 导入分页类
-        $count = $cp->where($where)->count(); // 总页数
-        $listrows = 20; // 每页显示的记录数
-        $page_where = 'tp=' . $ss_type; // 分页条件
-        $Page = new ZQPage($count, $listrows, 1, 0, 3, $page_where);
-        // ===============(总页数,每页显示记录数,css样式 0-9)
-        $show = $Page->show(); // 分页变量
-        $this->assign('page', $show); // 分页变量输出到模板
-        $list = $cp->where($where)
-            ->field($field)
-            ->order('id desc')
-            ->page($Page->getPage() . ',' . $listrows)
-            ->select();
-        // =================================================
-        foreach ($list as $voo) {
-            $w_money = $voo['a_money'];
-            $e_money = $voo['b_money'];
-            $cc[$voo['id']] = $w_money;
-            $cc[$voo['cid']] = $e_money;
-        }
-        $this->assign('cc', $cc);
-        $this->assign('list', $list); // 数据输出到模板
+//         $order = 'id asc';
+//         $field = '*';
+//         // =====================分页开始==============================================
+//         import("@.ORG.ZQPage"); // 导入分页类
+//         $count = $cp->where($where)->count(); // 总页数
+//         $listrows = 20; // 每页显示的记录数
+//         $page_where = 'tp=' . $ss_type; // 分页条件
+//         $Page = new ZQPage($count, $listrows, 1, 0, 3, $page_where);
+//         // ===============(总页数,每页显示记录数,css样式 0-9)
+//         $show = $Page->show(); // 分页变量
+//         $this->assign('page', $show); // 分页变量输出到模板
+//         $list = $cp->where($where)
+//             ->field($field)
+//             ->order('id desc')
+//             ->page($Page->getPage() . ',' . $listrows)
+//             ->select();
+//         // =================================================
+//         foreach ($list as $voo) {
+//             $w_money = $voo['a_money'];
+//             $e_money = $voo['b_money'];
+//             $cc[$voo['id']] = $w_money;
+//             $cc[$voo['cid']] = $e_money;
+//         }
+//         $this->assign('cc', $cc);
+//         $this->assign('list', $list); // 数据输出到模板
         
-        $this->assign('f_rs', $f_rs);
+//         $this->assign('f_rs', $f_rs);
         $this->display();
     }
     

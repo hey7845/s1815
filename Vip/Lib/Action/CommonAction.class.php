@@ -97,7 +97,7 @@ class CommonAction extends CheFieldAction {
 			$this->LinkOut();
 			exit;
 		}
-		$this->check_order_isout();
+// 		$this->check_order_isout();
 		
 		$this->_user_mktime($_SESSION['UserMktimes']);
 		$User = M ('fck');

@@ -293,9 +293,10 @@ class TransferAction extends CommonAction{
 			if($select==2){
 				$zz_content = "现金币 转 电子币";
 				$fck->execute("update `xt_fck` Set `agent_use`=agent_use-".$ePoints." where `id`=".$ID);
-				//$tmp = $ePoints * $str7;
-				//$tmp = bcdiv($tmp, 100,2);
-				//$ePoints = $ePoints - $tmp;
+				// 转账手续费5%
+				$tmp = $ePoints * 5;
+				$tmp = bcdiv($tmp, 100,2);
+				$ePoints = $ePoints - $tmp;
 				$fck->execute("update `xt_fck` Set `agent_cash`=agent_cash+".$ePoints." where `id`=".$vo['id']);
 			}
 			if($select==3){
