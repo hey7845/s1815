@@ -1212,7 +1212,7 @@ public function dizhiAdd(){
             //===============(总页数,每页显示记录数,css样式 0-9)
             $show = $Page->show();//分页变量
             $this->assign('page',$show);//分页变量输出到模板
-            $list = $shopping ->where($map)->field($field)->order('pdt desc')->page($Page->getPage().','.$listrows)->select();
+            $list = $shopping ->where($map)->field($field)->order('pdt desc,ispay asc')->page($Page->getPage().','.$listrows)->select();
             $this->assign('list',$list);//数据输出到模板
             //=================================================
             foreach($list as $vv){
