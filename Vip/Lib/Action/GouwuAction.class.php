@@ -701,13 +701,13 @@ public function dizhiAdd(){
 		$prs = $pora->where($where)->select();
 		$gouwu = M('gouwu');
 		// if($fck_rs['vip4']==1){
-		$fee = M('fee');
-        $fee_rs = $fee->field('str1')->find(1);
-        $str1 = explode("|",$fee_rs['str1']);
-        $lev=$fck_rs['u_level']-1;
-        $ss=$str1[$lev]/100;
-        $sss=1-$ss;
-        $prices=bcmul($prices,$sss,2);
+// 		$fee = M('fee');
+//         $fee_rs = $fee->field('str1')->find(1);
+//         $str1 = explode("|",$fee_rs['str1']);
+//         $lev=$fck_rs['u_level']-1;
+//         $ss=$str1[$lev]/100;
+//         $sss=1-$ss;
+//         $prices=bcmul($prices,$sss,2);
         // }
 
         if($_POST['sel']==1){
