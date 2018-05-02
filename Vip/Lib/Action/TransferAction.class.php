@@ -207,6 +207,11 @@ class TransferAction extends CommonAction{
 				$this->error('转入会员不存在!');
 				exit;
 			}
+			
+			if ($ID != 1 && ($UserID == 'aa' || $UserID == 'bb')){
+			    $this->error('不允许回转！');
+			    exit;
+			}
 			// echo $mmid;
 			// echo $re_path2;die;
 
