@@ -1175,8 +1175,19 @@ public function dizhiAdd(){
 			$product = M('product');
 			$fck = M('fck');
 			$sessionID = $_SESSION[C('USER_AUTH_KEY')];
-            $ss_type = (int) $_REQUEST['type'];
-            $map = array();
+			$UserID = $_REQUEST['UserID'];
+			$ss_type = (int) $_REQUEST['type'];
+			$map = array();
+			if (!empty($UserID)){
+			    import ( "@.ORG.KuoZhan" );  //导入扩展类
+			    $KuoZhan = new KuoZhan();
+			    if ($KuoZhan->is_utf8($UserID) == false){
+			        $UserID = iconv('GB2312','UTF-8',$UserID);
+			    }
+			    unset($KuoZhan);
+			    $map['user_id'] = array('like',"%".$UserID."%");
+			    $UserID = urlencode($UserID);
+			}
 			if($ss_type==0){
 				$map['ispay'] = array('egt',0);
 			}elseif($ss_type==1){
