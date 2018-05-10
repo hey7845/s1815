@@ -391,7 +391,7 @@ class UplevelAction extends CommonAction{
 				$fck->xiangJiao($uid, $need_dl);
 				$fck->tz($fck_rs['p_path'],$need_m);
 				//各种奖项
-				$fck->tuijj($fck_rs['p_path'],$fck_rs['user_id'],$need_m);
+				$fck->tuijj($fck_rs['re_path'],$fck_rs['user_id'],$need_m);
 				$fck->lingdao22($fck_rs['p_path'],$fck_rs['user_id'],$need_m);
 				$fck->sh_level();
 				$fck->baodanfei($fck_rs['shop_id'],$fck_rs['user_id'],$need_m,$fck_rs['is_agent']);
