@@ -242,7 +242,7 @@ class RegAction extends CommonAction{
     	    if ($authInfoo['id'] == $shop_rs['id'] && $authInfoo['is_agent'] == 2) {
     	        $this->assign('shopid',$shopid);
     	    } else {
-    	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and is_agent = 2 and id = '.$authInfoo['id'])->find();
+    	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and id = '.$authInfoo['id'])->find();
     	        if (!$spResult) {
     	            $this->error('请填写网体上级的报单中心！');
     	            exit;
@@ -583,7 +583,7 @@ class RegAction extends CommonAction{
     	        $data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
 		        $data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
     	    } else {
-    	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and is_agent = 2 and id = '.$authInfoo['id'])->find();
+    	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and id = '.$authInfoo['id'])->find();
     	        if (!$spResult) {
     	            $this->error('请填写网体上级的报单中心！');
     	            exit;
@@ -1021,7 +1021,7 @@ class RegAction extends CommonAction{
     	        $data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
 		        $data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
     	    } else {
-    	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and is_agent = 2 and id = '.$authInfoo['id'])->find();
+    	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and id = '.$authInfoo['id'])->find();
     	        if (!$spResult) {
     	            $this->error('请填写网体上级的报单中心！');
     	            exit;
