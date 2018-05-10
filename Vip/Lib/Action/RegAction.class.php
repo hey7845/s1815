@@ -215,6 +215,21 @@ class RegAction extends CommonAction{
 			$this->error('请输入报单中心编号！');
 			exit;
 		}
+		//检测招商代表
+		$RID = trim($_POST['RID']);  //获取推荐会员帐号
+		$mapp  = array();
+		$mapp['user_id']	= $RID;
+		$mapp['is_pay']	    = array('gt',0);
+		$authInfoo = $fck->where($mapp)->field('id,user_id,re_level,re_path,is_agent,l,r')->find();
+		if ($authInfoo){
+		    $this->assign('RID',$RID);
+		    $data['re_id'] = $authInfoo['id'];
+		}else{
+		    $this->error('推荐人不存在！');
+		    exit;
+		}
+		unset($mapp);
+		
 		$smap = array();
 		$smap['user_id'] = $shopid;
 		$smap['is_agent'] = array('gt',1);
@@ -222,24 +237,21 @@ class RegAction extends CommonAction{
 		if (!$shop_rs){
 			$this->error('没有该报单中心！');
 			exit;
+		}else{
+		    // 如果报单中心与推荐人相等
+    	    if ($authInfoo['id'] == $shop_rs['id'] && $authInfoo['is_agent'] == 2) {
+    	        $this->assign('shopid',$shopid);
+    	    } else {
+    	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and is_agent = 2 and id = '.$authInfoo['id'])->find();
+    	        if (!$spResult) {
+    	            $this->error('请填写网体上级的报单中心！');
+    	            exit;
+    	        }
+    	        $this->assign('shopid',$shopid);
+    	    }
 		}
-		$this->assign('shopid',$shopid);
 		unset($smap,$shop_rs,$shopid);
 
-		//检测招商代表
-		$RID = trim($_POST['RID']);  //获取推荐会员帐号
-		$mapp  = array();
-		$mapp['user_id']	= $RID;
-		$mapp['is_pay']	    = array('gt',0);
-		$authInfoo = $fck->where($mapp)->field('id,user_id,re_level,re_path,l,r')->find();
-		if ($authInfoo){
-			$this->assign('RID',$RID);
-			$data['re_id'] = $authInfoo['id'];
-		}else{
-			$this->error('推荐人不存在！');
-			exit;
-		}
-		unset($mapp);
  		// 根据左右区人数判断滑落地点
 		$FID = $this->positionRecuision($authInfoo['id'],$authInfoo['user_id'],$authInfoo['l'],$authInfoo['r']);
  		$mappp  = array();
@@ -540,6 +552,23 @@ class RegAction extends CommonAction{
 			$this->error('请输入服务中心编号！');
 			exit;
 		}
+		//检测招商代表
+		$RID = trim($_POST['RID']);  //获取推荐会员帐号
+		$mapp  = array();
+		$mapp['user_id']	= $RID;
+		$mapp['is_pay']	    = array('gt',0);
+		$authInfoo = $fck->where($mapp)->field('id,user_id,re_level,re_path,is_agent,l,r')->find();
+		if ($authInfoo){
+		    $data['re_path'] = $authInfoo['re_path'].$authInfoo['id'].',';  //推荐路径
+		    $data['re_id'] = $authInfoo['id'];                              //招商代表ID
+		    $data['re_name'] = $authInfoo['user_id'];                       //招商代表帐号
+		    $data['re_level'] = $authInfoo['re_level'] + 1;                 //代数(绝对层数)
+		}else{
+		    $this->error('招商代表不存在！');
+		    exit;
+		}
+		unset($mapp);
+		
 		$smap = array();
 		$smap['user_id'] = $shopid;
 		$smap['is_agent'] = array('gt',1);
@@ -549,27 +578,21 @@ class RegAction extends CommonAction{
 			$this->error('没有该报单中心！');
 			exit;
 		}else{
-			$data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
-			$data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
+		    // 如果报单中心与推荐人相等
+    	    if ($authInfoo['id'] == $shop_rs['id'] && $authInfoo['is_agent'] == 2) {
+    	        $data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
+		        $data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
+    	    } else {
+    	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and is_agent = 2 and id = '.$authInfoo['id'])->find();
+    	        if (!$spResult) {
+    	            $this->error('请填写网体上级的报单中心！');
+    	            exit;
+    	        }
+    	        $data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
+    	        $data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
+    	    }
 		}
 		unset($smap,$shop_rs,$shopid);
-
-		//检测招商代表
-		$RID = trim($_POST['RID']);  //获取推荐会员帐号
-		$mapp  = array();
-		$mapp['user_id']	= $RID;
-		$mapp['is_pay']	    = array('gt',0);
-		$authInfoo = $fck->where($mapp)->field('id,user_id,re_level,re_path,l,r')->find();
-		if ($authInfoo){
-			$data['re_path'] = $authInfoo['re_path'].$authInfoo['id'].',';  //推荐路径
-			$data['re_id'] = $authInfoo['id'];                              //招商代表ID
-			$data['re_name'] = $authInfoo['user_id'];                       //招商代表帐号
-			$data['re_level'] = $authInfoo['re_level'] + 1;                 //代数(绝对层数)
-		}else{
-			$this->error('招商代表不存在！');
-			exit;
-		}
-		unset($mapp);
 
         // 根据左右区人数判断滑落地点
 		$FID = $this->positionRecuision($authInfoo['id'],$authInfoo['user_id'],$authInfoo['l'],$authInfoo['r']);
@@ -963,6 +986,22 @@ class RegAction extends CommonAction{
 		}
 
 		$data = array();  //创建数据对象
+		
+		//检测招商代表
+		$RID = trim($_POST['RID']);  //获取推荐会员帐号
+		$mapp  = array();
+		$mapp['user_id']	= $RID;
+		$mapp['is_pay']	    = array('gt',0);
+		$authInfoo = $fck->where($mapp)->field('id,user_id,re_level,re_path,p_path,is_agent,l,r')->find();
+		if ($authInfoo){
+		    $data['re_path'] = $authInfoo['re_path'].$authInfoo['id'].',';  //推荐路径
+		    $data['re_id'] = $authInfoo['id'];                              //招商代表ID
+		    $data['re_name'] = $authInfoo['user_id'];                       //招商代表帐号
+		    $data['re_level'] = $authInfoo['re_level'] + 1;                 //代数(绝对层数)
+		}else{
+		    $this->error('推荐人不存在！');
+		    exit;
+		}
 		//检测报单中心
 		$shopid = trim($_POST['shopid']);  //所属报单中心帐号
 		if (empty($shopid)){
@@ -977,26 +1016,23 @@ class RegAction extends CommonAction{
 			$this->error('没有该报单中心！');
 			exit;
 		}else{
-			$data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
-			$data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
+		    // 如果报单中心与推荐人相等
+    	    if ($authInfoo['id'] == $shop_rs['id'] && $authInfoo['is_agent'] == 2) {
+    	        $data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
+		        $data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
+    	    } else {
+    	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and is_agent = 2 and id = '.$authInfoo['id'])->find();
+    	        if (!$spResult) {
+    	            $this->error('请填写网体上级的报单中心！');
+    	            exit;
+    	        }
+    	        $data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
+    	        $data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
+    	    }
+    	    
 		}
 		unset($smap,$shop_rs,$shopid);
 
-		//检测招商代表
-		$RID = trim($_POST['RID']);  //获取推荐会员帐号
-		$mapp  = array();
-		$mapp['user_id']	= $RID;
-		$mapp['is_pay']	    = array('gt',0);
-		$authInfoo = $fck->where($mapp)->field('id,user_id,re_level,re_path,l,r')->find();
-		if ($authInfoo){
-			$data['re_path'] = $authInfoo['re_path'].$authInfoo['id'].',';  //推荐路径
-			$data['re_id'] = $authInfoo['id'];                              //招商代表ID
-			$data['re_name'] = $authInfoo['user_id'];                       //招商代表帐号
-			$data['re_level'] = $authInfoo['re_level'] + 1;                 //代数(绝对层数)
-		}else{
-			$this->error('推荐人不存在！');
-			exit;
-		}
         // 根据左右区人数判断滑落地点
 		$FID = $this->positionRecuision($authInfoo['id'],$authInfoo['user_id'],$authInfoo['l'],$authInfoo['r']);
 		$mappp  = array();
@@ -1266,6 +1302,17 @@ class RegAction extends CommonAction{
             }
         }
         return $data;
+	}
+	
+	// 递归检测报单中心
+	public function find_shopid($id,$recommend_id,$shop_rs) {
+	    $result = array();
+	    // 如果报单中心与推荐人相等
+	    if ($recommend_id == $user_id) {
+	        return $shop_rs;
+	    }
+	    $result = $fck->where('p_path like "%,' . $id . ',%" and is_pay=1 and is_agent = 2 and id = '.$recommend_id)->find();
+	    
 	}
 	
 	//生成会员编号
