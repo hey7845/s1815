@@ -28,6 +28,7 @@ if (!empty($fck_result)) {
     // 循环取得会员表数据
     $kk = 0;
     $rc = 0;
+    ini_set("max_execution_time", 0);
     foreach($fck_Contents as $key=>$value){
         // 待更新到会员表金钱
         $fck_money = 0;
@@ -48,7 +49,7 @@ if (!empty($fck_result)) {
                 // 已分红金额
                 $jd_oldMoney = $v['money'];
                 // 总金额
-                $jd_sumMoney = $str1 * $jd_danshu * $s5;
+                $jd_sumMoney = 11 * $jd_danshu * $s5;
                 if ($jd_money >= $jd_sumMoney - $jd_oldMoney) {
                     // 超出部分去掉，按剩余部分分红，设为出局
                     $jd_money = $jd_sumMoney - $jd_oldMoney;
