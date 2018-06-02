@@ -586,8 +586,6 @@ class AgentAction extends CommonAction
             $fck->jiandianjiang($fck_rs['p_path'], $fck_rs['user_id']);
             // 领导奖
             $fck->lingdao22($fck_rs['p_path'], $fck_rs['user_id'], $money);
-            // 合伙人级别
-            $fck->sh_level();
             
             $bUrl = __URL__ . '/agents1';
             $this->_box(1, '复投成功！', $bUrl, 2);
@@ -949,6 +947,7 @@ class AgentAction extends CommonAction
         }
         if ($_SESSION['Urlszpass'] == 'MyssmenberUpLevel'){
             $i = 0;
+            ini_set("max_execution_time", 0);
             foreach ($OpID as $vo){
                 $i++;
                 $where = array();
@@ -965,7 +964,6 @@ class AgentAction extends CommonAction
                     $this->error('会员已经升过级,请刷新页面重试！');
                     exit;
                 }
-                $promo->query("update xt_promo set is_pay=1 where `id`=".$vo);
                 $fck_where = array();
                 $fck_where['user_id'] = $promo_rs['user_id'];
                 $fck_rs = $fck->where($fck_where)->find();
@@ -983,30 +981,45 @@ class AgentAction extends CommonAction
                     $this->error('已经是最高级，无法再升级！');
                     exit;
                 }
-                //统计单数
-                $fck->xiangJiao($fck_rs['id'], $need_dl);
-                $fck->tz($fck_rs['p_path'],$need_m);
-                //各种奖项
-                $fck->tuijj($fck_rs['re_path'],$fck_rs['user_id'],$need_m);
-                $fck->lingdao22($fck_rs['p_path'],$fck_rs['user_id'],$need_m);
-                $fck->sh_level();
-                $fck->baodanfei($fck_rs['shop_id'],$fck_rs['user_id'],$need_m,$fck_rs['is_agent']);
-                $fck->dsfenhong($fck_rs['p_path'],$fck_rs['user_id'],$need_m);
-                $fck->query("update __TABLE__ set is_xf=0,u_level=1".",cpzj=".$newlv.",f4=f4+".$need_dl." where `id`=".$fck_rs['id']);
-                // 分红包记录表
-                $nowdate = strtotime ("now");
-                $fck->jiaDan($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $need_dl, 0, 1);
-                
-                if ($need_dl == 50) {
-                    $nowdate = strtotime(date('c'));
-                    $data['idt'] = $promo_rs['create_time'];
-                    $data['adt'] = $nowdate;
-                    $data['is_agent'] = 1;
-                    // 设置报单中心审核
-                    $result = $fck->where("user_id='". $fck_rs['user_id']."'")->save($data);
+                $rs = $fck->where("id=".$fck_rs['id'])->field("*")->find();
+                if (! $rs) {
+                    $this->error('会员错误！');
+                    exit();
                 }
-            
-                unset($fck,$fee,$promo);
+                $agent_cash = $rs['agent_cash'];
+                if ($agent_cash < $need_m) {
+                    $this->error('电子余额不足！');
+                    exit;
+                }
+                // 减去电子币
+                $minusResult = $fck->execute("update __TABLE__ set `agent_cash`=agent_cash-" . $need_m . " where `id`=" . $fck_rs['id']);
+                if ($minusResult) {
+                    //统计单数
+                    $fck->xiangJiao($fck_rs['id'], $need_dl);
+                    $fck->tz($fck_rs['p_path'],$need_m);
+                    //各种奖项
+                    $fck->tuijj($fck_rs['re_path'],$fck_rs['user_id'],$need_m);
+                    $fck->lingdao22($fck_rs['p_path'],$fck_rs['user_id'],$need_m);
+                    $fck->sh_level();
+                    $fck->baodanfei($fck_rs['shop_id'],$fck_rs['user_id'],$need_m,$fck_rs['is_agent']);
+                    $fck->dsfenhong($fck_rs['p_path'],$fck_rs['user_id'],$need_m);
+                    $fck->query("update __TABLE__ set is_xf=0,u_level=1".",cpzj=".$newlv.",f4=f4+".$need_dl." where `id`=".$fck_rs['id']);
+                    // 分红包记录表
+                    $nowdate = strtotime ("now");
+                    $fck->jiaDan($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $need_dl, 0, 1);
+                    
+                    if ($need_dl == 50) {
+                        $nowdate = strtotime(date('c'));
+                        $data['idt'] = $promo_rs['create_time'];
+                        $data['adt'] = $nowdate;
+                        $data['is_agent'] = 1;
+                        // 设置报单中心审核
+                        $result = $fck->where("user_id='". $fck_rs['user_id']."'")->save($data);
+                    }
+                    
+                    $promo->query("update xt_promo set is_pay=1 where `id`=".$vo);
+                    unset($fck,$fee,$promo);
+                }
             }
             if($OpID) {
                 $bUrl = __URL__.'/memberuplevel/';
@@ -1067,7 +1080,7 @@ class AgentAction extends CommonAction
             $nowday = strtotime(date('Y-m-d'));
             $nowmonth = date('m');
             $fck->emptyTime();
-            
+            ini_set("max_execution_time", 0);
             foreach ($vo as $voo) {
                 $rs = $fck->where($where_two)
                     ->field($field_two)

@@ -245,7 +245,7 @@ class FckModel extends CommonModel
                 // 已分红金额
                 $jd_oldMoney = $value['money'];;
                 // 总金额
-                $jd_sumMoney = $str1 * $jd_danshu * $s5;
+                $jd_sumMoney = 11 * $jd_danshu * $s5;
                 if ($jd_money >= $jd_sumMoney - $jd_oldMoney) {
                     // 超出部分去掉，按剩余部分分红，设为出局
                     $jd_money = $jd_sumMoney - $jd_oldMoney;

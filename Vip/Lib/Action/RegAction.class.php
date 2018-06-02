@@ -210,11 +210,11 @@ class RegAction extends CommonAction{
 		$this->assign('UserID',$_POST['UserID']);
 
 		$data = array();  //创建数据对象
-		$shopid = trim($_POST['shopid']);  //所属报单中心帐号
-		if (empty($shopid)){
-			$this->error('请输入报单中心编号！');
-			exit;
-		}
+// 		$shopid = trim($_POST['shopid']);  //所属报单中心帐号
+// 		if (empty($shopid)){
+// 			$this->error('请输入报单中心编号！');
+// 			exit;
+// 		}
 		//检测招商代表
 		$RID = trim($_POST['RID']);  //获取推荐会员帐号
 		$mapp  = array();
@@ -230,27 +230,34 @@ class RegAction extends CommonAction{
 		}
 		unset($mapp);
 		
-		$smap = array();
-		$smap['user_id'] = $shopid;
-		$smap['is_agent'] = array('gt',1);
-		$shop_rs = $fck->where($smap)->field('id,user_id')->find();
-		if (!$shop_rs){
-			$this->error('没有该报单中心！');
-			exit;
-		}else{
-		    // 如果报单中心与推荐人相等
-    	    if ($authInfoo['id'] == $shop_rs['id'] && $authInfoo['is_agent'] == 2) {
-    	        $this->assign('shopid',$shopid);
-    	    } else {
-    	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and id = '.$authInfoo['id'])->find();
-    	        if (!$spResult) {
-    	            $this->error('请填写网体上级的报单中心！');
-    	            exit;
-    	        }
-    	        $this->assign('shopid',$shopid);
-    	    }
-		}
-		unset($smap,$shop_rs,$shopid);
+// 		$smap = array();
+// 		$smap['user_id'] = $shopid;
+// 		$smap['is_agent'] = array('gt',1);
+// 		$shop_rs = $fck->where($smap)->field('id,user_id')->find();
+// 		if (!$shop_rs){
+// 			$this->error('没有该报单中心！');
+// 			exit;
+// 		}else{
+// 		    // 如果报单中心与推荐人相等
+//     	    if ($authInfoo['id'] == $shop_rs['id'] && $authInfoo['is_agent'] == 2) {
+//     	        $this->assign('shopid',$shopid);
+//     	    } else {
+//     	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and id = '.$authInfoo['id'])->find();
+//     	        if (!$spResult) {
+//     	            $this->error('请填写网体上级的报单中心！');
+//     	            exit;
+//     	        }
+//     	        $this->assign('shopid',$shopid);
+//     	    }
+// 		}
+// 		unset($smap,$shop_rs,$shopid);
+		//检测报单中心
+		$shopResult = $this->find_shopid($RID);
+		// 报单中心的用户名
+		$data['shop_id'] = $shopResult['id'];
+		// 报单中心姓名
+		$data['shop_name'] = $shopResult['user_id'];
+		unset($shopResult);
 
  		// 根据左右区人数判断滑落地点
 		$FID = $this->positionRecuision($authInfoo['id'],$authInfoo['user_id'],$authInfoo['l'],$authInfoo['r']);
@@ -546,12 +553,12 @@ class RegAction extends CommonAction{
 		}
 
 		$data = array();  //创建数据对象
-		//检测报单中心
-		$shopid = trim($_POST['shopid']);  //所属报单中心帐号
-		if (empty($shopid)){
-			$this->error('请输入服务中心编号！');
-			exit;
-		}
+// 		//检测报单中心
+// 		$shopid = trim($_POST['shopid']);  //所属报单中心帐号
+// 		if (empty($shopid)){
+// 			$this->error('请输入服务中心编号！');
+// 			exit;
+// 		}
 		//检测招商代表
 		$RID = trim($_POST['RID']);  //获取推荐会员帐号
 		$mapp  = array();
@@ -569,30 +576,37 @@ class RegAction extends CommonAction{
 		}
 		unset($mapp);
 		
-		$smap = array();
-		$smap['user_id'] = $shopid;
-		$smap['is_agent'] = array('gt',1);
-		$shop_rs = $fck->where($smap)->field('id,user_id')->find();
-		// print_r($shop_rs);die;
-		if (!$shop_rs){
-			$this->error('没有该报单中心！');
-			exit;
-		}else{
-		    // 如果报单中心与推荐人相等
-    	    if ($authInfoo['id'] == $shop_rs['id'] && $authInfoo['is_agent'] == 2) {
-    	        $data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
-		        $data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
-    	    } else {
-    	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and id = '.$authInfoo['id'])->find();
-    	        if (!$spResult) {
-    	            $this->error('请填写网体上级的报单中心！');
-    	            exit;
-    	        }
-    	        $data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
-    	        $data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
-    	    }
-		}
-		unset($smap,$shop_rs,$shopid);
+// 		$smap = array();
+// 		$smap['user_id'] = $shopid;
+// 		$smap['is_agent'] = array('gt',1);
+// 		$shop_rs = $fck->where($smap)->field('id,user_id')->find();
+// 		// print_r($shop_rs);die;
+// 		if (!$shop_rs){
+// 			$this->error('没有该报单中心！');
+// 			exit;
+// 		}else{
+// 		    // 如果报单中心与推荐人相等
+//     	    if ($authInfoo['id'] == $shop_rs['id'] && $authInfoo['is_agent'] == 2) {
+//     	        $data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
+// 		        $data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
+//     	    } else {
+//     	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and id = '.$authInfoo['id'])->find();
+//     	        if (!$spResult) {
+//     	            $this->error('请填写网体上级的报单中心！');
+//     	            exit;
+//     	        }
+//     	        $data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
+//     	        $data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
+//     	    }
+// 		}
+// 		unset($smap,$shop_rs,$shopid);
+		//检测报单中心
+		$shopResult = $this->find_shopid($RID);
+		// 报单中心的用户名
+		$data['shop_id'] = $shopResult['id'];
+		// 报单中心姓名
+		$data['shop_name'] = $shopResult['user_id'];
+		unset($shopResult);
 
         // 根据左右区人数判断滑落地点
 		$FID = $this->positionRecuision($authInfoo['id'],$authInfoo['user_id'],$authInfoo['l'],$authInfoo['r']);
@@ -1002,36 +1016,43 @@ class RegAction extends CommonAction{
 		    $this->error('推荐人不存在！');
 		    exit;
 		}
-		//检测报单中心
-		$shopid = trim($_POST['shopid']);  //所属报单中心帐号
-		if (empty($shopid)){
-			$this->error('请输入报单中心编号！');
-			exit;
-		}
-		$smap = array();
-		$smap['user_id'] = $shopid;
-		$smap['is_agent'] = array('gt',1);
-		$shop_rs = $fck->where($smap)->field('id,user_id')->find();
-		if (!$shop_rs){
-			$this->error('没有该报单中心！');
-			exit;
-		}else{
-		    // 如果报单中心与推荐人相等
-    	    if ($authInfoo['id'] == $shop_rs['id'] && $authInfoo['is_agent'] == 2) {
-    	        $data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
-		        $data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
-    	    } else {
-    	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and id = '.$authInfoo['id'])->find();
-    	        if (!$spResult) {
-    	            $this->error('请填写网体上级的报单中心！');
-    	            exit;
-    	        }
-    	        $data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
-    	        $data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
-    	    }
+// 		//检测报单中心
+// 		$shopid = trim($_POST['shopid']);  //所属报单中心帐号
+// 		if (empty($shopid)){
+// 			$this->error('请输入报单中心编号！');
+// 			exit;
+// 		}
+// 		$smap = array();
+// 		$smap['user_id'] = $shopid;
+// 		$smap['is_agent'] = array('gt',1);
+// 		$shop_rs = $fck->where($smap)->field('id,user_id')->find();
+// 		if (!$shop_rs){
+// 			$this->error('没有该报单中心！');
+// 			exit;
+// 		}else{
+// 		    // 如果报单中心与推荐人相等
+//     	    if ($authInfoo['id'] == $shop_rs['id'] && $authInfoo['is_agent'] == 2) {
+//     	        $data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
+// 		        $data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
+//     	    } else {
+//     	        $spResult = $fck->where('p_path like "%,' . $shop_rs['id'] . ',%" and is_pay=1 and id = '.$authInfoo['id'])->find();
+//     	        if (!$spResult) {
+//     	            $this->error('请填写网体上级的报单中心！');
+//     	            exit;
+//     	        }
+//     	        $data['shop_id']   = $shop_rs['id'];      //隶属会员中心编号
+//     	        $data['shop_name'] = $shop_rs['user_id']; //隶属会员中心帐号
+//     	    }
     	    
-		}
-		unset($smap,$shop_rs,$shopid);
+// 		}
+// 		unset($smap,$shop_rs,$shopid);
+		//检测报单中心
+		$shopResult = $this->find_shopid($RID);
+		// 报单中心的用户名
+		$data['shop_id'] = $shopResult['id'];
+		// 报单中心姓名
+		$data['shop_name'] = $shopResult['user_id'];
+		unset($shopResult);
 
         // 根据左右区人数判断滑落地点
 		$FID = $this->positionRecuision($authInfoo['id'],$authInfoo['user_id'],$authInfoo['l'],$authInfoo['r']);
@@ -1304,15 +1325,18 @@ class RegAction extends CommonAction{
         return $data;
 	}
 	
-	// 递归检测报单中心
-	public function find_shopid($id,$recommend_id,$shop_rs) {
-	    $result = array();
-	    // 如果报单中心与推荐人相等
-	    if ($recommend_id == $user_id) {
-	        return $shop_rs;
+    // 递归检测报单中心
+	public function find_shopid($user_id) {
+	    $member = M('fck');
+	    $mappp  = array();
+	    $mappp['user_id'] = $user_id;
+	    $authInfoo = $member->where($mappp)->field('id,user_id,user_name,is_agent,re_id,re_name')->find();
+	    if ($authInfoo['is_agent'] == 2){
+	        return $authInfoo;
+	    } else {
+	        $authInfoo = $this->find_shopid($authInfoo['re_name']);
+	        return $authInfoo;
 	    }
-	    $result = $fck->where('p_path like "%,' . $id . ',%" and is_pay=1 and is_agent = 2 and id = '.$recommend_id)->find();
-	    
 	}
 	
 	//生成会员编号
