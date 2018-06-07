@@ -491,13 +491,20 @@ class AgentAction extends CommonAction
         $fck_rs = $fck->where($where)->field('*')->find();
         // 若存在会员表数据
         if ($fck_rs) {
-            // 已经复投单数+现在提交的复投单数
-            $f4 = $fck_rs['is_cc'] + $nums;
-            // 剩余可以复投单数
-            $sum = 50 - $fck_rs['is_cc'];
-            // 总单数不能大于50
-            if ($nums > 50) {
-                $this->error('一次最多只能复投50单！');
+            // 检索已经存在的分红包数量
+            $jiadan = M('jiadan');
+            $danshu = $jiadan->where('user_id = "' . $fck_rs['user_id'] . '" and is_pay=0')->sum('danshu');
+            // 总包数：已经存在+刚刚提交
+            $sum_tmp = $danshu + $nums;
+            // 普通会员：未出局分红包不能大于500 服务中心未出局分红包不能大于1000
+            if ($fck_rs['is_agent'] == 2 && $sum_tmp > 1000) {
+                // 还可复投的包数
+                $bag = 1000 - $danshu;
+                $this->error('服务中心未出局分红包不能大于1000,还可复投'.$bag.'包！');
+                exit();
+            } else if ($fck_rs['is_agent'] < 2 && $sum_tmp > 500) {
+                $bag = 500 - $danshu;
+                $this->error('普通会员未出局分红包不能大于500,还可复投'.$bag.'包！');
                 exit();
             } else {
                 // 前台输入单数总金额：单数*每单注册金额
@@ -529,6 +536,10 @@ class AgentAction extends CommonAction
                 $this->error('现金币不足！');
                 exit();
             }
+            if ($fck_rs['agent_cash'] < $money && $futou == 4) {
+                $this->error('电子币不足！');
+                exit();
+            }
             // 注册时投资金额
             $agent_xf = $fck_rs['cpzj'];
             $data = array();
@@ -556,7 +567,7 @@ class AgentAction extends CommonAction
                 $history->add($data);
                 // 更新会员表数据
                 $result = $fck->query("update __TABLE__ set is_cc=is_cc+" . $sum .",jia_nums=jia_nums+1". ",agent_xf=agent_xf-$money where id=" . $id);
-            } else {
+            } else if ($futou == 2) {
                 // ID
                 $data['uid'] = $fck_rs['id'];
                 // 会员编号
@@ -575,7 +586,52 @@ class AgentAction extends CommonAction
                 $history->add($data);
                 // 更新会员表数据
                 $result = $fck->query("update __TABLE__ set is_cc=is_cc+" . $sum .",jia_nums=jia_nums+1". ",agent_use=agent_use-$money where id=" . $id);
+            } else if ($futou == 4) {
+                // ID
+                $data['uid'] = $fck_rs['id'];
+                // 会员编号
+                $data['user_id'] = $fck_rs['user_id'];
+                // 电子币复投
+                $data['action_type'] = 29;
+                // 时间
+                $data['pdt'] = $nowdate;
+                // 复投金额
+                $data['epoints'] = $money;
+                $data['did'] = 0;
+                $data['allp'] = 0;
+                $data['bz'] = '29';
+                // 添加历史记录表数据
+                $history->create();
+                $history->add($data);
+                // 更新会员表数据
+                $result = $fck->query("update __TABLE__ set is_cc=is_cc+" . $sum .",jia_nums=jia_nums+1". ",agent_cash=agent_cash-$money where id=" . $id);
+                // 添加物流信息
+                $pora = M('product');
+                $gouwu = D('Gouwu');
+                $gwd = array();
+                $gwd['uid'] = $fck_rs['id'];
+                $gwd['user_id'] = $fck_rs['user_id'];
+                $gwd['lx'] = 1;
+                $gwd['ispay'] = 0;
+                $gwd['pdt'] = mktime();
+                $gwd['us_name'] = $fck_rs['name'];
+                $gwd['us_address'] = $fck_rs['user_address'];
+                $gwd['us_tel'] = $fck_rs['user_tel'];
+                $where = array();
+                // 查询产品信息
+                $where['id'] = 22;
+                $prs = $pora->where($where)->find();
+                $w_money = $prs['a_money'];
+                $gwd['did'] = $prs['id'];
+                $gwd['money'] = $w_money;
+                $gwd['shu'] = $sum;
+                $gwd['cprice'] = $money;
+                if(!empty($prs['countid'])){
+                    $gwd['countid'] = $prs['countid'];
+                }
+                $gouwu->add($gwd);
             }
+            unset($history,$data,$gwd,$pora,$gouwu);
             
             // 分红包记录表
             $fck->jiaDan($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $sum, 0, 2);
