@@ -578,40 +578,30 @@ class FckModel extends CommonModel
             if ($count == 2) {
                 // 合伙人
                 if ($sh_level < 1) {
-                    $one11 = $this->where('treeplace=0 and father_id=' . $myid)
-                        ->field('id,user_id,ach')
-                        ->find();
-                    $nowdate = strtotime(date('Y-m-d'));
-                    $ach1 = $this->where('p_path like "%,' . $one11['id'] . ',%" and is_pay=1 and pdt<' . $nowdate)->sum('cpzj');
-                    if (empty($ach1)) {
-                        $ach1 = 0.00;
-                    }
-                    $one22 = $this->where('treeplace=1 and father_id=' . $myid)
-                        ->field('id,user_id,ach')
-                        ->find();
-                    $ach2 = $one22['ach'];
-                    $nowdate = strtotime(date('Y-m-d'));
-                    $ach2 = $this->where('p_path like "%,' . $one22['id'] . ',%" and is_pay=1 and pdt<' . $nowdate)->sum('cpzj');
-                    if (empty($ach2)) {
-                        $ach2 = 0.00;
-                    }
+//                     $one11 = $this->where('treeplace=0 and father_id=' . $myid)
+//                         ->field('id,user_id,ach')
+//                         ->find();
+//                     $nowdate = strtotime(date('Y-m-d'));
+//                     $ach1 = $this->where('p_path like "%,' . $one11['id'] . ',%" and is_pay=1 and pdt<' . $nowdate)->sum('cpzj');
+//                     if (empty($ach1)) {
+//                         $ach1 = 0.00;
+//                     }
+//                     $one22 = $this->where('treeplace=1 and father_id=' . $myid)
+//                         ->field('id,user_id,ach')
+//                         ->find();
+//                     $ach2 = $this->where('p_path like "%,' . $one22['id'] . ',%" and is_pay=1 and pdt<' . $nowdate)->sum('cpzj');
+//                     if (empty($ach2)) {
+//                         $ach2 = 0.00;
+//                     }
                     if ($ach >= 160000) {
                         $this->execute("update __TABLE__ set sh_level=1,sh_one=sh_one+1 where id=" . $myid);
-                        
-                        $lirs = $this->where('id in (0' . $p_path . '0)')
-                            ->field('id')
-                            ->order('id desc')
-                            ->select();
-                        foreach ($lirs as $lrs) {
-                            $uid = $lrs['id'];
-                            $this->execute("update __TABLE__ set sh_one=sh_one+1 where id=" . $uid);
-                        }
-                        unset($lirs, $uid, $one11, $one22, $ach2, $ach1);
+                        $this->execute("update __TABLE__ set sh_one=sh_one+1 where id in (0" . $p_path . "0)");
                     }
+                    unset($one11, $one22, $ach2, $ach1,$nowdate);
                 }
                 
                 // 市场总监
-                if ($value['sh_level'] < 2) {
+                else if ($value['sh_level'] < 2) {
                     $one11 = $this->where('treeplace=0 and father_id=' . $myid)
                         ->field('id,user_id,sh_one')
                         ->find();
@@ -622,20 +612,12 @@ class FckModel extends CommonModel
                     $sh_one2 = $one22['sh_one'];
                     if ($sh_one1 > 0 && $sh_one2 > 0) {
                         $this->execute("update __TABLE__ set sh_level=2,sh_two=sh_two+1 where id=" . $myid);
-                        
-                        $lirs = $this->where('id in (0' . $p_path . '0)')
-                            ->field('id')
-                            ->order('id desc')
-                            ->select();
-                        foreach ($lirs as $lrs) {
-                            $uid = $lrs['id'];
-                            $this->execute("update __TABLE__ set sh_two=sh_two+1 where id=" . $uid);
-                        }
-                        unset($lirs, $uid, $one11, $one22);
+                        $this->execute("update __TABLE__ set sh_two=sh_two+1 where id in (0" . $p_path . "0)");
                     }
+                    unset($one11, $one22,$sh_one1,$sh_one2);
                 }
                 // 市场监理
-                if ($value['sh_level'] < 3) {
+                else if ($value['sh_level'] < 3) {
                     $one11 = $this->where('treeplace=0 and father_id=' . $myid)
                         ->field('id,user_id,sh_two')
                         ->find();
@@ -647,20 +629,12 @@ class FckModel extends CommonModel
                     $shnums = $sh_two1 + $sh_two2;
                     if ($sh_two1 > 0 && $sh_two2 > 0 && $shnums > 2) {
                         $this->execute("update __TABLE__ set sh_level=3,sh_three=sh_three+1 where id=" . $myid);
-                        
-                        $lirs = $this->where('id in (0' . $p_path . '0)')
-                            ->field('id')
-                            ->order('id desc')
-                            ->select();
-                        foreach ($lirs as $lrs) {
-                            $uid = $lrs['id'];
-                            $this->execute("update __TABLE__ set sh_three=sh_three+1 where id=" . $uid);
-                        }
-                        unset($lirs, $uid, $one11, $one22);
+                        $this->execute("update __TABLE__ set sh_three=sh_three+1 where id in (0" . $p_path . "0)");
                     }
+                    unset($one11, $one22,$sh_two1,$sh_two2,$shnums);
                 }
                 // 市场董事
-                if ($value['sh_level'] < 4) {
+                else if ($value['sh_level'] < 4) {
                     $one11 = $this->where('treeplace=0 and father_id=' . $myid)
                         ->field('id,user_id,sh_three')
                         ->find();
@@ -672,20 +646,12 @@ class FckModel extends CommonModel
                     $shThreeNums = $sh_three1 + $sh_three2;
                     if ($sh_three1 > 1 && $sh_three2 > 1 && $shThreeNums > 2) {
                         $this->execute("update __TABLE__ set sh_level=4,sh_four=sh_four+1 where id=" . $myid);
-                        
-                        $lirs = $this->where('id in (0' . $p_path . '0)')
-                            ->field('id')
-                            ->order('id desc')
-                            ->select();
-                        foreach ($lirs as $lrs) {
-                            $uid = $lrs['id'];
-                            $this->execute("update __TABLE__ set sh_four=sh_four+1 where id=" . $uid);
-                        }
-                        unset($lirs, $uid, $one11, $one22);
+                        $this->execute("update __TABLE__ set sh_four=sh_four+1 where id in (0" . $p_path . "0)");
                     }
+                    unset($one11, $one22,$sh_three1,$sh_three2,$shThreeNums);
                 }
                 // 全国董事
-                if ($value['sh_level'] < 5) {
+                else if ($value['sh_level'] < 5) {
                     $one11 = $this->where('treeplace=0 and father_id=' . $myid)
                         ->field('id,user_id,sh_four,ach')
                         ->find();
@@ -699,7 +665,6 @@ class FckModel extends CommonModel
                         ->field('id,user_id,sh_four,ach')
                         ->find();
                     $sh_four2 = $one22['sh_four'];
-                    $nowdate = strtotime(date('Y-m-d'));
                     $ach2 = $this->where('p_path like "%,' . $one22['id'] . ',%" and is_pay=1 and pdt<' . $nowdate)->sum('cpzj');
                     if (empty($ach2)) {
                         $ach2 = 0.00;
@@ -708,9 +673,8 @@ class FckModel extends CommonModel
                     $shnums22 = $sh_four1 + $sh_four2;
                     if ($sh_four1 > 1 && $sh_four2 > 1 && $shnums22 > 2) {
                         $this->execute("update __TABLE__ set sh_level=5 where id=" . $myid);
-                        
-                        unset($lirs, $uid, $one11, $one22);
                     }
+                    unset($one11, $one22,$sh_four1,$sh_four2,$ach1,$ach2,$nowdate,$miannums,$shnums22);
                 }
                 // $count11=$this->where('father_id ='.$uuid1.' and is_pay>=1')->count();
                 // $count22=$this->where('father_id ='.$uuid2.' and is_pay>=1')->count();
