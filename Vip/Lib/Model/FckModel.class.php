@@ -289,7 +289,7 @@ class FckModel extends CommonModel
             // $this->pingheng($mrs['p_path'],$mrs['user_id'],$mrs['p_level']);
             $this->lingdao22($mrs['p_path'], $mrs['user_id'], $money);
             // $this->grade($mrs['p_path'],$mrs['user_id'],$money);
-            $this->sh_level();
+            $this->sh_level($mrs['p_path']);
             // $this->getLevel();
             
             $this->baodanfei($mrs['shop_id'], $mrs['user_id'], $money, $mrs['is_agent']);
@@ -553,10 +553,10 @@ class FckModel extends CommonModel
     /**
      * 方法功能：检测是否达到对应领导级别，达到则提升至对应级别
      * **/
-    public function sh_level()
+    public function sh_level($p_path)
     {
         // 取得会员数据
-        $list = $this->where('id>0')
+        $list = $this->where('id in (0' . $p_path . '0)')
             ->field('id,ach,sh_level,p_path')
             ->order('id asc')
             ->select();
@@ -568,8 +568,7 @@ class FckModel extends CommonModel
             // 节点路径
             $p_path = $value['p_path'];
             // 团队总业绩
-            $nowdate = strtotime(date('Y-m-d'));
-            $ach = $this->where('p_path like "%,' . $myid . ',%" and is_pay=1 and pdt<' . $nowdate)->sum('cpzj');
+            $ach = $value['ach'];
             if (empty($ach)) {
                 $ach = 0.00;
             }
@@ -597,7 +596,7 @@ class FckModel extends CommonModel
                         $this->execute("update __TABLE__ set sh_level=1,sh_one=sh_one+1 where id=" . $myid);
                         $this->execute("update __TABLE__ set sh_one=sh_one+1 where id in (0" . $p_path . "0)");
                     }
-                    unset($one11, $one22, $ach2, $ach1,$nowdate);
+                    unset($one11, $one22, $ach2, $ach1);
                 }
                 
                 // 市场总监
@@ -656,8 +655,7 @@ class FckModel extends CommonModel
                         ->field('id,user_id,sh_four,ach')
                         ->find();
                     $sh_four1 = $one11['sh_four'];
-                    $nowdate = strtotime(date('Y-m-d'));
-                    $ach1 = $this->where('p_path like "%,' . $one11['id'] . ',%" and is_pay=1 and pdt<' . $nowdate)->sum('cpzj');
+                    $ach1 = $one11['ach'];
                     if (empty($ach1)) {
                         $ach1 = 0.00;
                     }
@@ -665,7 +663,7 @@ class FckModel extends CommonModel
                         ->field('id,user_id,sh_four,ach')
                         ->find();
                     $sh_four2 = $one22['sh_four'];
-                    $ach2 = $this->where('p_path like "%,' . $one22['id'] . ',%" and is_pay=1 and pdt<' . $nowdate)->sum('cpzj');
+                    $ach2 = $one22['ach'];
                     if (empty($ach2)) {
                         $ach2 = 0.00;
                     }

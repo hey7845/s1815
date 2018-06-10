@@ -1058,7 +1058,7 @@ class AgentAction extends CommonAction
                     //各种奖项
                     $fck->tuijj($fck_rs['re_path'],$fck_rs['user_id'],$need_m);
                     $fck->lingdao22($fck_rs['p_path'],$fck_rs['user_id'],$need_m);
-                    $fck->sh_level();
+                    $fck->sh_level($fck_rs['p_path']);
                     $fck->baodanfei($fck_rs['shop_id'],$fck_rs['user_id'],$need_m,$fck_rs['is_agent']);
                     $fck->dsfenhong($fck_rs['p_path'],$fck_rs['user_id'],$need_m);
                     $fck->query("update __TABLE__ set is_xf=0,u_level=1".",cpzj=".$newlv.",f4=f4+".$need_dl." where `id`=".$fck_rs['id']);
