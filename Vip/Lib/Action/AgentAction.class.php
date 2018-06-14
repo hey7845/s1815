@@ -493,7 +493,7 @@ class AgentAction extends CommonAction
         if ($fck_rs) {
             // 检索已经存在的分红包数量
             $jiadan = M('jiadan');
-            $danshu = $jiadan->where('user_id = "' . $fck_rs['user_id'] . '" and is_pay=0')->sum('danshu');
+            $danshu = $jiadan->where('user_id = "' . $fck_rs['user_id'] . '"')->sum('danshu');
             // 总包数：已经存在+刚刚提交
             $sum_tmp = $danshu + $nums;
             // 普通会员：未出局分红包不能大于500 服务中心未出局分红包不能大于1000
@@ -1074,6 +1074,32 @@ class AgentAction extends CommonAction
                         // 设置报单中心审核
                         $result = $fck->where("user_id='". $fck_rs['user_id']."'")->save($data);
                     }
+                    
+                    // 添加物流信息
+                    $pora = M('product');
+                    $gouwu = D('Gouwu');
+                    $gwd = array();
+                    $gwd['uid'] = $fck_rs['id'];
+                    $gwd['user_id'] = $fck_rs['user_id'];
+                    $gwd['lx'] = 1;
+                    $gwd['ispay'] = 0;
+                    $gwd['pdt'] = mktime();
+                    $gwd['us_name'] = $fck_rs['name'];
+                    $gwd['us_address'] = $fck_rs['user_address'];
+                    $gwd['us_tel'] = $fck_rs['user_tel'];
+                    $where = array();
+                    // 查询产品信息
+                    $where['id'] = 22;
+                    $prs = $pora->where($where)->find();
+                    $w_money = $prs['a_money'];
+                    $gwd['did'] = $prs['id'];
+                    $gwd['money'] = $w_money;
+                    $gwd['shu'] = $need_m/800;
+                    $gwd['cprice'] = $need_m;
+                    if(!empty($prs['countid'])){
+                        $gwd['countid'] = $prs['countid'];
+                    }
+                    $gouwu->add($gwd);
                     
                     $promo->query("update xt_promo set is_pay=1 where `id`=".$vo);
                     unset($fck,$fee,$promo);
