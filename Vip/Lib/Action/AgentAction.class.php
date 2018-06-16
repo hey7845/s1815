@@ -632,12 +632,12 @@ class AgentAction extends CommonAction
                     $gwd['countid'] = $prs['countid'];
                 }
                 $gouwu->add($gwd);
+                $fck->tz($fck_rs['p_path'], $money);
             }
             unset($history,$data,$gwd,$pora,$gouwu);
             
             // 分红包记录表
             $fck->jiaDan($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $sum, 0, 2);
-            $fck->tz($fck_rs['p_path'], $money);
             // 推荐奖
             $fck->tuijj($fck_rs['re_path'], $fck_rs['user_id'], $money);
             // 见点奖
