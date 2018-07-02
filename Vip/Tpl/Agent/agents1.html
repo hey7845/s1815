@@ -2,7 +2,7 @@
 <load href="__PUBLIC__/Js/UserJs.js" />
 <div class="ncenter_box">
 <div class="accounttitle"><h1>复投 </h1></div>
-    <div class="c_p5"><div class="tips">首次申请报单中心，请填写申请备注。 </div></div>
+    <div class="c_p5"><div class="tips">如选择复投币复投，只能选择当前网络的复投币复投。 </div></div>
 	<table width="100%" border="0" cellpadding="3" cellspacing="0">
 		<form name="form1" method='post' id="form1" action="__URL__/agentsAC1">
      
@@ -12,17 +12,40 @@
 			<td width="75%">{$fck_rs['user_id']}</td>
 		</tr>
 		<tr>
+			<td width="25%" height="30" align="right">当前网络：</td>
+			<eq name = "fck_rs['net_status']" value = "b">
+				<td width="75%">B网</td>
+			<else />
+				<td width="75%">A网</td>
+			</eq>
+			
+		</tr>
+		<tr>
 			<td width="25%" height="30" align="right">现金币：</td>
 			<td width="75%">{$fck_rs['agent_use']}</td>
 		</tr>
 		<tr>
-			<td width="25%" height="30" align="right">复投币：</td>
+			<td width="25%" height="30" align="right">电子币：</td>
+			<td width="75%">{$fck_rs['agent_cash']}</td>
+		</tr>
+		<tr>
+			<td width="25%" height="30" align="right">A网复投币：</td>
 			<td width="75%">{$fck_rs['agent_xf']}</td>
 		</tr>
 		<tr>
-			<td width="25%" height="30" align="right">复投单数：</td>
+			<td width="25%" height="30" align="right">A网复投单数：</td>
 			<td width="75%">{$fck_rs['is_cc']}</td>
 		</tr>
+		<eq name = "fck_rs['net_status']" value = "b">
+			<tr>
+				<td width="25%" height="30" align="right">B网复投币：</td>
+				<td width="75%">{$netb_rs['agent_futou']}</td>
+			</tr>
+			<tr>
+			<td width="25%" height="30" align="right">B网复投单数：</td>
+			<td width="75%">{$netb_rs['futou_danshu']}</td>
+		</tr>
+		</eq>
 		 <tr>
 			<td width="25%" height="30" align="right">复投类型：</td>
 			<td>
@@ -62,7 +85,7 @@
 		  <td><textarea name="content" id="content" cols="40" rows="8"></textarea></td>
 		</tr> -->
 		<tr>
-			<td align="right">复投单数</td>
+			<td align="right">本次复投单数：</td>
 		  <td><input type="text" name="nums"></td>
 		</tr>
 		<tr>

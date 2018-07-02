@@ -101,6 +101,23 @@ class AgentAction extends CommonAction
                 $bUrl = __URL__ . '/memberuplevel'; // 原点升级晋级审核
                 $this->_boxx($bUrl);
                 break;
+                
+            case 12:
+                $_SESSION['Urlszpass'] = 'MyssnetAorB';
+                $bUrl = __URL__ . '/netAorB'; // 开通新网络审核
+                $this->_boxx($bUrl);
+                break;
+                
+            case 13:
+                $_SESSION['Urlszpass'] = 'MyssnetAorBApply';
+                $bUrl = __URL__ . '/netAorBApply'; // 申请新网络
+                $this->_boxx($bUrl);
+                break;
+            case 14:
+                $_SESSION['Urlszpass'] = 'MyssproductExchange';
+                $bUrl = __URL__ . '/productExchange'; // 产品兑换
+                $this->_boxx($bUrl);
+                break;
             
             case 4:
                 $_SESSION['UrlPTPass'] = 'MyssGuanXiGua';
@@ -243,6 +260,194 @@ class AgentAction extends CommonAction
             exit();
         }
     }
+    
+    // 申请新网络列表
+    public function netAorBApply($Urlsz = 0)
+    {
+        if ($_SESSION['Urlszpass'] == 'MyssnetAorBApply') {
+            $where = array();
+			$fck = M('fck');
+	    	$uid = $_SESSION[C('USER_AUTH_KEY')];
+			$frs = $fck->find($uid);
+			$fee = M ('fee');
+			$fee_rs =$fee->field('s1,s2,s3,s4,s5,s9')->find();
+			$s1 =explode('|',$fee_rs['s1']);
+			$s2 =explode('|',$fee_rs['s2']);
+			$s3 =explode('|',$fee_rs['s3']);
+			// 投资金额基数
+			$s9 =explode('|',$fee_rs['s9']);
+			// 领导奖比例
+			$s4 =$fee_rs['s4'];
+			$promo = M('aorb');
+			$field  = '*';
+			$map['uid'] = $uid;
+            $list = $promo->where($map)->field($field)->order('id desc')->select();
+            $this->assign('list',$list);//数据输出到模板
+            //=================================================
+
+			$this->assign('s4',$s4);
+			$this->assign('frs',$frs);//数据输出到模板
+			$this->display();
+        } else {
+            $this->error('错误!');
+            exit();
+        }
+    }
+    
+    // 产品兑换列表
+    public function productExchange($Urlsz = 0)
+    {
+        if ($_SESSION['Urlszpass'] == 'MyssproductExchange') {
+            $where = array();
+            // 类型
+            $nettype = $_POST['net'];
+            $fck = M('fck');
+            $uid = $_SESSION[C('USER_AUTH_KEY')];
+            $frs = $fck->find($uid);
+            $this->assign('futoua',$frs['agent_xf']);
+            $netb = M('netb');
+            $netb_rs = $netb->where('uid='.$uid)->field('*')->find();
+            $this->assign('futoub',$netb_rs['agent_futou']);
+            $this->assign('frs',$frs);//数据输出到模板
+            unset($where,$fck,$uid,$frs,$netb,$netb_rs);
+            $this->display();
+        } else {
+            $this->error('错误!');
+            exit();
+        }
+    }
+    
+    //前台产品兑换确认
+    public function productExchangeConfirm(){
+        if ($_SESSION['Urlszpass'] == 'MyssproductExchange'){
+            // 网络类型
+            $nettype = $_POST['net'];
+            // 类型
+            $type = $_POST['type'];
+            // 填写的数量
+            $nums = $_POST['nums'];
+            $money = $nums*800;
+            $where = array();
+            $fck = M('fck');
+            $uid = $_SESSION[C('USER_AUTH_KEY')];
+            $frs = $fck->find($uid);
+            if ($nettype == 'a' && $frs['net_top_a'] == 1) {
+                $agent_futou = $frs['agent_xf'];
+                if (type == 1 && $agent_futou < $money) {
+                    $this->error('可兑换余额不足！');
+                    exit();
+                } else {
+                    $member_result = $fck->execute("update xt_fck set agent_xf=agent_xf -$money where id =".$uid);
+                }
+            } else if ($nettype == 'b' && $frs['net_top_b'] == 1) {
+                $netb = M('netb');
+                $netb_rs = $netb->where('uid='.$uid)->field('*')->find();
+                $agent_futou = $netb_rs['agent_futou'];
+                if (type == 1 && $agent_futou < $money) {
+                    $this->error('可兑换余额不足！');
+                    exit();
+                } else {
+                    $member_result = $netb->execute("update xt_netB set agent_futou=agent_futou -$money where uid =".$uid);
+                }
+            } else {
+                $this->error('分红包尚未封顶，暂时不可兑换！');
+                exit;
+            }
+            if ($member_result) {
+                // 添加物流信息
+                $pora = M('product');
+                $gouwu = D('Gouwu');
+                $gwd = array();
+                $gwd['uid'] = $frs['id'];
+                $gwd['user_id'] = $frs['user_id'];
+                $gwd['lx'] = 1;
+                $gwd['ispay'] = 0;
+                $gwd['pdt'] = mktime();
+                $gwd['us_name'] = $frs['name'];
+                $gwd['us_address'] = $frs['user_address'];
+                $gwd['us_tel'] = $frs['user_tel'];
+                $where = array();
+                // 查询产品信息
+                $where['id'] = 22;
+                $prs = $pora->where($where)->find();
+                $w_money = $prs['a_money'];
+                $gwd['did'] = $prs['id'];
+                $gwd['money'] = $w_money;
+                $gwd['shu'] = $nums;
+                $gwd['cprice'] = $nums*800;
+                if(!empty($prs['countid'])){
+                    $gwd['countid'] = $prs['countid'];
+                }
+                $result = $gouwu->add($gwd);
+            }
+            if($result) {
+                $bUrl = __URL__.'/productExchange';
+                $this->_box(1,'兑换成功！',$bUrl,3);
+            } else {
+                $this->error('兑换失败！');
+                exit;
+            }
+            unset($fck,$uid,$frs,$agent_futou,$money,$member_result,$netb,$netb_rs,$pora,$gouwu,$gwd,$where,$prs,$w_money,$result);
+             
+        }else{
+            $this->error('错误！');
+            exit;
+        }
+    }
+    
+    //前台新网络申请
+    public function netAorBApplyConfirm(){
+        if ($_SESSION['Urlszpass'] == 'MyssnetAorBApply'){
+            // 当前用户ID
+            $uid = $_SESSION[C('USER_AUTH_KEY')];
+            $where['id'] = $uid;
+            $promo = M('aorb');
+            $promo_rs = $promo->where("uid={$uid} and  is_pay=0")->find();
+            if ($promo_rs) {
+                $this->error('您有还未确认的申请，请等待确认之后再行申请！');
+                exit;
+            }
+            $fck = D('Fck');
+            // 根据会员ID查询会员表数据
+            $fck_rs = $fck->where($where)->find();
+            // 临时会员不能升级
+            if($fck_rs['is_pay'] == 0){
+                $this->error('您是临时会员不能申请新网络，请先开通！');
+                exit;
+            }
+            if ($fck_rs['net_status'] == 'b' && $fck_rs['net_top_b'] == 0) {
+                $this->error('当前网络分红包尚未封顶，暂时不能开通新网络！');
+                exit;
+            } else if ($fck_rs['net_status'] == 'a' && $fck_rs['net_top_a'] == 0) {
+                $this->error('当前网络分红包尚未封顶，暂时不能开通新网络！');
+                exit;
+            }
+            // 查询参数设置数据
+            $fee = M ('fee');
+            $fee_rs =$fee->field('s1,s2,s3,s4,s5,s9,s13')->find();
+            // 写入帐号数据
+            $data = array();
+            $data['uid'] = $uid;
+            $data['user_id'] = $fck_rs['user_id'];
+            $data['money'] = 40000;
+            $data['adt'] = time();
+            $data['danshu'] = 50;
+            $data['is_pay']	= 0;
+            $result = $promo->add($data);
+            unset($data);
+            if($result) {
+                $bUrl = __URL__.'/netAorBApply';
+                $this->_box(1,'您申请成功，请耐心等待管理员审核！',$bUrl,3);
+            } else {
+                $this->error('申请失败！');
+                exit;
+            }
+             
+        }else{
+            $this->error('错误！');
+            exit;
+        }
+    }
 
     public function agents1($Urlsz = 0)
     {
@@ -258,6 +463,8 @@ class AgentAction extends CommonAction
             $fck_rs = $fck->where($where)
                 ->field($field)
                 ->find();
+            $netb = M('netb');
+            $netb_rs = $netb ->where('uid = '.$_SESSION[C('USER_AUTH_KEY')])->field('*')->find();
             
             if ($fck_rs) {
                 // 会员级别
@@ -278,6 +485,7 @@ class AgentAction extends CommonAction
                 $this->assign('agent_level', 0);
                 $this->assign('agent_status', $agent_status);
                 $this->assign('fck_rs', $fck_rs);
+                $this->assign('netb_rs', $netb_rs);
                 
                 $Agent_Us_Name = C('Agent_Us_Name');
                 $Aname = explode("|", $Agent_Us_Name);
@@ -489,51 +697,98 @@ class AgentAction extends CommonAction
         $where['id'] = $id;
         // 查询会员表数据
         $fck_rs = $fck->where($where)->field('*')->find();
+        // 查询B网表数据
+        $netb = D('netb');
+        $netb_rs = $netb->where('uid = '.$id)->field('*')->find();
         // 若存在会员表数据
         if ($fck_rs) {
-            // 检索已经存在的分红包数量
-            $jiadan = M('jiadan');
-            $danshu = $jiadan->where('user_id = "' . $fck_rs['user_id'] . '"')->sum('danshu');
-            // 总包数：已经存在+刚刚提交
-            $sum_tmp = $danshu + $nums;
-            // 普通会员：未出局分红包不能大于500 服务中心未出局分红包不能大于1000
-            if ($fck_rs['is_agent'] == 2 && $sum_tmp > 1000) {
-                // 还可复投的包数
-                $bag = 1000 - $danshu;
-                $this->error('服务中心未出局分红包不能大于1000,还可复投'.$bag.'包！');
-                exit();
-            } else if ($fck_rs['is_agent'] < 2 && $sum_tmp > 500) {
-                $bag = 500 - $danshu;
-                $this->error('普通会员未出局分红包不能大于500,还可复投'.$bag.'包！');
-                exit();
+            if ($fck_rs['net_status'] == 'b') {
+                // 检索已经存在的分红包数量
+                $jiadanb = M('jiadanb');
+                $danshu = $jiadanb->where('user_id = "' . $fck_rs['user_id'] . '"')->sum('danshu');
+                // 总包数：已经存在+刚刚提交
+                $sum_tmp = $danshu + $nums;
+                // 普通会员：未出局分红包不能大于500 服务中心未出局分红包不能大于1000
+                if ($fck_rs['is_agent'] == 2 && $sum_tmp > 1000) {
+                    // 还可复投的包数
+                    $bag = 1000 - $danshu;
+                    $this->error('服务中心总分红包不能大于1000,还可复投'.$bag.'包！');
+                    exit();
+                } else if ($fck_rs['is_agent'] < 2 && $sum_tmp > 500) {
+                    $bag = 500 - $danshu;
+                    $this->error('普通会员总分红包不能大于500,还可复投'.$bag.'包！');
+                    exit();
+                } else {
+                    // 前台输入单数总金额：单数*每单注册金额
+                    $picmoney = $nums * $s9;
+                    // 复投金额小于投资额的10%，不允许复投
+                    if ($picmoney < 4000) {
+                        $this->error('必须满4000才可复投！');
+                        exit();
+                    }
+                    // 单数
+                    $sum = $nums;
+                }
             } else {
-                // 前台输入单数总金额：单数*每单注册金额
-                $picmoney = $nums * $s9;
-                // 投资额*10%
-                $summoney = $fck_rs['cpzj'] * 0.1;
-                // 注册单数大于等于25之后，前10次任意复投，10次之后满投资额的10%才可以复投。
-                if ($fck_rs['f4'] >= 25) {
-                    // 复投次数 > 10次
-                    if ($fck_rs['jia_nums'] > 10) {
+                // 检索已经存在的分红包数量
+                $jiadan = M('jiadan');
+                $danshu = $jiadan->where('user_id = "' . $fck_rs['user_id'] . '"')->sum('danshu');
+                // 总包数：已经存在+刚刚提交
+                $sum_tmp = $danshu + $nums;
+                // 普通会员：未出局分红包不能大于500 服务中心未出局分红包不能大于1000
+                if ($fck_rs['is_agent'] == 2 && $sum_tmp > 1000) {
+                    // 还可复投的包数
+                    $bag = 1000 - $danshu;
+                    $this->error('服务中心总分红包不能大于1000,还可复投'.$bag.'包！');
+                    exit();
+                } else if ($fck_rs['is_agent'] < 2 && $sum_tmp > 500) {
+                    $bag = 500 - $danshu;
+                    $this->error('普通会员总分红包不能大于500,还可复投'.$bag.'包！');
+                    exit();
+                } else {
+                    // 前台输入单数总金额：单数*每单注册金额
+                    $picmoney = $nums * $s9;
+                    // 投资额*10%
+                    $summoney = $fck_rs['cpzj'] * 0.1;
+                    // 注册单数大于等于25之后，前10次任意复投，10次之后满投资额的10%才可以复投。
+                    if ($fck_rs['f4'] >= 25) {
+                        // 复投次数 > 10次
+                        if ($fck_rs['jia_nums'] > 10) {
                 
-                        // 复投金额小于投资额的10%，不允许复投
-                        if ($picmoney < 4000) {
-                            if ($picmoney < $summoney) {
-                                $this->error('您已经复投超过10次，必须满'.$summoney.'才可复投！');
-                                exit();
+                            // 复投金额小于投资额的10%，不允许复投
+                            if ($picmoney < 4000) {
+                                if ($picmoney < $summoney) {
+                                    $this->error('您已经复投超过10次，必须满'.$summoney.'才可复投！');
+                                    exit();
+                                }
                             }
                         }
                     }
+                    // 单数
+                    $sum = $nums;
                 }
-                // 单数
-                $sum = $nums;
             }
+            
             // 复投金额：单数*每单金额
             $money = $sum * $s9;
-            if ($fck_rs['agent_xf'] < $money && $futou == 3) {
-                $this->error('复投币不足！');
-                exit();
+//             if ($fck_rs['agent_xf'] < $money && $futou == 3) {
+//                 $this->error('复投币不足！');
+//                 exit();
+//             }
+            if ($futou == 3) {
+                if ($fck_rs['net_status'] == 'b') {
+                    if ($netb_rs['agent_futou'] < $money) {
+                        $this->error('复投币不足！');
+                        exit();
+                    }
+                } else {
+                    if ($fck_rs['agent_xf'] < $money) {
+                        $this->error('复投币不足！');
+                        exit();
+                    }
+                }
             }
+            
             if ($fck_rs['agent_use'] < $money && $futou == 2) {
                 $this->error('现金币不足！');
                 exit();
@@ -567,8 +822,12 @@ class AgentAction extends CommonAction
                 // 添加历史记录表数据
                 $history->create();
                 $history->add($data);
-                // 更新会员表数据
-                $result = $fck->query("update __TABLE__ set is_cc=is_cc+" . $sum .",jia_nums=jia_nums+1". ",agent_xf=agent_xf-$money where id=" . $id);
+                if ($fck_rs['net_status'] == 'b'){
+                    $result = $netb->query("update xt_netB set futou_danshu=futou_danshu+" . $sum .",sum_bag=sum_bag+".$sum. ",agent_futou=agent_futou-$money where uid=" . $id);
+                } else {
+                    // 更新会员表数据
+                    $result = $fck->query("update __TABLE__ set is_cc=is_cc+" . $sum .",jia_nums=jia_nums+1". ",agent_xf=agent_xf-$money where id=" . $id);
+                }
             } else if ($futou == 2) {
                 // ID
                 $data['uid'] = $fck_rs['id'];
@@ -587,7 +846,12 @@ class AgentAction extends CommonAction
                 $history->create();
                 $history->add($data);
                 // 更新会员表数据
-                $result = $fck->query("update __TABLE__ set is_cc=is_cc+" . $sum .",jia_nums=jia_nums+1". ",agent_use=agent_use-$money where id=" . $id);
+                if ($fck_rs['net_status'] == 'b'){
+                    $netb->query("update xt_netB set futou_danshu=futou_danshu+" . $sum .",sum_bag=sum_bag+".$sum. " where uid=" . $id);
+                    $result = $fck->query("update __TABLE__ set agent_use=agent_use-$money where id=" . $id);
+                } else {
+                    $result = $fck->query("update __TABLE__ set is_cc=is_cc+" . $sum .",jia_nums=jia_nums+1". ",agent_use=agent_use-$money where id=" . $id);
+                }
             } else if ($futou == 4) {
                 // ID
                 $data['uid'] = $fck_rs['id'];
@@ -606,7 +870,12 @@ class AgentAction extends CommonAction
                 $history->create();
                 $history->add($data);
                 // 更新会员表数据
-                $result = $fck->query("update __TABLE__ set is_cc=is_cc+" . $sum .",jia_nums=jia_nums+1". ",agent_cash=agent_cash-$money where id=" . $id);
+                if ($fck_rs['net_status'] == 'b'){
+                    $netb->query("update xt_netB set futou_danshu=futou_danshu+" . $sum .",sum_bag=sum_bag+".$sum. " where uid=" . $id);
+                    $result = $fck->query("update __TABLE__ set agent_cash=agent_cash-$money where id=" . $id);
+                } else {
+                    $result = $fck->query("update __TABLE__ set is_cc=is_cc+" . $sum .",jia_nums=jia_nums+1". ",agent_cash=agent_cash-$money where id=" . $id);
+                }
                 // 添加物流信息
                 $pora = M('product');
                 $gouwu = D('Gouwu');
@@ -635,15 +904,37 @@ class AgentAction extends CommonAction
                 $fck->tz($fck_rs['p_path'], $money);
             }
             unset($history,$data,$gwd,$pora,$gouwu);
-            
-            // 分红包记录表
-            $fck->jiaDan($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $sum, 0, 2);
+            if ($fck_rs['net_status'] == 'b') {
+                // 分红包记录表
+                $fck->jiaDanB($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $sum, 0, 2);
+            } else {
+                // 分红包记录表
+                $fck->jiaDan($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $sum, 0, 2);
+            }
             // 推荐奖
             $fck->tuijj($fck_rs['re_path'], $fck_rs['user_id'], $money);
             // 见点奖
             $fck->jiandianjiang($fck_rs['p_path'], $fck_rs['user_id']);
             // 领导奖
             $fck->lingdao22($fck_rs['p_path'], $fck_rs['user_id'], $money);
+            
+            // 普通会员：500包改变状态 服务中心1000包改变状态
+            if ($fck_rs['is_agent'] == 2 && $sum_tmp >= 1000) {
+                // 更新会员表数据
+                if ($fck_rs['net_status'] == 'b') {
+                    $fck->query("update __TABLE__ set net_top_b=1,is_fenh=1 where id=" . $id);
+                } else {
+                    $fck->query("update __TABLE__ set net_top_a=1,is_fenh=1 where id=" . $id);
+                }
+                
+            } else if ($fck_rs['is_agent'] < 2 && $sum_tmp >= 500) {
+                // 更新会员表数据
+                if ($fck_rs['net_status'] == 'b') {
+                    $fck->query("update __TABLE__ set net_top_b=1,is_fenh=1 where id=" . $id);
+                } else {
+                    $fck->query("update __TABLE__ set net_top_a=1,is_fenh=1 where id=" . $id);
+                }
+            }
             
             $bUrl = __URL__ . '/agents1';
             $this->_box(1, '复投成功！', $bUrl, 2);
@@ -898,6 +1189,44 @@ class AgentAction extends CommonAction
         }
     }
     
+    // 开通新网络审核列表
+    public function netAorB($Urlsz = 0)
+    {
+        // 列表过滤器，生成查询Map对象
+        if ($_SESSION['Urlszpass'] == 'MyssnetAorB') {
+            $id = $_SESSION[C('USER_AUTH_KEY')];
+            $fck = M('fck');
+            $where = array();
+            $where['p_path'] = array('like',"%" . $id . "%");
+            $fck_rs = $fck->where($where)->field('*')->find();
+            $promo = M('aorb');
+            $map = array();
+            // 查询字段
+            $field = '*';
+            // =====================分页开始==============================================
+            import("@.ORG.ZQPage"); // 导入分页类
+            $count = $promo->where($map)->count(); // 总页数
+            $listrows = C('ONE_PAGE_RE'); // 每页显示的记录数
+            $page_where = 'user_id=' . $fck_rs['user_id']; // 分页条件
+            $Page = new ZQPage($count, $listrows, 1, 0, 3, $page_where);
+            // ===============(总页数,每页显示记录数,css样式 0-9)
+            $show = $Page->show(); // 分页变量
+            $this->assign('page', $show); // 分页变量输出到模板
+            $list = $promo->where($map)->field($field)->order('is_pay asc,pdt desc')->page($Page->getPage() . ',' . $listrows)->select();
+            $this->assign('list', $list); // 数据输出到模板
+            // =================================================
+            $HYJJ = '';
+            $this->_levelConfirm($HYJJ, 1);
+            $this->assign('voo', $HYJJ); // 会员级别
+            $this->assign('frs', $fck_rs); // 注册币
+            $this->display('netAorB');
+            exit();
+        } else {
+            $this->error('数据错误!');
+            exit();
+        }
+    }
+    
     // 未开通会员
     public function menberok($Urlsz = 0)
     {
@@ -1110,6 +1439,187 @@ class AgentAction extends CommonAction
                 $this->_box(1,'晋级成功！',$bUrl,3);
             }else{
                 $this->error('晋级失败！');
+                exit;
+            }
+        }else{
+            $this->error('错误！');
+            exit;
+        }
+    }
+    
+    // 开通新网络确认
+    public function agentNetAorBConfirm(){
+        // 获取复选框的值
+        $OpID = $_POST['tabledb'];
+        if (! isset($OpID) || empty($OpID)) {
+            $bUrl = __URL__ . '/netAorB';
+            $this->_box(0, '没有该会员！', $bUrl, 1);
+            exit();
+        }
+        $model = M();
+        M()->startTrans();
+        if ($_SESSION['Urlszpass'] == 'MyssnetAorB'){
+            $i = 0;
+            ini_set("max_execution_time", 0);
+            foreach ($OpID as $vo){
+                $i++;
+                $where = array();
+                $where['user_id'] = $vo;
+                $where['is_pay'] = 0;
+                $promo = M('aorb');
+                $fck = D('Fck');
+                $promo_rs = $promo->where($where)->find();
+                if (!$promo_rs) {
+                    $this->error('会员新网络已经开通,请刷新页面重试！');
+                    exit;
+                }
+                $fck_where = array();
+                $fck_where['user_id'] = $promo_rs['user_id'];
+                $fck_rs = $fck->where($fck_where)->find();
+                
+                $rs = $fck->where("id=".$fck_rs['id'])->field("*")->find();
+                if (! $rs) {
+                    $this->error('会员错误！');
+                    exit();
+                }
+                $nowdate = strtotime(date('c'));
+                // 物流表更新
+                $pora = M('product');
+                $gouwu = D('Gouwu');
+                $gwd = array();
+                $gwd['uid'] = $fck_rs['id'];
+                $gwd['user_id'] = $fck_rs['user_id'];
+                $gwd['lx'] = 1;
+                $gwd['ispay'] = 0;
+                $gwd['pdt'] = mktime();
+                $gwd['us_name'] = $fck_rs['name'];
+                $gwd['us_address'] = $fck_rs['user_address'];
+                $gwd['us_tel'] = $fck_rs['user_tel'];
+                $where = array();
+                // 查询产品信息
+                $where['id'] = 22;
+                $prs = $pora->where($where)->find();
+                $w_money = $prs['a_money'];
+                $gwd['did'] = $prs['id'];
+                $gwd['money'] = $w_money;
+                $gwd['shu'] = $promo_rs['danshu'];
+                $gwd['cprice'] = 40000;
+                if(!empty($prs['countid'])){
+                    $gwd['countid'] = $prs['countid'];
+                }
+                $gouwuResult = $model->table('xt_gouwu')->add($gwd);
+                
+                // 新网络审核表更新
+                $aorbData['is_pay'] = 1;
+                $aorbData['pdt'] = $nowdate;
+                $aorbData['confirm_userid'] = $_SESSION['loginUseracc'];
+                $aorbResult = $model->table('xt_aorb')->where("user_id = '".$vo."'")->save($aorbData);
+                if ($fck_rs['net_status'] == 'b') {
+                    // 剩余分红包迁移，分红包表更新
+                    $jiadan = M('jiadan');
+                    $jiadan_rs = $jiadan->where('is_pay = 0 and uid = '.$fck_rs['id'])->field("uid,user_id,adt,pdt,money,danshu,is_pay,up_level,out_level")->select();
+                    $in_counts = $jiadan->where('is_pay = 0 and uid = '.$fck_rs['id'])->sum('danshu');
+                    $jiadanResult = $model->table('xt_jiadanb')->addAll($jiadan_rs);
+                    $jiadandeleteResult = $model->table('xt_jiadan')->where('uid = '.$fck_rs['id'])->delete();
+                    // 会员表更新
+                    $net_status['f4'] = 50;
+                    $net_status['is_cc'] = 0;
+                    $net_status['agent_xf'] = 0;
+                    $net_status['net_status'] = 'a';
+                    $net_status['net_ispay_a'] = 1;
+                    $net_status['net_ispay_b'] = 0;
+                    $net_status['net_top_a'] = 0;
+                    $net_status['idt'] = $promo_rs['pdt'];
+                    $net_status['adt'] = $nowdate;
+                    $net_status['is_agent'] = 2;
+                    $net_status['is_fenh'] = 0;
+                    $fckResult = $model->table('xt_fck')->where("user_id='". $vo."'")->save($net_status);
+                    $netB = M('netb');
+                    $netBData = $netB->where('uid = '.$fck_rs['id'])->find();
+                    $netBData['sum_bag'] += $in_counts;
+                    $netBData['futou_danshu'] += $in_counts;
+                    $netBData['in_bag'] += $in_counts;
+                    $netResult = $model->table('xt_netb')->where('uid='.$fck_rs['id'])->save($netBData);
+                } else {
+                    // B网表更新
+                    $netb = M('netb');
+                    $netbWhere = array();
+                    $netbWhere['uid'] = $fck_rs['id'];
+                    $netb_rs = $netb->where($netbWhere)->find();
+                    if ($netb_rs) {
+                        // 剩余分红包迁移，分红包表更新
+                        $jiadanb = M('jiadanb');
+                        $jiadanb_rs = $jiadanb->where('is_pay = 0 and uid = '.$fck_rs['id'])->field("uid,user_id,adt,pdt,money,danshu,is_pay,up_level,out_level")->select();
+                        $in_counts = $jiadanb->where('is_pay = 0 and uid = '.$fck_rs['id'])->sum('danshu');
+                        $jiadanResult = $model->table('xt_jiadan')->addAll($jiadanb_rs);
+                        $jiadandeleteResult = $model->table('xt_jiadanb')->where('uid = '.$fck_rs['id'])->delete();
+                        $netBData['sum_bag'] = 50;
+                        $netBData['agent_futou'] = 0;
+                        $netBData['register_danshu'] = 50;
+                        $netBData['futou_danshu'] = 0;
+                        $netBData['in_bag'] = 50;
+                        $netBData['out_bag'] = 0;
+                        $netBData['register_time'] = $nowdate;
+                        $netResult = $model->table('xt_netb')->where('uid='.$fck_rs['id'])->save($netBData);
+                        // 会员表更新
+                        $net_status = $fck->where('id = '.$fck_rs['id'])->find();
+                        $net_status['is_cc'] += $in_counts;
+                        $net_status['net_status'] = 'b';
+                        $net_status['net_ispay_a'] = 0;
+                        $net_status['net_ispay_b'] = 1;
+                        $net_status['net_top_b'] = 0;
+                        $net_status['idt'] = $promo_rs['pdt'];
+                        $net_status['adt'] = $nowdate;
+                        $net_status['is_agent'] = 2;
+                        $net_status['is_fenh'] = 0;
+                        $fckResult = $model->table('xt_fck')->where("user_id='". $vo."'")->save($net_status);
+                    } else {
+                        $netBData['uid'] = $fck_rs['id'];
+                        $netBData['user_id'] = $fck_rs['user_id'];
+                        $netBData['sum_bag'] = 50;
+                        $netBData['register_danshu'] = 50;
+                        $netBData['futou_danshu'] = 0;
+                        $netBData['in_bag'] = 50;
+                        $netBData['out_bag'] = 0;
+                        $netBData['register_time'] = $nowdate;
+                        $netResult = $model->table('xt_netb')->add($netBData);
+                        $jiadanResult = true;
+                        $jiadandeleteResult = true;
+                        $net_status['net_status'] = 'b';
+                        $net_status['net_ispay_a'] = 0;
+                        $net_status['net_ispay_b'] = 1;
+                        $net_status['net_top_b'] = 0;
+                        $net_status['idt'] = $promo_rs['pdt'];
+                        $net_status['adt'] = $nowdate;
+                        $net_status['is_agent'] = 2;
+                        $net_status['is_fenh'] = 0;
+                        $fckResult = $model->table('xt_fck')->where("user_id='". $vo."'")->save($net_status);
+                    }
+                }
+                if($netResult && $jiadanResult && $jiadandeleteResult && $gouwuResult && $aorbResult && $fckResult) {
+                    // 分红包记录表更新
+                    if ($fck_rs['net_status'] == 'b'){
+                        $nowdate = strtotime ("now");
+                        $fck->jiaDan($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $promo_rs['danshu'], 0, 0);
+                    } else {
+                        $nowdate = strtotime ("now");
+                        $fck->jiadanb($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $promo_rs['danshu'], 0, 0);
+                    }
+                    // 投资业绩统计更新
+                    $fck->tz($fck_rs['p_path'],$promo_rs['money']);
+                    //各种奖项分配更新
+                    $fck->tuijj($fck_rs['re_path'],$fck_rs['user_id'],$promo_rs['money']);
+                    $fck->sh_level($fck_rs['p_path']);
+                }
+                unset($fck,$fee,$promo);
+            }
+            if($netResult && $jiadanResult && $jiadandeleteResult && $gouwuResult && $aorbResult && $fckResult) {
+                $model->commit();
+                $bUrl = __URL__.'/netAorB/';
+                $this->_box(1,'开通新网络成功！',$bUrl,3);
+            }else{
+                $model->rollback();
+                $this->error('开通新网络失败！');
                 exit;
             }
         }else{

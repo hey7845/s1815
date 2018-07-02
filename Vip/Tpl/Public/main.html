@@ -244,5 +244,72 @@ img{ border:none;}
     </div>
 </div>
 </div>
+<!--B网板块-->
+<gt name="in_countsb" value='0'>
+<div class="container">
+  <div class="row">
+   <div class="col-xs-6 col-sm-4">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h6>B网复投币余额</h6>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">{$netB['agent_futou']}</h3>
+        </div>
+      </div>
+    </div>
+	<div class="col-xs-6 col-sm-4">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h6>B网注册单数</h6>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">{$netB['register_danshu']}</h3>
+        </div>
+      </div>
+    </div>
+	<div class="col-xs-6 col-sm-4">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h6>B网复投单数</h6>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">{$netB['futou_danshu']}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-4">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h6>B网总分红包</h6>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">{$in_countsb + $out_countsb}</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-6 col-sm-4">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h6>B网未出局分红包</h6>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">{$in_countsb}</h3>
+        </div>
+      </div>
+    </div>
+	<div class="col-xs-6 col-sm-4">
+      <div class="ibox float-e-margins">
+        <div class="ibox-title">
+          <h6>B网出局分红包</h6>
+        </div>
+        <div class="ibox-content">
+          <h3 class="no-margins">{$out_countsb}</h3>
+        </div>
+      </div>
+    </div>
+</div>
+</div>
+</gt>
 </body>
 </html>

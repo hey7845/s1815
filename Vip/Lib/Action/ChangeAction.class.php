@@ -329,7 +329,10 @@ class ChangeAction extends CommonAction {
 		//会员
         $u_all = $fck -> where('id='.$id)->field('*') -> find();
 		$lev = $u_all['u_level']-1;
-
+        // B网表信息
+        $netb = M('netb');
+		$netb_rs = $netb -> where('uid='.$id)->field('*') -> find();
+		// 参数表
 		$fee = M('fee');
 		$fee_rs = $fee->field('s4,s10,a_money,b_money')->find();
 		$s4 = explode('|',$fee_rs['s4']);
@@ -343,6 +346,7 @@ class ChangeAction extends CommonAction {
 		$this -> assign('mycg',$s4[$lev]);//会员级别
 		$this -> assign('u_level',$Level[$lev]);//会员级别
 		$this -> assign('rs',$u_all);
+		$this -> assign('netb_rs',$netb_rs);
         $this->display();
     }
     

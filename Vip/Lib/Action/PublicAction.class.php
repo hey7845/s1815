@@ -69,6 +69,7 @@ class PublicAction extends CommonAction
         $id = $_SESSION[C('USER_AUTH_KEY')]; // 登录AutoId
         $fck = M('fck');
         $jiadan = M('Jiadan');
+        $jiadanb = M('jiadanb');
 //         $cash = M('cash');
 //         $form = M('form');
 //         $map = array();
@@ -124,6 +125,21 @@ class PublicAction extends CommonAction
             $in_counts = 0;
         }
         $this->assign('in_counts', $in_counts);
+        // B网版块
+        $in_countsb = $jiadanb->where($where)->sum('danshu');
+        if (empty($in_countsb)) {
+            $in_countsb = 0;
+        }
+        $this->assign('in_countsb', $in_countsb);
+        $where['is_pay'] = 1;
+        $out_countsb = $jiadanb->where($where)->sum('danshu');
+        if (empty($out_countsb)) {
+            $out_countsb = 0;
+        }
+        $this->assign('out_countsb', $out_countsb);
+        $netb = M('netb');
+        $netb_rs = $netb->where('uid=' . $id)->field('*')->find();
+        $this->assign('netB', $netb_rs);
 //         // 直推人数
 //         $one = $fck->where('id=1')
 //             ->field('tz_nums')

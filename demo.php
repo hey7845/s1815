@@ -3,9 +3,6 @@
     zy
     2018年3月27日
 */
-// $conn = mysqli_connect('localhost', 'root', '123qwe!@#');
-// $con = mysqli_connect('localhost', 'root', '123qwe!@#', 's1815');
-// $con = mysqli_connect('localhost','root','123qwe!@#','s1815','3306');
 $con=mysqli_connect("localhost","root","123qwe!@#","s1815");
 // 检查连接
 if (!$con) {     
@@ -17,28 +14,34 @@ $fee_rs=mysqli_fetch_assoc(mysqli_query($con,$fee_sql));
 $str1 = $fee_rs['str1'];
 $s5 = $fee_rs['s5'];
 // 查询会员表数据
-$fck_sql = "select id,is_fenh,u_level,re_nums,user_id,agent_sfw,agent_sf,agent_sfo,day_feng,f4,is_cc,tz_nums from xt_fck where id>0 and is_pay=1 and is_fenh=0";
+$fck_sql = "select id,is_fenh,u_level,re_nums,user_id,agent_sfw,agent_sf,agent_sfo,day_feng,f4,is_cc,tz_nums,net_status,net_ispay_a,net_ispay_b from xt_fck where id>0 and is_pay=1";
 $fck_result = mysqli_query($con,$fck_sql);
 if (!empty($fck_result)) {
     // 获取数据
     $fck_Contents = mysqli_fetch_all($fck_result,MYSQLI_ASSOC);
-//     print_r($fck_Contents);
     // 释放结果集
     mysqli_free_result($fck_result);
     // 循环取得会员表数据
     $kk = 0;
+    $kk1 = 0;
     $rc = 0;
     ini_set("max_execution_time", 0);
     foreach($fck_Contents as $key=>$value){
         // 待更新到会员表金钱
         $fck_money = 0;
-        // 检索分红包表数据
+        // 检索A网分红包表数据
         $jiadan_sql = "select * from xt_jiadan where is_pay=0 and user_id='{$value['user_id']}'";
+        // 检索B网分红包表数据
+        $jiadanb_sql = "select * from xt_jiadanB where is_pay=0 and user_id='{$value['user_id']}'";
         $jiadan_rs = mysqli_query($con,$jiadan_sql);
-        if (!empty($jiadan_rs)) {
+        $jiadanb_rs = mysqli_query($con,$jiadanb_sql);
+        // A网分红
+        if (!empty($jiadan_rs) || !empty($jiadanb_rs)) {
             $jiadan_Contents = mysqli_fetch_all($jiadan_rs,MYSQLI_ASSOC);
+            $jiadanb_Contents = mysqli_fetch_all($jiadanb_rs,MYSQLI_ASSOC);
             // 释放结果集
             mysqli_free_result($jiadan_rs);
+            mysqli_free_result($jiadanb_rs);
             // 循环取得分红包表数据
             foreach ($jiadan_Contents as $k=>$v) {
                 $kk++;
@@ -71,8 +74,39 @@ if (!empty($fck_result)) {
                     $rc += mysqli_affected_rows($con);
                     
                 }
-               // print "MONEY:".$fck_money;
-                //print "\r\n";
+            }
+            // 循环取得B网分红包表数据
+            foreach ($jiadanb_Contents as $key1=>$value1) {
+                $kk1++;
+                // 单数
+                $jdb_danshu = $value1['danshu'];
+                // 应分红金额
+                $jdb_money = $jdb_danshu * $str1;
+                // 已分红金额
+                $jdb_oldMoney = $value1['money'];
+                // 总金额
+                $jdb_sumMoney = 11 * $jdb_danshu * $s5;
+                if ($jdb_money >= $jdb_sumMoney - $jdb_oldMoney) {
+                    // 超出部分去掉，按剩余部分分红，设为出局
+                    $jdb_money = $jdb_sumMoney - $jdb_oldMoney;
+                    $fck_money += $jdb_money;
+                    $nowdate = strtotime ("now");
+                    // 待更新数据
+                    $money = $jdb_oldMoney + $jdb_money;
+                    // 更新到分红记录表
+                    $jdb_updateSql = "update xt_jiadanb set money = ".$money.",is_pay = 1,pdt = ".$nowdate." where id=".$value1['id'];;
+                    mysqli_query($con,$jdb_updateSql);
+                    $rc += mysqli_affected_rows($con);
+                } else {
+                    $fck_money += $jdb_money;
+                    // 待更新数据
+                    $money = $jdb_oldMoney + $jdb_money;
+                    // 更新到分红记录表
+                    $jdb_updateSql = "update xt_jiadanb set money = ".$money." where id=".$value1['id'];
+                    mysqli_query($con,$jdb_updateSql);
+                    $rc += mysqli_affected_rows($con);
+            
+                }
             }
              // 会员表ID
              $myid = $value['id'];
@@ -184,6 +218,7 @@ if (!empty($fck_result)) {
                  $fck_updateSql3 = "update xt_fck set " . $usqlc . ",day_feng=day_feng+" . $fck_money . ",agent_xf=agent_xf+" . $money_kb . ",agent_cf=agent_cf+" . $money_kc . " where id=" . $myid;
                  mysqli_query($con,$fck_updateSql3);
                  $rc += mysqli_affected_rows($con);
+                 
                  // 更新到货币历史记录表
                  $nowdate = strtotime ("now");
                  $history_InsertSql = "insert into xt_history (user_id, uid,action_type,pdt,epoints,bz,did,type,allp,user_did) VALUES ('{$inUserID}','{$myid}',1,'{$nowdate}','{$fck_money}',1,0,1,0,1)";
@@ -206,10 +241,11 @@ if (!empty($fck_result)) {
              $rc += mysqli_affected_rows($con);
              }
         }
+        unset($jiadan_rs,$jiadan_Contents,$jd_danshu,$jd_money,$jd_oldMoney,$jd_sumMoney,$jd_updateSql,$money,$myid,$inUserID);
 }
+    $fee_updateSql = "update xt_fee set i3=0";
+    mysqli_query($con,$fee_updateSql);
     print "**************ROWS:".$rc;
-    print "\r\n";
-    print "**************XHCS:".$kk;
     print "\r\n";
 }
 

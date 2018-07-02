@@ -156,6 +156,35 @@ class FckModel extends CommonModel
         $result = $jiadan->add($data);
         unset($data, $jiadan);
     }
+    
+    /**
+     * 添加到B网分红包数据表
+     * @param 用户ID $uid
+     * @param 用户名 $user_id
+     * @param 分红开始时间 $adt
+     * @param 分红截止时间 $pdt
+     * @param 已分红金额 $money
+     * @param 单数 $danshu
+     * @param 是否出局 $is_pay
+     * @param 加单类型0：注册，1升级，2复投 $out_level
+     */
+    public function jiadanb($uid = 0, $user_id = 0, $adt = 0, $pdt = 0, $money = 0, $danshu = 0, $is_pay = 0, $out_level = 0)
+    {
+        $data = array();
+        $jiadan = M('jiadanb');
+    
+        $data['uid'] = $uid;
+        $data['user_id'] = $user_id;
+        $data['adt'] = $adt;
+        $data['pdt'] = $pdt;
+        $data['money'] = $money;
+        $data['danshu'] = $danshu;
+        $data['is_pay'] = $is_pay;
+        $data['out_level'] = $out_level;
+    
+        $result = $jiadan->add($data);
+        unset($data, $jiadan);
+    }
 
     public function huikuiAdd($ID = 0, $tz = 0, $zk, $money = 0, $nowdate = null)
     {
@@ -572,9 +601,26 @@ class FckModel extends CommonModel
             if (empty($ach)) {
                 $ach = 0.00;
             }
-            // 查询对应父节点的数量 **可能出现问题的点***
-            $count = $this->where('father_id =' . $myid)->count();
-            if ($count == 2) {
+            // 左右区各有一个推荐
+            $countleft = 0;
+            $countright = 0;
+            $tree0 = $this->where('treeplace=0 and father_id=' . $myid)->field('id,user_id,re_id')->find();
+            $tree1 = $this->where('treeplace=1 and father_id=' . $myid)->field('id,user_id,re_id')->find();
+            if ($tree0['re_id'] == $myid) {
+                $countleft++;
+            }
+            if ($tree1['re_id'] == $myid) {
+                $countright++;
+            }
+            $tree0count = $this->where("p_path like '%,{$tree0['id']},%' and re_id=" . $myid)->count();
+            $tree1count = $this->where("p_path like '%,{$tree1['id']},%' and re_id=" . $myid)->count();
+            if ($tree0count > 0) {
+                $countleft += $tree0count;
+            }
+            if ($tree1count > 0) {
+                $countright += $tree1count;
+            }
+            if ($countleft >= 1 && $countright >= 1) {
                 // 合伙人
                 if ($sh_level < 1) {
 //                     $one11 = $this->where('treeplace=0 and father_id=' . $myid)
@@ -1582,7 +1628,7 @@ class FckModel extends CommonModel
         $money_kd = 0;
         
         // 查询会员表数据
-        $one = $this->where('id=' . $myid)->field('agent_use,is_pp')->find();
+        $one = $this->where('id=' . $myid)->field('agent_use,is_pp,net_status')->find();
         // 账户中现金币余额
         $agent_use = $one['agent_use'];
         // 扣除管理费
@@ -1633,7 +1679,13 @@ class FckModel extends CommonModel
         // 加到奖金记录表
         $bonus->execute("UPDATE __TABLE__ SET b0=b0+" . $last_m . "," . $inbb . "=" . $inbb . "+" . $money_count . "  WHERE id={$bid}");
         // 加到会员表
-        $this->execute("update __TABLE__ set " . $usqlc . ",day_feng=day_feng+" . $money_count . ",agent_xf=agent_xf+" . $money_kb . ",agent_cf=agent_cf+" . $money_kc . " where id=" . $myid);
+        if ($one['net_status'] == 'b') {
+            $netb = M('netb');
+            $netb->execute("update xt_netB set agent_futou=agent_futou+" . $money_kb . " where id=" . $myid);
+            $this->execute("update __TABLE__ set " . $usqlc . ",day_feng=day_feng+" . $money_count . ",agent_cf=agent_cf+" . $money_kc . " where id=" . $myid);
+        } else {
+            $this->execute("update __TABLE__ set " . $usqlc . ",day_feng=day_feng+" . $money_count . ",agent_xf=agent_xf+" . $money_kb . ",agent_cf=agent_cf+" . $money_kc . " where id=" . $myid);
+        }
         // 如果金额大于0，更新到货币历史记录表
         if ($money_count > 0) {
             $this->addencAdd($myid, $inUserID, $money_count, $bnum);

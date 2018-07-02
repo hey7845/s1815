@@ -307,7 +307,13 @@ class TransferAction extends CommonAction{
 			if($select==3){
 				$zz_content = "注册积分 转 复投币";
 				$fck->execute("update `xt_fck` Set `agent_use`=agent_use-".$ePoints." where `id`=".$ID);
-				$fck->execute("update `xt_fck` Set `agent_xf`=agent_xf+".$ePoints." where `id`=".$vo['id']);
+				if ($mmrs['net_status'] == 'b'){
+				    $fck->execute("update `xt_netb` Set `agent_futou`=agent_futou+".$ePoints." where `id`=".$vo['id']);
+				} else {
+				    $fck->execute("update `xt_fck` Set `agent_xf`=agent_xf+".$ePoints." where `id`=".$vo['id']);
+				}
+				
+				
 			}
 
 			if($select==4){
