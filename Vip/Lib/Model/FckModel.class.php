@@ -357,7 +357,7 @@ class FckModel extends CommonModel
         // 直推奖比例参数分割
         $s11 = explode("|", $fee_rs['s11']);
         // 查询所有直推路径下的会员数据
-        $lirs = $this->where('id in (0' . $re_path . '0)  and is_fenh=0')
+        $lirs = $this->where('id in (0' . $re_path . '0)  and is_fenh=0 and is_pay=1')
             ->field('id,re_nums,is_fenh')
             ->order('id desc')
             ->select();
@@ -402,7 +402,7 @@ class FckModel extends CommonModel
         $s13 = explode("|", $fee_rs['s13']);
         $str5 = $fee_rs['str5'];
         // 检索节点路径数据
-        $lirs = $this->where('id in (0' . $p_path . '0)  and is_fenh=0')
+        $lirs = $this->where('id in (0' . $p_path . '0)  and is_fenh=0 and is_pay=1')
             ->field('id,re_nums,is_fenh,re_nums')
             ->order('id desc')
             ->select();
@@ -479,7 +479,7 @@ class FckModel extends CommonModel
         $fee_rs = $fee->field('s4')->find(1);
         $s4 = explode("|", $fee_rs['s4']);
         // 搜索节点路径下的会员数据
-        $lirs = $this->where('id in (0' . $p_path . '0)  and is_fenh=0')
+        $lirs = $this->where('id in (0' . $p_path . '0)  and is_fenh=0 and is_pay=1')
             ->field('id,re_nums,is_fenh,sh_level')
             ->order('id asc')
             ->select();
@@ -557,7 +557,7 @@ class FckModel extends CommonModel
         // 董事分红比例
         $s6 = $fee_rs['s6'] / 100;
         // 查询所有级别达到全国董事的会员数据
-        $lirs = $this->where('is_fenh=0 and sh_level=5')
+        $lirs = $this->where('is_fenh=0 and is_pay=1 and sh_level=5')
             ->field('id,re_nums,is_fenh,sh_level')
             ->order('id desc')
             ->select();
