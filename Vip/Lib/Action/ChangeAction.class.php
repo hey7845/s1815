@@ -133,7 +133,7 @@ class ChangeAction extends CommonAction {
 
 			$myw = array();
 			$myw['id'] = $_SESSION[C('USER_AUTH_KEY')];
-			$mrs = $fck->where($myw)->field('id,wenti_dan')->find();
+			$mrs = $fck->where($myw)->field('id,wenti_dan,agent_use')->find();
 			if(!$mrs){
 				$this->error('非法提交数据!');
 				exit;
@@ -155,7 +155,7 @@ class ChangeAction extends CommonAction {
 			$data['nickname']         = $_POST['NickName'];        //会员昵称
 			$data['bank_name']        = $_POST['BankName'];        //银行名称
 			$data['bank_card']        = $_POST['BankCard'];        //银行卡号
-			$data['user_name']        = $_POST['UserName'];        //开户姓名
+// 			$data['user_name']        = $_POST['UserName'];        //开户姓名
 
 			$data['bank_province']    = $_POST['BankProvince'];    //省份
 			$data['bank_city']        = $_POST['BankCity'];        //城市
