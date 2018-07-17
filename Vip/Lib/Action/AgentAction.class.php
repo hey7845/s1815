@@ -852,6 +852,8 @@ class AgentAction extends CommonAction
                 } else {
                     $result = $fck->query("update __TABLE__ set is_cc=is_cc+" . $sum .",jia_nums=jia_nums+1". ",agent_use=agent_use-$money where id=" . $id);
                 }
+                // 见点奖
+                $fck->jiandianjiang($fck_rs['p_path'], $fck_rs['user_id']);
             } else if ($futou == 4) {
                 // ID
                 $data['uid'] = $fck_rs['id'];
@@ -902,6 +904,8 @@ class AgentAction extends CommonAction
                 }
                 $gouwu->add($gwd);
                 $fck->tz($fck_rs['p_path'], $money);
+                // 见点奖
+                $fck->jiandianjiang($fck_rs['p_path'], $fck_rs['user_id']);
             }
             unset($history,$data,$gwd,$pora,$gouwu);
             if ($fck_rs['net_status'] == 'b') {
@@ -913,8 +917,6 @@ class AgentAction extends CommonAction
             }
             // 推荐奖
             $fck->tuijj($fck_rs['re_path'], $fck_rs['user_id'], $money);
-            // 见点奖
-            $fck->jiandianjiang($fck_rs['p_path'], $fck_rs['user_id']);
             // 领导奖
             $fck->lingdao22($fck_rs['p_path'], $fck_rs['user_id'], $money);
             
