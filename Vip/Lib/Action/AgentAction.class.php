@@ -919,6 +919,8 @@ class AgentAction extends CommonAction
             $fck->tuijj($fck_rs['re_path'], $fck_rs['user_id'], $money);
             // 领导奖
             $fck->lingdao22($fck_rs['p_path'], $fck_rs['user_id'], $money);
+            // 领导级别统计
+            $fck->sh_level($fck_rs['p_path']);
             
             // 普通会员：500包改变状态 服务中心1000包改变状态
             if ($fck_rs['is_agent'] == 2 && $sum_tmp >= 1000) {

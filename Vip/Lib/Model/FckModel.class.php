@@ -589,6 +589,7 @@ class FckModel extends CommonModel
             ->field('id,ach,sh_level,p_path')
             ->order('id asc')
             ->select();
+        $jiadan = M("jiadan");
         foreach ($list as $key => $value) {
             // id
             $myid = $value['id'];
@@ -607,18 +608,36 @@ class FckModel extends CommonModel
             $tree0 = $this->where('treeplace=0 and father_id=' . $myid)->field('id,user_id,re_id')->find();
             $tree1 = $this->where('treeplace=1 and father_id=' . $myid)->field('id,user_id,re_id')->find();
             if ($tree0['re_id'] == $myid) {
-                $countleft++;
+                $jiadan0Tmp = $jiadan->where("uid=".$tree0["id"]." and is_pay = 0")->select();
+                if ($jiadan0Tmp) {
+                    $countleft += 1;
+                }
             }
             if ($tree1['re_id'] == $myid) {
-                $countright++;
+                $jiadan1Tmp = $jiadan->where("uid=".$tree1["id"]." and is_pay = 0")->select();
+                if ($jiadan1Tmp) {
+                    $countright += 1;
+                }
             }
-            $tree0count = $this->where("p_path like '%,{$tree0['id']},%' and re_id=" . $myid)->count();
-            $tree1count = $this->where("p_path like '%,{$tree1['id']},%' and re_id=" . $myid)->count();
-            if ($tree0count > 0) {
-                $countleft += $tree0count;
+            // 判断推荐的人是否分红包已经出局
+            $tree0Result = $this->where("p_path like '%,{$tree0['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
+            $tree1Result = $this->where("p_path like '%,{$tree0['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
+            
+            if ($tree0Result) {
+                foreach ($tree0Result as $value) {
+                    $jiadan0Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
+                    if ($jiadan0Tmp) {
+                        $countleft += 1;
+                    }
+                }
             }
-            if ($tree1count > 0) {
-                $countright += $tree1count;
+            if ($tree1Result > 0) {
+                foreach ($tree1Result as $value) {
+                    $jiadan1Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
+                    if ($jiadan1Tmp) {
+                        $countright += 1;
+                    }
+                }
             }
             if ($countleft >= 1 && $countright >= 1) {
                 // 合伙人
@@ -722,6 +741,9 @@ class FckModel extends CommonModel
                 }
                 // $count11=$this->where('father_id ='.$uuid1.' and is_pay>=1')->count();
                 // $count22=$this->where('father_id ='.$uuid2.' and is_pay>=1')->count();
+            } else {
+                // 重置领导人级别
+                $this->execute("update __TABLE__ set sh_level=0 where id=" . $myid);
             }
         }
     }
