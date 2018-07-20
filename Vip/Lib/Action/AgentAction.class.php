@@ -757,6 +757,9 @@ class AgentAction extends CommonAction
                 
                             // 复投金额小于投资额的10%，不允许复投
                             if ($picmoney < 4000) {
+                                if ($summoney > 4000) {
+                                    $summoney = 4000;
+                                }
                                 if ($picmoney < $summoney) {
                                     $this->error('您已经复投超过10次，必须满'.$summoney.'才可复投！');
                                     exit();
