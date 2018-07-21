@@ -611,34 +611,55 @@ class FckModel extends CommonModel
                 $jiadan0Tmp = $jiadan->where("uid=".$tree0["id"]." and is_pay = 0")->select();
                 if ($jiadan0Tmp) {
                     $countleft += 1;
+                } else {
+                    $tree0Result = $this->where("p_path like '%,{$tree0['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
+                    if ($tree0Result) {
+                        foreach ($tree0Result as $value) {
+                            $jiadan0Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
+                            if ($jiadan0Tmp) {
+                                $countleft += 1;
+                            }
+                        }
+                    }
+                }
+            } else {
+                $tree0Result = $this->where("p_path like '%,{$tree0['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
+                if ($tree0Result) {
+                    foreach ($tree0Result as $value) {
+                        $jiadan0Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
+                        if ($jiadan0Tmp) {
+                            $countleft += 1;
+                        }
+                    }
                 }
             }
             if ($tree1['re_id'] == $myid) {
                 $jiadan1Tmp = $jiadan->where("uid=".$tree1["id"]." and is_pay = 0")->select();
                 if ($jiadan1Tmp) {
                     $countright += 1;
+                } else {
+                    $tree1Result = $this->where("p_path like '%,{$tree1['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
+                    if ($tree1Result > 0) {
+                        foreach ($tree1Result as $value) {
+                            $jiadan1Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
+                            if ($jiadan1Tmp) {
+                                $countright += 1;
+                            }
+                        }
+                    }
+                }
+            } else {
+                $tree1Result = $this->where("p_path like '%,{$tree1['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
+                if ($tree1Result > 0) {
+                    foreach ($tree1Result as $value) {
+                        $jiadan1Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
+                        if ($jiadan1Tmp) {
+                            $countright += 1;
+                        }
+                    }
                 }
             }
-            // 判断推荐的人是否分红包已经出局
-            $tree0Result = $this->where("p_path like '%,{$tree0['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
-            $tree1Result = $this->where("p_path like '%,{$tree0['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
             
-            if ($tree0Result) {
-                foreach ($tree0Result as $value) {
-                    $jiadan0Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
-                    if ($jiadan0Tmp) {
-                        $countleft += 1;
-                    }
-                }
-            }
-            if ($tree1Result > 0) {
-                foreach ($tree1Result as $value) {
-                    $jiadan1Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
-                    if ($jiadan1Tmp) {
-                        $countright += 1;
-                    }
-                }
-            }
             if ($countleft >= 1 && $countright >= 1) {
                 // 合伙人
                 if ($sh_level < 1) {
