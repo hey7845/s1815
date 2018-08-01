@@ -39,11 +39,11 @@ function CheckForm(){
       <td colspan="4" style=" height:5px;"><hr></td>
       </tr>
     <tr>
-      <td height="30" align="right">奖金币：</td>
+      <td height="30" align="right">消费积分：</td>
       <td colspan="2"><span class="hong">{$frs['agent_use']}</span></td>
       </tr>
 	<tr>
-      <td height="30" align="right">电子币余额：</td>
+      <td height="30" align="right">电子积分余额：</td>
       <td colspan="2"><span class="hong">{$frs['agent_cash']}</span></td>
       </tr>
     <form name="form1" method="post" action="__URL__/currencyRechargeAC" onSubmit="{return CheckForm();}">
@@ -56,8 +56,8 @@ function CheckForm(){
 	  <td height="30" align="right">购买类型：</td>
 	  <td>
       <select name="stype">
-      <option value="0">充值电子币</option>
-      <option value="1">充值现金币</option>
+      <option value="0">充值电子积分</option>
+      <option value="1">充值消费积分</option>
       </select></td>
 	  <td></td>
     </tr>
@@ -126,7 +126,7 @@ function CheckForm(){
 	<tr align="center">
         <td>{$vo['user_id']}</td>
         <td>{$vo['epoint']}</td>
-        <td><eq name="vo.stype" value="0">充入电子币<else/>充入现金币</eq></td>
+        <td><eq name="vo.stype" value="0">充入电子积分<else/>充入消费积分</eq></td>
         <td>{$vo.rdt|date='Y-m-d H:i:s',###}</td>
         <td>{$vo['huikuan']}</td>
         <td>{$vo['zhuanghao']}</td>

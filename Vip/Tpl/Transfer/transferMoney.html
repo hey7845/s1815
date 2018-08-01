@@ -28,11 +28,11 @@ function yhServer(Ful){
     <form name="form1" method="post" action="__URL__/transferMoneyAC" onSubmit="{return CheckForm();}">
       <table width="100%" border="0" cellpadding="3" cellspacing="0">
           <tr>
-            <td height="30" align="right" width="30%">现金币： </td>
+            <td height="30" align="right" width="30%">消费积分： </td>
             <td colspan="2"><span class="hong">{$rs.agent_use}</span></td>
           </tr>
           <tr>
-            <td height="30" align="right" width="30%">电子币： </td>
+            <td height="30" align="right" width="30%">电子积分： </td>
             <td colspan="2"><span class="hong">{$rs.agent_cash}</span></td>
           </tr>
 		
@@ -44,11 +44,11 @@ function yhServer(Ful){
             <select name="select" id="select" onchange="Selev(this.value)" onpropertychange="Selev(this.value)">
               <!-- <option value="1"> 现金币 转给 其他会员 </option>-->
               <?php if(  $_SESSION['loginUseracc']  !=  "aa" && $_SESSION['loginUseracc']  !=  "bb"): ?>
-              	<option value="1"> 电子币 转 现金币</option>
-              	<option value="2"> 现金币 转 电子币 </option>
-      		   	<option value="3"> 现金币 转 复投币 </option>
+              	<option value="1"> 电子积分 转 消费积分</option>
+              	<option value="2"> 消费积分 转 电子积分 </option>
+      		   	<option value="3"> 消费积分 转 复投积分 </option>
       		   <?php endif; ?>
-      		    <option value="4"> 电子币 转给 其他会员 </option>
+      		    <option value="4"> 电子积分 转给 其他会员 </option>
       		    <!-- <option value="5"> M币 转  重销积分 </option> -->
             </select>
             </td>
@@ -99,10 +99,10 @@ function yhServer(Ful){
 		<td>{$vo['in_userid']}</td>
 		<td>{$vo['rdt']|date='Y-m-d H:i:s',###}</td>
 		<td>{$vo['epoint']}</td>
-        <td><eq name="vo['type']" value="1">电子币 转 现金币</eq>
-        	<eq name="vo['type']" value="2">现金币 转 电子币</eq>
-        	<eq name="vo['type']" value="3">现金币 转 复投币</eq>
-        	<eq name="vo['type']" value="4">电子币 转给 其他会员</eq>
+        <td><eq name="vo['type']" value="1">电子积分 转 消费积分</eq>
+        	<eq name="vo['type']" value="2">消费积分 转 电子积分</eq>
+        	<eq name="vo['type']" value="3">消费积分 转 复投积分</eq>
+        	<eq name="vo['type']" value="4">电子积分 转给 其他会员</eq>
         	<eq name="vo['type']" value="5">M币 转  重销积分</eq>
         </td>
       <!--  <td>{$vo['sm']}</td>-->

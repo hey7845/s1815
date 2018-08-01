@@ -53,14 +53,14 @@ function CheckAll(form)
 <tr>
   <td align="right">充值类型：</td>
   <td><select name="stype">
-      <option value="1">充值现金币</option>
-      <option value="0">充值电子币</option>
+      <option value="1">充值消费积分</option>
+      <option value="0">充值电子积分</option>
       </select></td>
 </tr>
 <tr>
   <td align="right">充值金额：</td>
   <td><input name="ePoints" type="text" id="ePoints" size="10" maxlength="12" />
-    <span style="color: #FF3300;">*（要减少币值，输入负金额即可！）</span></td>
+    <span style="color: #FF3300;">*（要减少积分值，输入负金额即可！）</span></td>
 </tr>
 
   <td align="right">&nbsp;</td>
@@ -93,7 +93,7 @@ function CheckAll(form)
 	<td>{$vo['user_id']}</td>
 	<td><span class="STYLE1">{$vo['epoint']}</span></td>
 	<td><span class="STYLE1">{$vo['huikuan']}</span></td>
-	<td><eq name="vo.stype" value="0">充值电子币<else/>充入现金币</eq></td>
+	<td><eq name="vo.stype" value="0">充值电子积分<else/>充入现金积分</eq></td>
 	<td>{$vo.rdt|date='Y-m-d H:i:s',###}</td>
 	<td><gt name="vo.pdt" value="0">{$vo.pdt|date='Y-m-d H:i:s',###}</gt></td>
 	<td>{$vo['zhuanghao']}</td>

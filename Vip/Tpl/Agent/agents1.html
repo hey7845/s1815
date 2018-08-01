@@ -2,7 +2,7 @@
 <load href="__PUBLIC__/Js/UserJs.js" />
 <div class="ncenter_box">
 <div class="accounttitle"><h1>复投 </h1></div>
-    <div class="c_p5"><div class="tips">如选择复投币复投，只能选择当前网络的复投币复投。 </div></div>
+    <div class="c_p5"><div class="tips">如选择复投积分复投，只能选择当前网络的复投积分复投。 </div></div>
 	<table width="100%" border="0" cellpadding="3" cellspacing="0">
 		<form name="form1" method='post' id="form1" action="__URL__/agentsAC1">
      
@@ -21,15 +21,15 @@
 			
 		</tr>
 		<tr>
-			<td width="25%" height="30" align="right">现金币：</td>
+			<td width="25%" height="30" align="right">消费积分：</td>
 			<td width="75%">{$fck_rs['agent_use']}</td>
 		</tr>
 		<tr>
-			<td width="25%" height="30" align="right">电子币：</td>
+			<td width="25%" height="30" align="right">电子积分：</td>
 			<td width="75%">{$fck_rs['agent_cash']}</td>
 		</tr>
 		<tr>
-			<td width="25%" height="30" align="right">A网复投币：</td>
+			<td width="25%" height="30" align="right">A网复投积分：</td>
 			<td width="75%">{$fck_rs['agent_xf']}</td>
 		</tr>
 		<tr>
@@ -38,7 +38,7 @@
 		</tr>
 		<eq name = "fck_rs['net_status']" value = "b">
 			<tr>
-				<td width="25%" height="30" align="right">B网复投币：</td>
+				<td width="25%" height="30" align="right">B网复投积分：</td>
 				<td width="75%">{$netb_rs['agent_futou']}</td>
 			</tr>
 			<tr>
@@ -52,9 +52,9 @@
             
             <select name="futou" >
               <option value="1">请选择复投类型</option>
-              <option value="2">现金币复投</option>
-              <option value="3">复投币复投</option>
-              <option value="4">电子币复投</option>
+              <option value="2">消费积分复投</option>
+              <option value="3">复投积分复投</option>
+              <option value="4">电子积分复投</option>
             </select>
            </td>
 		</tr>

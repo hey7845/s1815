@@ -691,6 +691,8 @@ class AgentAction extends CommonAction
         $one_mm = 1;
         
         $fck = D('Fck');
+        $jiadan = M('jiadan');
+        $jiadanb = M('jiadanb');
         // 登录会员ID
         $id = $_SESSION[C('USER_AUTH_KEY')];
         $where = array();
@@ -704,7 +706,6 @@ class AgentAction extends CommonAction
         if ($fck_rs) {
             if ($fck_rs['net_status'] == 'b') {
                 // 检索已经存在的分红包数量
-                $jiadanb = M('jiadanb');
                 $danshu = $jiadanb->where('user_id = "' . $fck_rs['user_id'] . '"')->sum('danshu');
                 // 总包数：已经存在+刚刚提交
                 $sum_tmp = $danshu + $nums;
@@ -731,7 +732,6 @@ class AgentAction extends CommonAction
                 }
             } else {
                 // 检索已经存在的分红包数量
-                $jiadan = M('jiadan');
                 $danshu = $jiadan->where('user_id = "' . $fck_rs['user_id'] . '"')->sum('danshu');
                 // 总包数：已经存在+刚刚提交
                 $sum_tmp = $danshu + $nums;
@@ -856,7 +856,7 @@ class AgentAction extends CommonAction
                     $result = $fck->query("update __TABLE__ set is_cc=is_cc+" . $sum .",jia_nums=jia_nums+1". ",agent_use=agent_use-$money where id=" . $id);
                 }
                 // 见点奖
-                $fck->jiandianjiang($fck_rs['p_path'], $fck_rs['user_id']);
+//                 $fck->jiandianjiang($fck_rs['p_path'], $fck_rs['user_id']);
             } else if ($futou == 4) {
                 // ID
                 $data['uid'] = $fck_rs['id'];
@@ -908,15 +908,17 @@ class AgentAction extends CommonAction
                 $gouwu->add($gwd);
                 $fck->tz($fck_rs['p_path'], $money);
                 // 见点奖
-                $fck->jiandianjiang($fck_rs['p_path'], $fck_rs['user_id']);
+//                 $fck->jiandianjiang($fck_rs['p_path'], $fck_rs['user_id']);
             }
             unset($history,$data,$gwd,$pora,$gouwu);
             if ($fck_rs['net_status'] == 'b') {
                 // 分红包记录表
-                $fck->jiaDanB($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $sum, 0, 2);
+                //$fck->jiaDanB($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $sum, 0, 2);
+                $jiadanb->query("update xt_jiadanb set danshu=danshu+" . $sum ." where uid=" . $fck_rs['id']);
             } else {
                 // 分红包记录表
-                $fck->jiaDan($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $sum, 0, 2);
+                //$fck->jiaDan($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $sum, 0, 2);
+                $jiadan->query("update xt_jiadan set danshu=danshu+" . $sum ." where uid=" . $fck_rs['id']);
             }
             // 推荐奖
             $fck->tuijj($fck_rs['re_path'], $fck_rs['user_id'], $money);
@@ -1400,7 +1402,9 @@ class AgentAction extends CommonAction
                     $fck->query("update __TABLE__ set is_xf=0,u_level=1".",cpzj=".$newlv.",f4=f4+".$need_dl." where `id`=".$fck_rs['id']);
                     // 分红包记录表
                     $nowdate = strtotime ("now");
-                    $fck->jiaDan($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $need_dl, 0, 1);
+                    // $fck->jiaDan($fck_rs['id'], $fck_rs['user_id'], $nowdate, 0, 0, $need_dl, 0, 1);]
+                    $jiadan = M('jiadan');
+                    $jiadan->query("update xt_jiadan set danshu=danshu+" . $need_dl ." where uid=" . $fck_rs['id']);
                     
                     if ($need_dl == 50) {
                         $nowdate = strtotime(date('c'));
@@ -1524,9 +1528,18 @@ class AgentAction extends CommonAction
                 if ($fck_rs['net_status'] == 'b') {
                     // 剩余分红包迁移，分红包表更新
                     $jiadan = M('jiadan');
-                    $jiadan_rs = $jiadan->where('is_pay = 0 and uid = '.$fck_rs['id'])->field("uid,user_id,adt,pdt,money,danshu,is_pay,up_level,out_level")->select();
+                    $jiadanb = M('jiadanb');
+//                     $jiadan_rs = $jiadan->where('is_pay = 0 and uid = '.$fck_rs['id'])->field("uid,user_id,adt,pdt,money,danshu,is_pay,up_level,out_level")->select();
+                    // 取得A网分红金额以及单数
+                    $in_money = $jiadan->where('is_pay = 0 and uid = '.$fck_rs['id'])->sum('money');
                     $in_counts = $jiadan->where('is_pay = 0 and uid = '.$fck_rs['id'])->sum('danshu');
-                    $jiadanResult = $model->table('xt_jiadanb')->addAll($jiadan_rs);
+                    // 取得B网分红金额以及单数
+                    $tmpMoney = $jiadanb->where('uid = '.$fck_rs['id'])->sum('money');
+                    $tmpDanshu = $jiadanb->where('uid = '.$fck_rs['id'])->sum('danshu');
+                    // 从B网向A网迁移，把A网剩余未分红包迁移到B网
+                    $jiadanBContent['money'] = $tmpMoney+$in_money;
+                    $jiadanBContent['danshu'] = $tmpDanshu+$in_counts;
+                    $jiadanResult = $model->table('xt_jiadanb')->where("uid=". $fck_rs['id'])->save($jiadanBContent);
                     $jiadandeleteResult = $model->table('xt_jiadan')->where('uid = '.$fck_rs['id'])->delete();
                     // 会员表更新
                     $net_status['f4'] = 50;
@@ -1555,10 +1568,20 @@ class AgentAction extends CommonAction
                     $netb_rs = $netb->where($netbWhere)->find();
                     if ($netb_rs) {
                         // 剩余分红包迁移，分红包表更新
+                        $jiadan = M('jiadan');
                         $jiadanb = M('jiadanb');
-                        $jiadanb_rs = $jiadanb->where('is_pay = 0 and uid = '.$fck_rs['id'])->field("uid,user_id,adt,pdt,money,danshu,is_pay,up_level,out_level")->select();
+//                         $jiadanb_rs = $jiadanb->where('is_pay = 0 and uid = '.$fck_rs['id'])->field("uid,user_id,adt,pdt,money,danshu,is_pay,up_level,out_level")->select();
+                        // 取得B网分红金额以及单数
+                        $in_money = $jiadanb->where('is_pay = 0 and uid = '.$fck_rs['id'])->sum('money');
                         $in_counts = $jiadanb->where('is_pay = 0 and uid = '.$fck_rs['id'])->sum('danshu');
-                        $jiadanResult = $model->table('xt_jiadan')->addAll($jiadanb_rs);
+                        // 取得A网分红金额以及单数
+                        $tmpMoney = $jiadan->where('uid = '.$fck_rs['id'])->sum('money');
+                        $tmpDanshu = $jiadan->where('uid = '.$fck_rs['id'])->sum('danshu');
+                        // 从A网向B网迁移，把B网剩余未分红包迁移到A网
+                        $jiadanBContent['money'] = $tmpMoney+$in_money;
+                        $jiadanBContent['danshu'] = $tmpDanshu+$in_counts;
+                        $jiadanResult = $model->table('xt_jiadan')->where("uid=". $fck_rs['id'])->save($jiadanBContent);
+//                         $jiadanResult = $model->table('xt_jiadan')->addAll($jiadanb_rs);
                         $jiadandeleteResult = $model->table('xt_jiadanb')->where('uid = '.$fck_rs['id'])->delete();
                         $netBData['sum_bag'] = 50;
                         $netBData['agent_futou'] = 0;

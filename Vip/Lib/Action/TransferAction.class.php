@@ -232,7 +232,7 @@ class TransferAction extends CommonAction{
 			$hB = $str19;//倍数
 			$mmB = $str3;//最低额
 			
-			if($select==1 || $select==3){
+			if($select==1 || $select==2 || $select==3 || $select==4){
 				if($ePoints<$mmB){
 					$this->error ('转账最低额度必须为 '.$mmB.' ！');
 					exit;

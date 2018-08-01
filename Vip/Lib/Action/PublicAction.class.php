@@ -108,35 +108,55 @@ class PublicAction extends CommonAction
         $this->assign('all_nmoney', $all_nmoney);
         
         // 出局分红包数
+//         $where = Array();
+//         $where['user_id'] = $urs['user_id'];
+//         $where['is_pay'] = 1;
+//         $out_counts = $jiadan->where($where)->sum('danshu');
+//         if (empty($out_counts)) {
+//             $out_counts = 0;
+//         }
+//         $this->assign('out_counts', $out_counts);
         $where = Array();
         $where['user_id'] = $urs['user_id'];
-        $where['is_pay'] = 1;
-        $out_counts = $jiadan->where($where)->sum('danshu');
-        if (empty($out_counts)) {
-            $out_counts = 0;
+        $out_counts = $jiadan->where($where)->field("money,danshu")->find();
+        if ($out_counts) {
+            $outCounts = floor(bcdiv($out_counts['money'], 1000,2));
+        } else {
+            $outCounts = 0;
         }
-        $this->assign('out_counts', $out_counts);
+        $this->assign('out_counts', $outCounts);
         
         // 未出局分红包数
+//         $where['user_id'] = $urs['user_id'];
+//         $where['is_pay'] = 0;
+//         $in_counts = $jiadan->where($where)->sum('danshu');
+//         if (empty($in_counts)) {
+//             $in_counts = 0;
+//         }
+//         $this->assign('in_counts', $in_counts);
         $where['user_id'] = $urs['user_id'];
-        $where['is_pay'] = 0;
-        $in_counts = $jiadan->where($where)->sum('danshu');
-        if (empty($in_counts)) {
-            $in_counts = 0;
+        $in_counts = $jiadan->where($where)->field("money,danshu")->find();
+        if ($in_counts) {
+            $inCounts = ceil(bcdiv(($in_counts['danshu']*1000 - $in_counts['money']), 1000,2));
+        } else {
+            $inCounts = 0;
         }
-        $this->assign('in_counts', $in_counts);
+        $this->assign('in_counts', $inCounts);
         // B网版块
-        $in_countsb = $jiadanb->where($where)->sum('danshu');
-        if (empty($in_countsb)) {
-            $in_countsb = 0;
+        $in_countsb = $jiadanb->where($where)->field("money,danshu")->find();
+        if ($in_countsb) {
+            $inCountsb = ceil(bcdiv(($in_countsb['danshu']*1000 - $in_countsb['money']), 1000,2));
+        } else {
+            $inCountsb = 0;
         }
-        $this->assign('in_countsb', $in_countsb);
-        $where['is_pay'] = 1;
-        $out_countsb = $jiadanb->where($where)->sum('danshu');
-        if (empty($out_countsb)) {
-            $out_countsb = 0;
+        $this->assign('in_countsb', $inCountsb);
+        $out_countsb = $jiadanb->where($where)->field("money,danshu")->find();
+        if ($out_countsb) {
+            $outCountsb = floor(bcdiv($out_countsb['money'], 1000,2));
+        } else {
+            $outCountsb = 0;
         }
-        $this->assign('out_countsb', $out_countsb);
+        $this->assign('out_countsb', $outCountsb);
         $netb = M('netb');
         $netb_rs = $netb->where('uid=' . $id)->field('*')->find();
         $this->assign('netB', $netb_rs);

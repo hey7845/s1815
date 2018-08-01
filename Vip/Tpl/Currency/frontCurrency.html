@@ -26,7 +26,7 @@ function yhServer(Ful){
         <td width="30%">&nbsp;</td>
       </tr>
       <tr>
-        <td height="30" align="right">现金币：</td>
+        <td height="30" align="right">消费积分：</td>
         <td colspan="2"><span class="hong">{$rs['agent_use']}</span></td></tr>
 		
 	 <!-- <tr>
@@ -102,7 +102,7 @@ function yhServer(Ful){
     <td><span style="color: #F00;">{$vo['money_two']}</td>
     <!-- <td>{$vo['money_two']|cx_cname}</span></td> -->
     <td>{$vo.rdt|date='Y-m-d H:i:s',###}</td>
-    <td><eq name="vo['t_type']" value="0">提取现金币<else/>提取钛宝提现账户</eq></td>
+    <td><eq name="vo['t_type']" value="0">提取消费积分<else/>提取钛宝提现账户</eq></td>
     <td>{$rs['bank_card']}</td>
     <td><eq name="vo['is_pay']" value="0"><span style="color: #FF3300;">未确认</span>
           <!-- |<a id="aa" href="__URL__/frontCurrencyDel/id/{$vo['id']}"><span style="color: #0000FF;">删除</span></a> -->
