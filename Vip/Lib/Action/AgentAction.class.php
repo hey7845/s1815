@@ -723,10 +723,10 @@ class AgentAction extends CommonAction
                     // 前台输入单数总金额：单数*每单注册金额
                     $picmoney = $nums * $s9;
                     // 复投金额小于投资额的10%，不允许复投
-                    if ($picmoney < 4000) {
-                        $this->error('必须满4000才可复投！');
-                        exit();
-                    }
+//                     if ($picmoney < 4000) {
+//                         $this->error('必须满4000才可复投！');
+//                         exit();
+//                     }
                     // 单数
                     $sum = $nums;
                 }
@@ -756,15 +756,15 @@ class AgentAction extends CommonAction
                         if ($fck_rs['jia_nums'] > 10) {
                 
                             // 复投金额小于投资额的10%，不允许复投
-                            if ($picmoney < 4000) {
-                                if ($summoney > 4000) {
-                                    $summoney = 4000;
-                                }
-                                if ($picmoney < $summoney) {
-                                    $this->error('您已经复投超过10次，必须满'.$summoney.'才可复投！');
-                                    exit();
-                                }
-                            }
+//                             if ($picmoney < 4000) {
+//                                 if ($summoney > 4000) {
+//                                     $summoney = 4000;
+//                                 }
+//                                 if ($picmoney < $summoney) {
+//                                     $this->error('您已经复投超过10次，必须满'.$summoney.'才可复投！');
+//                                     exit();
+//                                 }
+//                             }
                         }
                     }
                     // 单数
