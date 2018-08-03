@@ -49,7 +49,7 @@ if (!empty($fck_result)) {
                 // 单数
                 $jd_danshu = $v['danshu'];
                 // 应分红金额
-                $jd_money = ceil(bcdiv(($jd_danshu*1000 - $v['money']), 1000,2)) * $str1;
+                $jd_money = ceil(bcdiv(($jd_danshu*1000 - $v['money']), 1000,5)) * $str1;
                 // 已分红金额
                 $jd_oldMoney = $v['money'];
                 // 总金额
@@ -84,7 +84,7 @@ if (!empty($fck_result)) {
                 $jdb_danshu = $value1['danshu'];
                 // 应分红金额
                 //$jdb_money = $jdb_danshu * $str1;
-                $jdb_money = ceil(bcdiv(($jdb_danshu*1000 - $value1['money']), 1000,2)) * $str1;
+                $jdb_money = ceil(bcdiv(($jdb_danshu*1000 - $value1['money']), 1000,5)) * $str1;
                 // 已分红金额
                 $jdb_oldMoney = $value1['money'];
                 // 总金额

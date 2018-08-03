@@ -120,7 +120,7 @@ class PublicAction extends CommonAction
         $where['user_id'] = $urs['user_id'];
         $out_counts = $jiadan->where($where)->field("money,danshu")->find();
         if ($out_counts) {
-            $outCounts = floor(bcdiv($out_counts['money'], 1000,2));
+            $outCounts = floor(bcdiv($out_counts['money'], 1000,5));
         } else {
             $outCounts = 0;
         }
@@ -137,7 +137,7 @@ class PublicAction extends CommonAction
         $where['user_id'] = $urs['user_id'];
         $in_counts = $jiadan->where($where)->field("money,danshu")->find();
         if ($in_counts) {
-            $inCounts = ceil(bcdiv(($in_counts['danshu']*1000 - $in_counts['money']), 1000,2));
+            $inCounts = ceil(bcdiv(($in_counts['danshu']*1000 - $in_counts['money']), 1000,5));
         } else {
             $inCounts = 0;
         }
@@ -145,14 +145,14 @@ class PublicAction extends CommonAction
         // B网版块
         $in_countsb = $jiadanb->where($where)->field("money,danshu")->find();
         if ($in_countsb) {
-            $inCountsb = ceil(bcdiv(($in_countsb['danshu']*1000 - $in_countsb['money']), 1000,2));
+            $inCountsb = ceil(bcdiv(($in_countsb['danshu']*1000 - $in_countsb['money']), 1000,5));
         } else {
             $inCountsb = 0;
         }
         $this->assign('in_countsb', $inCountsb);
         $out_countsb = $jiadanb->where($where)->field("money,danshu")->find();
         if ($out_countsb) {
-            $outCountsb = floor(bcdiv($out_countsb['money'], 1000,2));
+            $outCountsb = floor(bcdiv($out_countsb['money'], 1000,5));
         } else {
             $outCountsb = 0;
         }
