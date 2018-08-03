@@ -151,6 +151,21 @@ class CurrencyAction extends CommonAction {
 //				$this->error('只能星期六、星期日才能提现！');
 //				exit;
 //			}
+			date_default_timezone_set('asia/shanghai');
+			$week = date('w');
+			$day = date('md');
+			$time = date('G');
+			if($week==0 || $week==6) {
+			    $status = 2;
+			} else if($time>=9 && $time < 17) {
+			    $status = 0;
+			} else {
+			    $status = 1;
+			}
+			if($status!=0){
+				$this->error('只能在9时至17时的上班时间提现，节假日及休息时间不能提现！');
+				exit;
+			}
 			$where = array();
 			$ID = $_SESSION[C('USER_AUTH_KEY')];
 
@@ -323,7 +338,7 @@ class CurrencyAction extends CommonAction {
 				}
 				$tiqu->commit();
 				$bUrl = __URL__.'/frontCurrency';
-				$this->_box(1,'提现申请已提交，24小时之内到账！',$bUrl,1);
+				$this->_box(1,'提现申请已提交，48小时之内到账！',$bUrl,1);
 				exit;
 			}else{
 				//事务回滚：
