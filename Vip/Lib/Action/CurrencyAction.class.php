@@ -234,7 +234,7 @@ class CurrencyAction extends CommonAction {
 			        $sameCount++;
 			    }
 			    // 根据提现未确认数据的ID查找会员表数据
-			    $fck_rs_tmp1 = $fck ->where("user_name='".$vo['user_name']."'")->field("id,user_id,user_name,user_code,p_path")->find();
+			    $fck_rs_tmp1 = $fck ->where("id='".$vo['uid']."'")->field("id,user_id,user_name,user_code,p_path")->find();
 			        
 		        $tempArray = array_reverse(explode(",",$fck_rs_tmp1['p_path']));
 		        $offset=array_search($fck_rs['id'],$tempArray);
