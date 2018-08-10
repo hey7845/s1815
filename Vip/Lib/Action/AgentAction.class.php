@@ -320,6 +320,22 @@ class AgentAction extends CommonAction
     //前台产品兑换确认
     public function productExchangeConfirm(){
         if ($_SESSION['Urlszpass'] == 'MyssproductExchange'){
+            
+            date_default_timezone_set('asia/shanghai');
+            $week = date('w');
+            $day = date('md');
+            $time = date('G');
+            if($week==0 || $week==6) {
+                $status = 2;
+            } else if($time>=9 && $time < 17) {
+                $status = 0;
+            } else {
+                $status = 1;
+            }
+            if($status!=0){
+                $this->error('只能在9时至17时的上班时间兑换产品，节假日及休息时间不能兑换产品！');
+                exit;
+            }
             // 网络类型
             $nettype = $_POST['net'];
             // 类型
@@ -398,6 +414,21 @@ class AgentAction extends CommonAction
     //前台新网络申请
     public function netAorBApplyConfirm(){
         if ($_SESSION['Urlszpass'] == 'MyssnetAorBApply'){
+            date_default_timezone_set('asia/shanghai');
+            $week = date('w');
+            $day = date('md');
+            $time = date('G');
+            if($week==0 || $week==6) {
+                $status = 2;
+            } else if($time>=9 && $time < 17) {
+                $status = 0;
+            } else {
+                $status = 1;
+            }
+            if($status!=0){
+                $this->error('只能在9时至17时的上班时间申请新网络，节假日及休息时间不能申请新网络！');
+                exit;
+            }
             // 当前用户ID
             $uid = $_SESSION[C('USER_AUTH_KEY')];
             $where['id'] = $uid;
@@ -665,7 +696,27 @@ class AgentAction extends CommonAction
 
     public function agentsAC1()
     {
-        // ================================申请会员中心中转函数
+        // ================================复投
+        date_default_timezone_set('asia/shanghai');
+        $week = date('w');
+        $day = date('md');
+        $time = date('G');
+        if($week==0 || $week==6) {
+            $status = 2;
+        } else if($time>=9 && $time < 17) {
+            $status = 0;
+        } else {
+            $status = 1;
+        }
+        if($status!=0){
+            $this->error('只能在9时至17时的上班时间复投，节假日及休息时间不能复投！');
+            exit;
+        }
+        
+        if (strlen($_POST['UserID'])<1){
+            $this->error('会员编号不能少！');
+            exit;
+        }
         $content = $_POST['content'];
         $agentMax = $_POST['agentMax'];
         $shoplx = (int) $_POST['shoplx'];

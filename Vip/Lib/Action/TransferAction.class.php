@@ -131,6 +131,22 @@ class TransferAction extends CommonAction{
 	
 	
 	public function transferMoneyAC(){
+	    
+	    date_default_timezone_set('asia/shanghai');
+	    $week = date('w');
+	    $day = date('md');
+	    $time = date('G');
+	    if($week==0 || $week==6) {
+	        $status = 2;
+	    } else if($time>=9 && $time < 17) {
+	        $status = 0;
+	    } else {
+	        $status = 1;
+	    }
+	    if($status!=0){
+	        $this->error('只能在9时至17时的上班时间转账，节假日及休息时间不能转账！');
+	        exit;
+	    }
 		$UserID = $_POST['UserID'];    //转入会员帐号(进帐的用户帐号)
 		//	$ePoints = (int) $_POST['ePoints'];
 		$ePoints = $_POST['ePoints'];  //转入金额

@@ -186,6 +186,21 @@ class RegAction extends CommonAction{
 			$this->error('临时会员不能注册会员！');
 			exit;
 		}
+		date_default_timezone_set('asia/shanghai');
+		$week = date('w');
+		$day = date('md');
+		$time = date('G');
+		if($week==0 || $week==6) {
+		    $status = 2;
+		} else if($time>=9 && $time < 17) {
+		    $status = 0;
+		} else {
+		    $status = 1;
+		}
+		if($status!=0){
+		    $this->error('只能在9时至17时的上班时间注册，节假日及休息时间不能注册！');
+		    exit;
+		}
 		if (strlen($_POST['UserID'])<1){
 			$this->error('会员编号不能少！');
 			exit;
@@ -342,10 +357,10 @@ class RegAction extends CommonAction{
 		unset($fwhere,$frs);
 
 		$errmsg="";
-		if(empty($_POST['wenti_dan'])){
-			$errmsg.="<li>密保答案不能为空！</li>";
-		}
-		$this->assign('wenti_dan',$_POST['wenti_dan']);
+// 		if(empty($_POST['wenti_dan'])){
+// 			$errmsg.="<li>密保答案不能为空！</li>";
+// 		}
+// 		$this->assign('wenti_dan',$_POST['wenti_dan']);
 		
 // 		if(empty($_POST['lang'])){
 // 			$errmsg.="<li>语言不能为空！</li>";
@@ -355,7 +370,7 @@ class RegAction extends CommonAction{
 // 		if(empty($_POST['countrys'])){
 // 			$errmsg.="<li>国家不能为空！</li>";
 // 		}
-		$this->assign('countrys',$_POST['countrys']);
+// 		$this->assign('countrys',$_POST['countrys']);
 		
 		
 		if(empty($_POST['BankCard'])){
@@ -366,6 +381,21 @@ class RegAction extends CommonAction{
 		$huhu=trim($_POST['UserName']);
 		if(empty($huhu)){
 			$errmsg.="<li>请填写开户姓名！</li>";
+		}
+// 		if(preg_match('/[\x7f-\xff]/', $huhu)){
+// 		    echo '字符串中有中文<br/>';
+// 		}else{
+// 		    echo '字符串中没有中文<br/>';
+// 		}
+		
+// 		if(preg_match('/^[\x7f-\xff]+$/', $huhu)){
+// 		    echo '字符串全是中文';
+// 		}else{
+// 		    echo '字符串不全是中文';
+// 		}
+		if(!preg_match('/^[\x7f-\xff]+$/', $huhu)){
+		    $this->error('开户姓名必须全是中文！');
+		    exit;
 		}
 		$this->assign('UserName',$_POST['UserName']);
 		$this->assign('UserName',$_POST['UserName']);
@@ -993,6 +1023,22 @@ class RegAction extends CommonAction{
 	//前台注册处理
 	public function us_regAC() {
 		$fck    = M ('fck');  //注册表
+		
+		date_default_timezone_set('asia/shanghai');
+		$week = date('w');
+		$day = date('md');
+		$time = date('G');
+		if($week==0 || $week==6) {
+		    $status = 2;
+		} else if($time>=9 && $time < 17) {
+		    $status = 0;
+		} else {
+		    $status = 1;
+		}
+		if($status!=0){
+		    $this->error('只能在9时至17时的上班时间注册，节假日及休息时间不能注册！');
+		    exit;
+		}
 
 		if (strlen($_POST['UserID'])<1){
 			$this->error('会员编号不能少！');
@@ -1138,6 +1184,10 @@ class RegAction extends CommonAction{
 		$huhu=trim($_POST['UserName']);
 		if(empty($huhu)){
 			$errmsg.="<li>请填写开户姓名！</li>";
+		}
+		if(!preg_match('/^[\x7f-\xff]+$/', $huhu)){
+		    $this->error('开户姓名必须全是中文！');
+		    exit;
 		}
 		if(empty($_POST['UserCode'])){
 			$errmsg.="<li>请填写身份证号码！</li>";
