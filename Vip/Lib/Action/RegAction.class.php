@@ -718,9 +718,9 @@ class RegAction extends CommonAction{
 		unset($fwhere,$frs);
 
 		$errmsg="";
-		if(empty($_POST['wenti_dan'])){
-			$errmsg.="<li>密保答案不能为空！</li>";
-		}
+// 		if(empty($_POST['wenti_dan'])){
+// 			$errmsg.="<li>密保答案不能为空！</li>";
+// 		}
 		if(empty($_POST['BankCard'])){
 			$errmsg.="<li>银行卡号不能为空！</li>";
 		}
@@ -1175,9 +1175,9 @@ class RegAction extends CommonAction{
 		unset($fwhere,$frs);
 
 		$errmsg="";
-		if(empty($_POST['wenti_dan'])){
-			$errmsg.="<li>密保答案不能为空！</li>";
-		}
+// 		if(empty($_POST['wenti_dan'])){
+// 			$errmsg.="<li>密保答案不能为空！</li>";
+// 		}
 		if(empty($_POST['BankCard'])){
 			$errmsg.="<li>银行卡号不能为空！</li>";
 		}
