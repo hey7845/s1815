@@ -713,10 +713,6 @@ class AgentAction extends CommonAction
             exit;
         }
         
-        if (strlen($_POST['UserID'])<1){
-            $this->error('会员编号不能少！');
-            exit;
-        }
         $content = $_POST['content'];
         $agentMax = $_POST['agentMax'];
         $shoplx = (int) $_POST['shoplx'];
