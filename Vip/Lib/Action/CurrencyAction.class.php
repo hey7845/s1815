@@ -208,8 +208,8 @@ class CurrencyAction extends CommonAction {
 			$where2['rdt'] = array(array('egt',$s_nowd),array('lt',$e_nowd));
 			$field1 = 'id';
 			$vo5 = $tiqu ->where($where2)->sum("money");
-			if ($vo5>10000 || $ePoints > 10000){
-				$this->error('每天每个账户最高提现 10000 元!');
+			if ($vo5>10000 || $ePoints > 5000){
+				$this->error('每个账户每天最高提现 5000 元!');
 				exit;
 			}
             
