@@ -41,9 +41,9 @@ if (mysqli_num_rows($history_result) < 1) {
             $fck_money = 0;
             $fck_moneyb = 0;
             // 检索A网分红包表数据
-            $jiadan_sql = "select * from xt_jiadan where is_pay=0 and user_id='{$value['user_id']}'";
+            $jiadan_sql = "select * from xt_jiadan where user_id='{$value['user_id']}'";
             // 检索B网分红包表数据
-            $jiadanb_sql = "select * from xt_jiadanB where is_pay=0 and user_id='{$value['user_id']}'";
+            $jiadanb_sql = "select * from xt_jiadanB where user_id='{$value['user_id']}'";
             $jiadan_rs = mysqli_query($con,$jiadan_sql);
             $jiadanb_rs = mysqli_query($con,$jiadanb_sql);
             // A网分红
