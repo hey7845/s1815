@@ -5,7 +5,6 @@ class TreeAction extends CommonAction {
 		$this->_inject_check(0);//调用过滤函数
 		//$this->_checkUser();
 		$this->_Config_name();//调用参数
-		$this->check_us_gq();
 	}
 
 	//会员级别颜色

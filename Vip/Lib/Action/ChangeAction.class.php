@@ -4,7 +4,6 @@ class ChangeAction extends CommonAction {
 		header("Content-Type:text/html; charset=utf-8");
 		$this->_inject_check(1);//调用过滤函数
 		$this->_checkUser();
-		$this->check_us_gq();
 	}
 	
 	//二级密码验证

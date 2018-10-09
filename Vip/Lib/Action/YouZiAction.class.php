@@ -999,12 +999,6 @@ class YouZiAction extends CommonAction
     {
         if ($_SESSION['UrlPTPass'] == 'MyssShenShuiPuTao') {
             
-            // $length_arr = count($PTid);
-            // if($length_arr > 1){
-            // $this->error('一次只能开通一个会员');
-            // exit;
-            // }
-            
             $fck = D('Fck');
             $shouru = M('shouru');
             $blist = M('blist');
@@ -1030,20 +1024,10 @@ class YouZiAction extends CommonAction
             $fck->emptyTime();
             
             foreach ($vo as $voo) {
-                // $ppath = $voo['p_path'];
-                // //上级未开通不能开通下级员工
-                // $frs_where['is_pay'] = array('eq',0);
-                // $frs_where['id'] = $voo['father_id'];
-                // $frs = $fck -> where($frs_where) -> find();
-                // if($frs){
-                // $this->error('开通失败，上级未开通');
-                // exit;
-                // }
-                
                 // 给推荐人添加推荐人数或单数
                 $fck->query("update __TABLE__ set `re_nums`=re_nums+1,re_f4=re_f4+" . $voo['f4'] . " where `id`=" . $voo['re_id']);
                 // 购物车管理
-                $gouwu->query("update __TABLE__ set `lx`=1 where `uid`=" . $voo['id']);
+//                 $gouwu->query("update __TABLE__ set `lx`=1 where `uid`=" . $voo['id']);
                 
                 $nnrs = $fck->where('is_pay>0')
                     ->field('n_pai')
@@ -1051,25 +1035,18 @@ class YouZiAction extends CommonAction
                     ->find();
                 $mynpai = ((int) $nnrs['n_pai']) + 1;
                 
-                // $in_gp = $s3[$voo['u_level']-1]*$voo['cpzj']/100;
-                // 新
-                // $fck->adduser($voo['id'],$voo['cpzj']);
                 $data = array();
                 $data['is_pay'] = 1;
                 $data['pdt'] = $nowdate;
                 $data['open'] = 1;
                 $data['get_date'] = $nowday;
                 $data['fanli_time'] = $nowday - 1; // 当天没有分红奖
-                                                 // $data['agent_lock'] = $in_gp;//
-                                                 // $data['agent_gp'] = $in_gp;//
-                                                 // $data['gp_num'] = $in_gp;//
                 $data['n_pai'] = $mynpai;
                 if ($voo['f4'] == 50) {
                     $data['idt'] = $nowdate;
                     $data['adt'] = $nowdate;
                     $data['is_agent'] = 1;
                 }
-                
                 $data['is_zy'] = $voo['id'];
                 $data['kt_id'] = 1;
                 $r_id = 1;
@@ -1088,13 +1065,12 @@ class YouZiAction extends CommonAction
                 unset($data);
                 
                 // 统计单数
-                $fck->xiangJiao($voo['id'], 1);
+//                 $fck->xiangJiao($voo['id'], 1);
                 // 分红包记录表
                 $fck->jiaDan($voo['id'], $voo['user_id'], $nowdate, 0, 0, $voo['f4'], 0, 0);
-                // 算出奖金
-                $fck->getusjj($voo['id'], 1, $voo['cpzj']);
+//                 // 算出奖金
+//                 $fck->getusjj($voo['id'], 1, $voo['cpzj']);
             }
-            // $this->_clearing();
             unset($fck, $field, $where, $vo);
             $bUrl = __URL__ . '/auditMenber';
             $this->_box(1, '开通会员成功！', $bUrl, 1);
@@ -1874,6 +1850,12 @@ class YouZiAction extends CommonAction
             case '关闭奖金':
                 $this->_Lockfenh($PTid);
                 break;
+            case '设为转账管理员':
+                $this->_treasureManager($PTid);
+                break;
+            case '解除转账管理员':
+                $this->_treasureManagerCancel($PTid);
+                break;
             case '设为实体服务中心':
                 $this->_relAgent($PTid);
                 break;
@@ -2303,6 +2285,61 @@ class YouZiAction extends CommonAction
         }
     }
     
+    // 转账管理员设置
+    private function _treasureManager($PTid = 0)
+    {
+        // 设置实体服务中心
+        if ($_SESSION['UrlPTPass'] == 'MyssGuanShuiPuTao') {
+            $fck = M('fck');
+            $where['id'] = array('in',$PTid);
+            $varray = array(
+                'is_treasure_manager' => '1',
+                'is_fenh' => '1'
+            );
+            $rs = $fck->where($where)->setField($varray);
+    
+            if ($rs) {
+                $bUrl = __URL__ . '/adminMenber';
+                $this->_box(1, '转账管理员设置成功！', $bUrl, 1);
+                exit();
+            } else {
+                $bUrl = __URL__ . '/adminMenber';
+                $this->_box(0, '转账管理员设置失败！', $bUrl, 1);
+                exit();
+            }
+        } else {
+            $this->error('错误!');
+        }
+    }
+    
+    // 转账管理员解除
+    private function _treasureManagerCancel($PTid = 0)
+    {
+        // 设置实体服务中心
+        if ($_SESSION['UrlPTPass'] == 'MyssGuanShuiPuTao') {
+            $fck = M('fck');
+            $where['is_treasure_manager'] = array('egt',1);
+            $where['id'] = array('in',$PTid);
+            $varray = array(
+                'is_treasure_manager' => '0',
+                'is_fenh' => '1'
+            );
+            $rs = $fck->where($where)->setField($varray);
+    
+            if ($rs) {
+                $bUrl = __URL__ . '/adminMenber';
+                $this->_box(1, '转账管理员解除成功！', $bUrl, 1);
+                exit();
+            } else {
+                $bUrl = __URL__ . '/adminMenber';
+                $this->_box(0, '转账管理员解除失败！', $bUrl, 1);
+                exit();
+            }
+        } else {
+            $this->error('错误!');
+        }
+    }
+    
     // 实体服务中心设置
     private function _relAgent($PTid = 0)
     {
@@ -2310,7 +2347,11 @@ class YouZiAction extends CommonAction
         if ($_SESSION['UrlPTPass'] == 'MyssGuanShuiPuTao') {
             $fck = M('fck');
             $where['id'] = array('in',$PTid);
-            $rs = $fck->where($where)->setField('is_aa', '1');
+            $varray = array(
+                'is_aa' => '1',
+                'is_fenh' => '1'
+            );
+            $rs = $fck->where($where)->setField($varray);
     
             if ($rs) {
                 $bUrl = __URL__ . '/adminMenber';
@@ -2334,7 +2375,11 @@ class YouZiAction extends CommonAction
             $fck = M('fck');
             $where['is_aa'] = array('egt',1);
             $where['id'] = array('in',$PTid);
-            $rs = $fck->where($where)->setField('is_aa', '0');
+            $varray = array(
+                'is_aa' => '0',
+                'is_fenh' => '1'
+            );
+            $rs = $fck->where($where)->setField($varray);
     
             if ($rs) {
                 $bUrl = __URL__ . '/adminMenber';
@@ -2357,7 +2402,11 @@ class YouZiAction extends CommonAction
         if ($_SESSION['UrlPTPass'] == 'MyssGuanShuiPuTao') {
             $fck = M('fck');
             $where['id'] = array('in',$PTid);
-            $rs = $fck->where($where)->setField('remark', '1');
+            $varray = array(
+                'remark' => '1',
+                'is_fenh' => '1'
+            );
+            $rs = $fck->where($where)->setField($varray);
     
             if ($rs) {
                 $bUrl = __URL__ . '/adminMenber';
@@ -2381,7 +2430,11 @@ class YouZiAction extends CommonAction
             $fck = M('fck');
             $where['remark'] = array('egt',1);
             $where['id'] = array('in',$PTid);
-            $rs = $fck->where($where)->setField('remark', '0');
+            $varray = array(
+                'remark' => '0',
+                'is_fenh' => '1'
+            );
+            $rs = $fck->where($where)->setField($varray);
     
             if ($rs) {
                 $bUrl = __URL__ . '/adminMenber';
@@ -4182,7 +4235,6 @@ class YouZiAction extends CommonAction
     {
         if ($_SESSION['UrlPTPass'] == 'MyssQingKong') {
             // 删除指定记录
-            // $name=$this->getActionName();
             $model = M('fck');
             $model2 = M('bonus');
             $model3 = M('history');
@@ -4213,7 +4265,6 @@ class YouZiAction extends CommonAction
     {
         if ($_SESSION['UrlPTPass'] == 'MyssQingKong') {
             // 删除指定记录
-            // $name=$this->getActionName();
             $model = M('fck');
             $model2 = M('bonus');
             $model41 = M('bonus1');
@@ -4251,8 +4302,13 @@ class YouZiAction extends CommonAction
             $model32 = M('cashhistory');
             $model33 = M('bonushistory');
             $model34 = M('cashpp');
+            $model35 = M('netb');
+            $model36 = M('jiadan');
+            $model37 = M('jiadanb');
+            $model38 = M('aorb');
+            $model39 = M('relation');
             
-            $model->where('id > 1')->delete();
+            $model->where("id > 1")->delete();
             $model2->where('id > 0')->delete();
             $model3->where('id > 0')->delete();
             $model4->where('id > 0')->delete();
@@ -4285,6 +4341,11 @@ class YouZiAction extends CommonAction
             $model32->where('id > 0')->delete();
             $model33->where('id > 0')->delete();
             $model34->where('id > 0')->delete();
+            $model35->where('id > 0')->delete();
+            $model36->where('id > 0')->delete();
+            $model37->where('id > 0')->delete();
+            $model38->where('id > 0')->delete();
+            $model39->where('id > 0')->delete();
             $model40->where('id > 0')->delete();
             $model41->where('id > 0')->delete();
             
@@ -4302,7 +4363,7 @@ class YouZiAction extends CommonAction
             
             $sql .= "`l`=0,`r`=0,`shangqi_l`=0,`shangqi_r`=0,`idt`=0,";
             $sql .= "`benqi_l`=0,`benqi_r`=0,`lr`=0,`shangqi_lr`=0,`benqi_lr`=0,";
-            $sql .= "`agent_max`=0,`lssq`=0,`agent_use`=0,`is_agent`=2,`agent_cash`=0,";
+            $sql .= "`agent_max`=0,`lssq`=0,`agent_use`=0,`f4`=0,`agent_active`=0,`is_agent`=2,`agent_cash`=0,";
             $sql .= "`u_level`=1,`zjj`=0,`wlf`=0,`zsq`=0,`re_money`=0,";
             $sql .= "`cz_epoint`=0,b0=0,b1=0,b2=0,b3=0,b4=0,";
             $sql .= "`b5`=0,b6=0,b7=0,b8=0,b9=0,b10=0,b11=0,b12=0,re_nums=0,man_ceng=0,";
@@ -4347,11 +4408,11 @@ class YouZiAction extends CommonAction
             $card->query("update __TABLE__ set is_sell=0,bid=0,buser_id='',b_time=0");
             
             $bUrl = __URL__ . '/delTable';
-            $this->_box(1, '清空数据！', $bUrl, 1);
+            $this->_box(1, '清空完毕！', $bUrl, 1);
             exit();
         } else {
             $bUrl = __URL__ . '/delTable';
-            $this->_box(0, '清空数据！', $bUrl, 1);
+            $this->_box(0, '清空数据失败！', $bUrl, 1);
             exit();
         }
     }

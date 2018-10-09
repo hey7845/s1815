@@ -6,7 +6,6 @@ class FckAction extends CommonAction {
 		$this->_Config_name();//调用参数
 		$this->_checkUser();
 //		$this->_inject_check(1);//调用过滤函数
-		$this->check_us_gq();
 
 
 	}

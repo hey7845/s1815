@@ -463,8 +463,8 @@ class CurrencyAction extends CommonAction {
 		$this->_Admin_checkUser();//后台权限检测
 		if ($_SESSION['Urlszpass'] == 'MyssGuanPaoYingTao'){
 			$tiqu = M ('tiqu');
-			$fck = M('fck');//
-			$history = M('history');
+			$fck = D('fck');//
+// 			$history = M('history');
 			$where = array();
 			$where['is_pay'] = 0;
 			$where['id'] = array ('in',$PTid);
@@ -475,23 +475,25 @@ class CurrencyAction extends CommonAction {
 			$nowdate = strtotime(date('c'));
 			foreach($rs as $rss){
 				$fck_where['id'] = $rss['uid'];
-				$rsss = $fck->where($fck_where)->field('id,user_id,agent_use')->find();
+				$rsss = $fck->where($fck_where)->field('id,user_id,agent_use,agent_cash,agent_xf,agent_active')->find();
 				if ($rsss){
 					$result = $tiqu->execute("UPDATE __TABLE__ set `is_pay`=1 where `id`=".$rss['id']);
 					if($result){
+// 						//插入历史表
+// 						$data = array();
+// 						$data['uid']			= $rsss['id'];//提现会员ID
+// 						$data['user_id']		= $rsss['user_id'];
+// 						$data['action_type']	= 18;
+// 						$data['pdt']			= mktime();//提现时间
+// 						$data['epoints']		= $rss['money'];//进出金额
+// 						$data['allp']			= $rss['money_two'];
+// 						$data['bz']				= '18';//备注
+// 						$data['type']			= 2;//1 转帐  2 提现
+// 						$history->add($data);
+// 						unset($data);
 						//插入历史表
-						$data = array();
-						$data['uid']			= $rsss['id'];//提现会员ID
-						$data['user_id']		= $rsss['user_id'];
-						$data['action_type']	= 18;
-						$data['pdt']			= mktime();//提现时间
-						$data['epoints']		= $rss['money'];//进出金额
-						$data['allp']			= $rss['money_two'];
-						$data['bz']				= '18';//备注
-						$data['type']			= 2;//1 转帐  2 提现
-						$history->add($data);
-						unset($data);
-						
+						$fck->addencAdd($rsss['id'], $rsss['user_id'], $rss['money'], 18, 0, 0, 0, '18',
+						    $rsss['agent_use'],$rsss['agent_cash'],$rsss['agent_xf'],$rsss['agent_active']);
 						$fck->execute("UPDATE __TABLE__ set shang_ach=shang_ach+".$rss['money']." where `id`=".$rss['uid']);
 					}
 				}else{

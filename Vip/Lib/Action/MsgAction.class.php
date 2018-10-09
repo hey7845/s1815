@@ -4,7 +4,6 @@ class MsgAction extends CommonAction {
 		header("Content-Type:text/html; charset=utf-8");
 		$this->_inject_check(0);//调用过滤函数
 		$this->_checkUser();
-		$this->check_us_gq();
 	}
 	
 	//二级密码验证
@@ -124,24 +123,28 @@ class MsgAction extends CommonAction {
 		$ID = $_SESSION[C('USER_AUTH_KEY')];
 		//收件人
 		$where1 = array();
-		$where1['user_id'] = $UserID;
 		if($UserID == '公司'){
+		    $where1['user_id'] = $UserID;
 			$gsrs = M('fck')->where('id=1')->field('user_id')->find();
 			$where1['user_id'] = $gsrs['user_id'];
+		} else if($UserID == '所有人' && $ID == 1){
+		    $where1['id'] != 1;
+		} else {
+		    $where1['user_id'] = $UserID;
 		}
 
 		$field = 'id,user_id';
-		$vo = $fck->where($where1)->field($field)->find();
+		$vo = $fck->where($where1)->field($field)->select();
 		if (!$vo){
 			$this->error('收件人不存在！');
 			exit;
 		}
-		if($ID>1){
-			if($ID == $vo['id']){
-				$this->error('不能给自已发邮件！');
-				exit;
-			}
-		}
+// 		if($ID>1){
+// 			if($ID == $vo['id']){
+// 				$this->error('不能给自已发邮件！');
+// 				exit;
+// 			}
+// 		}
 
 		//发件人
 		$where['id'] = $ID;
@@ -153,17 +156,21 @@ class MsgAction extends CommonAction {
 		//开始事务处理
 		$Users->startTrans();
         $nowdate = strtotime(date('c'));
-        
-		//留言表
-		$data = array();
-		$data['f_uid']		= $vo2['id'];
-		$data['f_user_id']	= $vo2['user_id'];
-		$data['s_uid']		= $vo['id'];
-		$data['s_user_id']	= $vo['user_id'];
-		$data['title']		= $Title;
-		$data['content']	= $Msg;
-		$data['f_time']		= time();
-		$rs1 = $Users->add($data);
+        foreach ($vo as $key=>$value){
+            //留言表
+            $data = array();
+            $data['f_uid']		= $vo2['id'];
+            $data['f_user_id']	= $vo2['user_id'];
+            $data['s_uid']		= $value['id'];
+            $data['s_user_id']	= $value['user_id'];
+            $data['title']		= $Title;
+            $data['content']	= $Msg;
+            $data['f_time']		= time();
+		    $rs1 = $Users->add($data);
+		    if (!$rs1) {
+		        break;
+		    }
+        }
 		unset($data);
 		if ($rs1){
 			//提交事务
@@ -209,7 +216,7 @@ class MsgAction extends CommonAction {
 		$boxID = $_POST['tabledb'];
 		$msg = M('msg');
 		$map = array();
-		$map['id']  = array('in ',$boxID);
+		$map['id']  = array('in',$boxID);
 		$map['s_uid'] = $_SESSION[C('USER_AUTH_KEY')];
 		$lirs = $msg->where($map)->select();
 		foreach($lirs as $rs){
@@ -341,7 +348,7 @@ class MsgAction extends CommonAction {
 		$boxID = $_POST['tabledb'];
 		$msg = M('msg');
 		$map = array();
-		$map['id']  = array('in ',$boxID);
+		$map['id']  = array('in',$boxID);
 		$map['f_uid'] = $_SESSION[C('USER_AUTH_KEY')];
 		$lirs = $msg->where($map)->select();
 		foreach($lirs as $rs){

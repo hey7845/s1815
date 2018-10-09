@@ -1,7 +1,7 @@
-<include file="Public:header" />
+<include file="Public:xyHead" />
 <load href="__PUBLIC__/Js/UserJs.js" />
 <div class="ncenter_box">
-<div class="accounttitle"><h1>复投 </h1></div>
+<div class="accounttitle"><h4>复投 </h4></div>
     <div class="c_p5"><div class="tips">如选择复投积分复投，只能选择当前网络的复投积分复投。 </div></div>
 	<table width="100%" border="0" cellpadding="3" cellspacing="0">
 		<form name="form1" method='post' id="form1" action="__URL__/agentsAC1">
@@ -27,6 +27,10 @@
 		<tr>
 			<td width="25%" height="30" align="right">电子积分：</td>
 			<td width="75%">{$fck_rs['agent_cash']}</td>
+		</tr>
+		<tr>
+			<td width="25%" height="30" align="right">激活积分：</td>
+			<td width="75%">{$fck_rs['agent_active']}</td>
 		</tr>
 		<tr>
 			<td width="25%" height="30" align="right">A网复投积分：</td>
@@ -58,32 +62,6 @@
             </select>
            </td>
 		</tr>
-		<!-- <tr>
-			<td width="25%" height="30" align="right">申请油卡时间：</td>
-		  <td><eq name="fck_rs['idt']" value="0" ><else/>{$fck_rs['idt']|date='Y-m-d H:i:s',###}</eq></td>
-		</tr> -->
-		<!-- <tr>
-			<td width="25%" height="30" align="right">开通报单中心时间：</td>
-		  <td><eq name="fck_rs['adt']" value="0" ><else/>{$fck_rs['adt']|date='Y-m-d H:i:s',###}</eq></td>
-		</tr> -->
-  
-      
-       <!--  <script language = JavaScript>
-        var s=["s1","s2"];
-        var opt0 = ["请选择","请选择"];
-        function setup()
-        {
-            for(i=0;i<s.length-1;i++)
-            document.getElementById(s[i]).onchange=new Function("change("+(i+1)+")");
-            change(0);
-        }
-        setup();
-      </script>
-       
-		<tr>
-			<td align="right">备注：</td>
-		  <td><textarea name="content" id="content" cols="40" rows="8"></textarea></td>
-		</tr> -->
 		<tr>
 			<td align="right">本次复投单数：</td>
 		  <td><input type="text" name="nums"></td>

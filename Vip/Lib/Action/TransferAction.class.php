@@ -7,7 +7,6 @@ class TransferAction extends CommonAction{
 		$this->_inject_check(0);//调用过滤函数
 		$this->_Config_name();//调用参数
  		$this->_checkUser();
- 		$this->check_us_gq();
 		//$this->_inject_check(1);//调用过滤函数
 	}
 	
@@ -206,7 +205,7 @@ class TransferAction extends CommonAction{
 			$mmrs = $fck->where($myww)->find();
 			$mmid = $mmrs['id'];
 			$mmisagent = $mmrs['is_agent'];
-			$re_path1=$mmrs['re_path'];
+			$p_path1=$mmrs['p_path'];
 			// if($mmid==1){
 			// 	$mmisagent = 0;
 			// }
@@ -214,31 +213,29 @@ class TransferAction extends CommonAction{
 			//转入会员
 			$fck_where = array();
 			$fck_where['user_id'] =$UserID;// strtolower($UserID);
-			$field = "id,user_id,is_agent,re_path";
+			$field = "id,user_id,is_agent,re_path,p_path,is_treasure_manager";
 			$vo = $fck ->where($fck_where)->field($field)->find();  //找出转入会员记录
 			$void=$vo['id'];
-			$re_path2=$vo['re_path'];
+			$p_path2=$vo['p_path'];
 
 			if (!$vo){
 				$this->error('转入会员不存在!');
 				exit;
 			}
 			
-			if ($ID != 1 && ($UserID == 'aa' || $UserID == 'bb')){
+			if ($vo['is_treasure_manager'] == 1){
 			    $this->error('不允许回转！');
 			    exit;
 			}
-			// echo $mmid;
-			// echo $re_path2;die;
 
-			$pos1 = strpos($re_path1, $void);
-			$pos2 = strpos($re_path2, $mmid);
-			// if($select==1 || $select==3){
-			// if($pos1 === false && $pos2 === false){
-			// 	$this->error('只能同一条线才可以上下互转!');
-			// 	exit;
-			// }
-			// }
+			$pos1 = strpos($p_path1, $void);
+			$pos2 = strpos($p_path2, $mmid);
+			if($select==1 || $select==4 || $select==5){
+			if($pos1 === false && $pos2 === false){
+				$this->error('只能同一条线才可以上下互转!');
+				exit;
+			}
+			}
 			$fee_rs = M ('fee') -> find();
 			$str3 = $fee_rs['str3'];
 			$str18 = $fee_rs['str18'];
@@ -308,6 +305,7 @@ class TransferAction extends CommonAction{
 				//$fck->execute("update `xt_fck` Set `agent_use`=agent_use-".$ePoints." where `id`=".$ID);
 				//$fck->execute("update `xt_fck` Set `agent_use`=agent_use+".$ePoints." where `id`=".$vo['id']);
 				$zz_content = "电子币 转 现金币";
+				
 				$fck->execute("update `xt_fck` Set `agent_cash`=agent_cash-".$ePoints." where `id`=".$ID);
 				$fck->execute("update `xt_fck` Set `agent_use`=agent_use+".$ePoints." where `id`=".$vo['id']);
 			}
@@ -315,13 +313,13 @@ class TransferAction extends CommonAction{
 				$zz_content = "现金币 转 电子币";
 				$fck->execute("update `xt_fck` Set `agent_use`=agent_use-".$ePoints." where `id`=".$ID);
 				// 转账手续费5%
-				$tmp = $ePoints * 5;
+				$tmp = $ePoints * 6;
 				$tmp = bcdiv($tmp, 100,2);
 				$ePoints = $ePoints - $tmp;
 				$fck->execute("update `xt_fck` Set `agent_cash`=agent_cash+".$ePoints." where `id`=".$vo['id']);
 			}
 			if($select==3){
-				$zz_content = "注册积分 转 复投币";
+				$zz_content = "现金币 转 复投币";
 				$fck->execute("update `xt_fck` Set `agent_use`=agent_use-".$ePoints." where `id`=".$ID);
 				if ($mmrs['net_status'] == 'b'){
 				    $fck->execute("update `xt_netb` Set `agent_futou`=agent_futou+".$ePoints." where `id`=".$vo['id']);
@@ -338,9 +336,9 @@ class TransferAction extends CommonAction{
 				$fck->execute("update `xt_fck` Set `agent_cash`=agent_cash+".$ePoints." where `id`=".$vo['id']);
 			}
 			if($select==5){
-				$zz_content = "M币 转 重销积分";
-				$fck->execute("update `xt_fck` Set `agent_cash`=agent_cash-".$ePoints." where `id`=".$ID);
-				$fck->execute("update `xt_fck` Set `agent_cf`=agent_cf+".$ePoints." where `id`=".$vo['id']);
+				$zz_content = "激活币 转给 其他会员";
+				$fck->execute("update `xt_fck` Set `agent_active`=agent_active-".$ePoints." where `id`=".$ID);
+				$fck->execute("update `xt_fck` Set `agent_active`=agent_active+".$ePoints." where `id`=".$vo['id']);
 			}
 			// if($select==4){
 			// 	$zz_content = "种子币 转 注册币 ";

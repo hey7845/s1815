@@ -825,26 +825,33 @@ class AgentAction extends CommonAction
 //                 $this->error('复投币不足！');
 //                 exit();
 //             }
+            $tmpMoney = $money * 0.9;
+            $tmpAcMoney = $money * 0.1;
             if ($futou == 3) {
                 if ($fck_rs['net_status'] == 'b') {
                     if ($netb_rs['agent_futou'] < $money) {
-                        $this->error('复投币不足！');
+                        $this->error('复投积分不足！');
                         exit();
                     }
                 } else {
                     if ($fck_rs['agent_xf'] < $money) {
-                        $this->error('复投币不足！');
+                        $this->error('复投积分不足！');
                         exit();
                     }
                 }
             }
             
             if ($fck_rs['agent_use'] < $money && $futou == 2) {
-                $this->error('现金币不足！');
+                $this->error('消费积分不足！');
                 exit();
             }
-            if ($fck_rs['agent_cash'] < $money && $futou == 4) {
-                $this->error('电子币不足！');
+            
+            if ($fck_rs['agent_cash'] < $tmpMoney && $futou == 4) {
+                $this->error('电子积分不足！');
+                exit();
+            }
+            if ($fck_rs['agent_active'] < $tmpAcMoney && $futou == 4) {
+                $this->error('激活积分不足！');
                 exit();
             }
             // 注册时投资金额
@@ -856,22 +863,23 @@ class AgentAction extends CommonAction
             $history = M('history');
             // 复投币复投
             if ($futou == 3) {
-                // ID
-                $data['uid'] = $fck_rs['id'];
-                // 会员编号
-                $data['user_id'] = $fck_rs['user_id'];
-                // 复投币复投
-                $data['action_type'] = 24;
-                // 时间
-                $data['pdt'] = $nowdate;
-                // 复投金额
-                $data['epoints'] = $money;
-                $data['did'] = 0;
-                $data['allp'] = 0;
-                $data['bz'] = '24';
-                // 添加历史记录表数据
-                $history->create();
-                $history->add($data);
+                $fck->addencAdd($fck_rs['id'], $fck_rs['user_id'], $money, 24, 0, 0, 0, '24',$fck_rs['agent_use'],$fck_rs['agent_cash'],$fck_rs['agent_xf'] - $money,$fck_rs['agent_active']); 
+//                 // ID
+//                 $data['uid'] = $fck_rs['id'];
+//                 // 会员编号
+//                 $data['user_id'] = $fck_rs['user_id'];
+//                 // 复投币复投
+//                 $data['action_type'] = 24;
+//                 // 时间
+//                 $data['pdt'] = $nowdate;
+//                 // 复投金额
+//                 $data['epoints'] = $money;
+//                 $data['did'] = 0;
+//                 $data['allp'] = 0;
+//                 $data['bz'] = '24';
+//                 // 添加历史记录表数据
+//                 $history->create();
+//                 $history->add($data);
                 if ($fck_rs['net_status'] == 'b'){
                     $result = $netb->query("update xt_netB set futou_danshu=futou_danshu+" . $sum .",sum_bag=sum_bag+".$sum. ",agent_futou=agent_futou-$money where uid=" . $id);
                 } else {
@@ -879,22 +887,24 @@ class AgentAction extends CommonAction
                     $result = $fck->query("update __TABLE__ set is_cc=is_cc+" . $sum .",jia_nums=jia_nums+1". ",agent_xf=agent_xf-$money where id=" . $id);
                 }
             } else if ($futou == 2) {
-                // ID
-                $data['uid'] = $fck_rs['id'];
-                // 会员编号
-                $data['user_id'] = $fck_rs['user_id'];
-                // 现金币复投
-                $data['action_type'] = 25;
-                // 时间
-                $data['pdt'] = $nowdate;
-                // 复投金额
-                $data['epoints'] = $money;
-                $data['did'] = 0;
-                $data['allp'] = 0;
-                $data['bz'] = '25';
-                // 添加历史记录表数据
-                $history->create();
-                $history->add($data);
+                $fck->addencAdd($fck_rs['id'], $fck_rs['user_id'], $money, 25, 0, 0, 0, '25',$fck_rs['agent_use'] - $money,$fck_rs['agent_cash'],$fck_rs['agent_xf'],$fck_rs['agent_active']);
+//                 // ID
+//                 $data['uid'] = $fck_rs['id'];
+//                 // 会员编号
+//                 $data['user_id'] = $fck_rs['user_id'];
+//                 // 现金币复投
+//                 $data['action_type'] = 25;
+//                 // 时间
+//                 $data['pdt'] = $nowdate;
+//                 // 复投金额
+//                 $data['epoints'] = $money;
+//                 $data['did'] = 0;
+//                 $data['allp'] = 0;
+//                 $data['bz'] = '25';
+//                 // 添加历史记录表数据
+//                 $history->create();
+//                 $history->add($data);
+                
                 // 更新会员表数据
                 if ($fck_rs['net_status'] == 'b'){
                     $netb->query("update xt_netB set futou_danshu=futou_danshu+" . $sum .",sum_bag=sum_bag+".$sum. " where uid=" . $id);
@@ -905,28 +915,29 @@ class AgentAction extends CommonAction
                 // 见点奖
 //                 $fck->jiandianjiang($fck_rs['p_path'], $fck_rs['user_id']);
             } else if ($futou == 4) {
-                // ID
-                $data['uid'] = $fck_rs['id'];
-                // 会员编号
-                $data['user_id'] = $fck_rs['user_id'];
-                // 电子币复投
-                $data['action_type'] = 29;
-                // 时间
-                $data['pdt'] = $nowdate;
-                // 复投金额
-                $data['epoints'] = $money;
-                $data['did'] = 0;
-                $data['allp'] = 0;
-                $data['bz'] = '29';
-                // 添加历史记录表数据
-                $history->create();
-                $history->add($data);
+                $fck->addencAdd($fck_rs['id'], $fck_rs['user_id'], $money, 29, 0, 0, 0, '29',$fck_rs['agent_use'],$fck_rs['agent_cash']- $tmpMoney,$fck_rs['agent_xf'],$fck_rs['agent_active']-$tmpAcMoney);
+//                 // ID
+//                 $data['uid'] = $fck_rs['id'];
+//                 // 会员编号
+//                 $data['user_id'] = $fck_rs['user_id'];
+//                 // 电子币复投
+//                 $data['action_type'] = 29;
+//                 // 时间
+//                 $data['pdt'] = $nowdate;
+//                 // 复投金额
+//                 $data['epoints'] = $money;
+//                 $data['did'] = 0;
+//                 $data['allp'] = 0;
+//                 $data['bz'] = '29';
+//                 // 添加历史记录表数据
+//                 $history->create();
+//                 $history->add($data);
                 // 更新会员表数据
                 if ($fck_rs['net_status'] == 'b'){
                     $netb->query("update xt_netB set futou_danshu=futou_danshu+" . $sum .",sum_bag=sum_bag+".$sum. " where uid=" . $id);
-                    $result = $fck->query("update __TABLE__ set agent_cash=agent_cash-$money where id=" . $id);
+                    $result = $fck->query("update __TABLE__ set agent_cash=agent_cash-$tmpMoney,agent_active=agent_active-$tmpAcMoney where id=" . $id);
                 } else {
-                    $result = $fck->query("update __TABLE__ set is_cc=is_cc+" . $sum .",jia_nums=jia_nums+1". ",agent_cash=agent_cash-$money where id=" . $id);
+                    $result = $fck->query("update __TABLE__ set is_cc=is_cc+" . $sum .",jia_nums=jia_nums+1". ",agent_cash=agent_cash-$tmpMoney,agent_active=agent_active-$tmpAcMoney where id=" . $id);
                 }
                 // 添加物流信息
                 $pora = M('product');
@@ -968,9 +979,9 @@ class AgentAction extends CommonAction
                 $jiadan->query("update xt_jiadan set danshu=danshu+" . $sum ." where uid=" . $fck_rs['id']);
             }
             // 推荐奖
-            $fck->tuijj($fck_rs['re_path'], $fck_rs['user_id'], $money);
+            $fck->tuijj($fck_rs['re_path'], $fck_rs['user_id'], $money/2);
             // 领导奖
-            $fck->lingdao22($fck_rs['p_path'], $fck_rs['user_id'], $money);
+            $fck->lingdao22($fck_rs['p_path'], $fck_rs['user_id'], $money/2);
             // 领导级别统计
             $fck->sh_level($fck_rs['p_path']);
             
@@ -1770,11 +1781,17 @@ class AgentAction extends CommonAction
                 $frs = $fck->where($frs_where)->find();
                 
                 $us_money = $rs['agent_cash'];
+                $ac_money = $rs['agent_active'];
                 $money_b = $voo['cpzj'];
                 
-                if ($us_money < $money_b) {
+                if ($us_money < $money_b * 0.7) {
                     $bUrl = __URL__ . '/menber';
-                    $this->_box(0, '电子余额不足！', $bUrl, 1);
+                    $this->_box(0, '电子积分余额不足！', $bUrl, 1);
+                    exit();
+                }
+                if ($ac_money < $money_b * 0.3) {
+                    $bUrl = __URL__ . '/menber';
+                    $this->_box(0, '激活积分余额不足！', $bUrl, 1);
                     exit();
                 }
                 $r_id = $rs['id'];
@@ -1784,7 +1801,9 @@ class AgentAction extends CommonAction
                 $is_agent = $rs['is_agent'];
                 if ($reg_money == 1) {
                     
-                    $result = $fck->execute("update __TABLE__ set `agent_cash`=agent_cash-" . $money_b . " where `id`=" . $ID);
+//                     $result = $fck->execute("update __TABLE__ set `agent_cash`=agent_cash-" . $money_b . " where `id`=" . $ID);
+                    
+                    $result = $fck->execute("update __TABLE__ set `agent_cash`=agent_cash-" . ($money_b * 0.7).",`agent_active`=agent_active-".($money_b * 0.3) . " where `id`=" . $ID);
                 }
                 if ($result) {
                     if ($reg_money == 1) {
@@ -2404,124 +2423,6 @@ class AgentAction extends CommonAction
         }
     }
 
-    private function _adminAgentsConfirm2($XGid = 0)
-    {
-        // ==========================================确认申请服务中心
-        if ($_SESSION['UrlPTPass'] == 'MyssGuanXiG') {
-            $fck = D('Fck');
-            
-            $fee = M('fee');
-            $fee_rs = $fee->field('str9')->find(1);
-            $str9 = $fee_rs['str9'];
-            $where['id'] = array(
-                'in',
-                $XGid
-            );
-            $where['is_cha'] = 1;
-            $rs = $fck->where($where)
-                ->field('*')
-                ->select();
-            
-            $data = array();
-            $history = M('history');
-            $rewhere = array();
-            // $nowdate = strtotime(date('c'));
-            $nowdate = time();
-            $jiesuan = 0;
-            foreach ($rs as $rss) {
-                
-                $myreid = $rss['re_id'];
-                $shoplx = $rss['shoplx'];
-                
-                $data['user_id'] = $rss['user_id'];
-                $data['uid'] = $rss['uid'];
-                $data['action_type'] = '申请油卡';
-                $data['pdt'] = $nowdate;
-                $data['epoints'] = $rss['agent_no'];
-                $data['bz'] = '申请油卡';
-                $data['did'] = 0;
-                $data['allp'] = 0;
-                $history->add($data);
-                $sel = $rss['jia_nums'];
-                if ($sel == 1) {
-                    $fck->query("UPDATE __TABLE__ SET is_cha=2,is_p=2,jia_nums=0 where id=" . $rss['id']); // 开通
-                }
-                if ($sel == 2) {
-                    $fck->query("UPDATE __TABLE__ SET is_cha=2,is_c=2,jia_nums=0 where id=" . $rss['id']); // 开通
-                }
-                if ($sel == 3) {
-                    $fck->query("UPDATE __TABLE__ SET is_cha=2,is_cty=2,jia_nums=0 where id=" . $rss['id']); // 开通
-                }
-            }
-            
-            unset($fck, $where, $rs, $history, $data, $rewhere);
-            $bUrl = __URL__ . '/adminAgents2';
-            
-            $this->_box(1, '确认申请！', $bUrl, 1);
-            
-            exit();
-        } else {
-            $this->error('错误！');
-            exit();
-        }
-    }
-
-    private function _adminAgentsConfirm1($XGid = 0)
-    {
-        // ==========================================确认申请服务中心
-        if ($_SESSION['UrlPTPass'] == 'MyssGuanXiGu') {
-            $fck = D('Fck');
-            
-            $fee = M('fee');
-            $fee_rs = $fee->field('str9')->find(1);
-            $str9 = $fee_rs['str9'];
-            $where['id'] = array(
-                'in',
-                $XGid
-            );
-            $where['is_cc'] = 1;
-            $rs = $fck->where($where)
-                ->field('*')
-                ->select();
-            
-            $data = array();
-            $history = M('history');
-            $rewhere = array();
-            // $nowdate = strtotime(date('c'));
-            $nowdate = time();
-            $jiesuan = 0;
-            foreach ($rs as $rss) {
-                
-                $myreid = $rss['re_id'];
-                $shoplx = $rss['shoplx'];
-                
-                $data['user_id'] = $rss['user_id'];
-                $data['uid'] = $rss['uid'];
-                $data['action_type'] = '申请油卡';
-                $data['pdt'] = $nowdate;
-                $data['epoints'] = $rss['agent_no'];
-                $data['bz'] = '申请油卡';
-                $data['did'] = 0;
-                $data['allp'] = 0;
-                $history->add($data);
-                $fck->query("UPDATE __TABLE__ SET is_cc=2,r_nums=r_nums+1 where id=" . $rss['id']); // 开通
-                if ($rss['is_fenh'] == 0) {
-                    $fck->youka($rss['id'], $rss['user_id']);
-                }
-            }
-            
-            unset($fck, $where, $rs, $history, $data, $rewhere);
-            $bUrl = __URL__ . '/adminAgents1';
-            
-            $this->_box(1, '确认申请！', $bUrl, 1);
-            
-            exit();
-        } else {
-            $this->error('错误！');
-            exit();
-        }
-    }
-
     private function _adminAgentsConfirm3($XGid = 0)
     {
         // ==========================================确认申请服务中心
@@ -2537,7 +2438,7 @@ class AgentAction extends CommonAction
                 ->select();
             
             $data = array();
-            $history = M('history');
+//             $history = M('history');
             $rewhere = array();
             // $nowdate = strtotime(date('c'));
             $nowdate = time();
@@ -2547,15 +2448,16 @@ class AgentAction extends CommonAction
                 $myreid = $rss['re_id'];
                 $shoplx = $rss['shoplx'];
                 
-                $data['user_id'] = $rss['user_id'];
-                $data['uid'] = $rss['uid'];
-                $data['action_type'] = '申请成为服务中心';
-                $data['pdt'] = $nowdate;
-                $data['epoints'] = $rss['agent_no'];
-                $data['bz'] = '申请成为服务中心';
-                $data['did'] = 0;
-                $data['allp'] = 0;
-                $history->add($data);
+//                 $data['user_id'] = $rss['user_id'];
+//                 $data['uid'] = $rss['uid'];
+//                 $data['action_type'] = '申请成为服务中心';
+//                 $data['pdt'] = $nowdate;
+//                 $data['epoints'] = $rss['agent_no'];
+//                 $data['bz'] = '申请成为服务中心';
+//                 $data['did'] = 0;
+//                 $data['allp'] = 0;
+//                 $history->add($data);
+                $fck->addencAdd($rss['id'], $rss['user_id'], $rss['agent_no'], '申请成为服务中心', 0, 0, 0,'申请成为服务中心',$rss['agent_use'],$rss['agent_cash'],$rss['agent_xf'],$rss['agent_active']);
                 
                 $fck->query("UPDATE __TABLE__ SET is_agent=2,adt=$nowdate,agent_max=0 where id=" . $rss['id']); // 开通
             }
@@ -2584,7 +2486,7 @@ class AgentAction extends CommonAction
                 ->select();
             
             $data = array();
-            $history = M('history');
+//             $history = M('history');
             $rewhere = array();
             // $nowdate = strtotime(date('c'));
             $nowdate = time();
@@ -2594,16 +2496,16 @@ class AgentAction extends CommonAction
                 $myreid = $rss['re_id'];
                 $shoplx = $rss['shoplx'];
                 
-                $data['user_id'] = $rss['user_id'];
-                $data['uid'] = $rss['uid'];
-                $data['action_type'] = '申请成为商家';
-                $data['pdt'] = $nowdate;
-                $data['epoints'] = $rss['agent_no'];
-                $data['bz'] = '申请成为商家';
-                $data['did'] = 0;
-                $data['allp'] = 0;
-                $history->add($data);
-                
+//                 $data['user_id'] = $rss['user_id'];
+//                 $data['uid'] = $rss['uid'];
+//                 $data['action_type'] = '申请成为商家';
+//                 $data['pdt'] = $nowdate;
+//                 $data['epoints'] = $rss['agent_no'];
+//                 $data['bz'] = '申请成为商家';
+//                 $data['did'] = 0;
+//                 $data['allp'] = 0;
+//                 $history->add($data);
+                $fck->addencAdd($rss['id'], $rss['user_id'], $rss['agent_no'], '申请成为商家', 0, 0, 0,'申请成为商家',$rss['agent_use'],$rss['agent_cash'],$rss['agent_xf'],$rss['agent_active']);
                 $fck->query("UPDATE __TABLE__ SET l_nums=2,adt=$nowdate,agent_max=0 where id=" . $rss['id']); // 开通
             }
             unset($fck, $where, $rs, $history, $data, $rewhere);

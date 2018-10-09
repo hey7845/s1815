@@ -6,7 +6,6 @@ class UserAction extends CommonAction{
 		$this->_inject_check(0);//调用过滤函数
 		$this->_Config_name();//调用参数
 		$this->_checkUser();
-		$this->check_us_gq();
 	}
 	
 	public function cody(){

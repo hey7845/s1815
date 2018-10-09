@@ -1,4 +1,4 @@
-<include file="Public:header" />
+<include file="Public:xyHead" />
 <load href="__PUBLIC__/Js/UserJs.js" />
 <script language=javascript src="__PUBLIC__/Js/wpCalendar.js"></script>
 <div class="ncenter_box">
@@ -159,16 +159,6 @@
           <td align="right">联系电话：</td>
           <td><input name="UserTel" type="text" id="UserTel" value="{$vo['user_tel']}" maxlength="45" size="20"  class="ipt" onkeyup="javascript:Null_Full(this.name)" onfocus="notice('10','')"  onblur="notice('10','none')" /></td>
           <td><div id="UserTel1" class="info"><div id="10" class="focus_r" style="display:none;"><div class="msg_tip">请输入您的联系电话。</div></div></div></td>
-        </tr>
-        <tr>
-          <td align="right">微信：</td>
-          <td><input name="email" type="text" id="email" value="{$vo['email']}" maxlength="45" size="20"  class="ipt" onkeyup="javascript:Email(this.name)" onfocus="notice('11','')"  onblur="notice('11','none')" /></td>
-          <td><div id="email1" class="info"><div id="11" class="focus_r" style="display:none;"><div class="msg_tip">请输入您的 E-Mail。</div></div></div></td>
-        </tr>
-        <tr>
-          <td align="right">支付宝：</td>
-          <td><input name="qq" type="text" id="qq" value="{$vo['qq']}" maxlength="45" size="20"  class="ipt" onkeyup="javascript:Null_Int(this.name)" onfocus="notice('12','')"  onblur="notice('12','none')" /></td>
-          <td><div id="qq1" class="info"><div id="12" class="focus_r" style="display:none;"><div class="msg_tip">请输入您的 Q Q。</div></div></div></td>
         </tr>
         <tr>
           <td colspan="3" style="height:5px;"><hr></td>

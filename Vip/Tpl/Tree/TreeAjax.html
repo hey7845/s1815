@@ -1,43 +1,25 @@
-<include file="Public:header" />
+<include file="Public:xyHead" />
 <style>
 .treep1{display:;}
 .treep2{display:none;}
 .sub_bav td {
     border: 0px solid #D0D0D0 !important;
     border-collapse: collapse;
-    padding: 2px;
+    padding: 0px;
 }
-table{ border:0px !important; padding:0px !important;}
-td{ border:0px !important; padding:0px !important;}
-p,div{ line-height:0px !important;}
 </style>
 
 <load href="__PUBLIC__/Js/tree.js" />
 <div class="ncenter_box">
-<div class="accounttitle"><h1>推荐关系图 </h1></div>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <form method='post' action="__URL__/TreeAjax/">
   <tr>
-    <td height="30">&nbsp;&nbsp;会员编号：
+    <td height="50">&nbsp;&nbsp;会员编号：
     <input type="text" name="UserID" title="帐号查询"  >
     <input type="submit" name="Submit" value="查询" class="btn1"/>
-    &nbsp;&nbsp;&nbsp;&nbsp;
-    团队人数：<b>{$all_nn}</b> 人
     </td>
   </tr>
   </form>
- <!-- <eq name="Mmid" value="1">
-  <form id="form3" name="form3" method="post" action="__URL__/yidongTwo">
-  <tr>
-    <td>将会员
-    <input name="sUserID" type="text" id="sUserID" maxlength="20" />
-    移至 会员编号：
-    <input name="yUserID" type="text" id="yUserID" maxlength="20" />
-    <input type="submit" name="button" id="button" value="确定" class="btn1"/>
-    </td>
-  </tr>
-  </form>
-  </eq>-->
   <tr>
     <td>{$myStr}</td>
   </tr>

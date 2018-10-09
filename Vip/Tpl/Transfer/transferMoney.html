@@ -1,4 +1,4 @@
-<include file="Public:header" />
+<include file="Public:xyHead" />
 <load href="__PUBLIC__/Js/Ajax/ThinkAjax-1.js" />
 <load href="__PUBLIC__/Js/UserJs.js" />
 <script language='javascript'>
@@ -24,7 +24,7 @@ function yhServer(Ful){
 }
 </script>
 <div class="ncenter_box">
-<div class="accounttitle"><h1>账户转账 </h1></div>
+<div class="accounttitle"><h4>账户转账 </h4></div>
     <form name="form1" method="post" action="__URL__/transferMoneyAC" onSubmit="{return CheckForm();}">
       <table width="100%" border="0" cellpadding="3" cellspacing="0">
           <tr>
@@ -49,6 +49,7 @@ function yhServer(Ful){
       		   	<option value="3"> 消费积分 转 复投积分 </option>
       		   <?php endif; ?>
       		    <option value="4"> 电子积分 转给 其他会员 </option>
+      		    <option value="5"> 激活积分 转给 其他会员 </option>
       		    <!-- <option value="5"> M币 转  重销积分 </option> -->
             </select>
             </td>

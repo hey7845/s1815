@@ -24,7 +24,7 @@ print "\r\n";
 $history_result = mysqli_query($con,$history_sql);
 if (mysqli_num_rows($history_result) < 1) {
     // 查询会员表数据
-    $fck_sql = "select id,is_fenh,u_level,re_nums,user_id,agent_sfw,agent_sf,agent_sfo,day_feng,f4,is_cc,tz_nums,net_status,net_ispay_a,net_ispay_b from xt_fck where id>0 and is_pay=1";
+    $fck_sql = "select id,is_fenh,u_level,re_nums,user_id,agent_sfw,agent_sf,agent_sfo,day_feng,f4,is_cc,tz_nums,net_status,net_ispay_a,net_ispay_b from xt_fck where id>0 and is_pay=1 and is_fenh = 0";
     $fck_result = mysqli_query($con,$fck_sql);
     if (!empty($fck_result)) {
         // 获取数据

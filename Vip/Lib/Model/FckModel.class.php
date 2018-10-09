@@ -5,7 +5,7 @@ class FckModel extends CommonModel
     // 数据库名称
     public function xiangJiao($Pid = 0, $DanShu = 1)
     {
-        // ========================================== 往上统计单数
+        //  往上统计单数
         $where = array();
         $where['id'] = $Pid;
         $field = 'treeplace,father_id';
@@ -85,7 +85,7 @@ class FckModel extends CommonModel
     // }
     // unset($where,$field,$vo);
     // }
-    public function addencAdd($ID = 0, $inUserID = 0, $money = 0, $name = null, $UID = 0, $time = 0, $acttime = 0, $bz = "")
+    public function addencAdd($ID = 0, $inUserID = 0, $money = 0, $name = null, $UID = 0, $time = 0, $acttime = 0, $bz = "", $agent_use = 0, $agent_cash = 0, $agent_xf = 0, $agent_active = 0)
     {
         // 添加 到数据表
         if ($UID > 0) {
@@ -124,6 +124,10 @@ class FckModel extends CommonModel
         if ($acttime > 0) {
             $data['act_pdt'] = $acttime;
         }
+        $data['agent_use'] = $agent_use;
+        $data['agent_cash'] = $agent_cash;
+        $data['agent_xf'] = $agent_xf;
+        $data['agent_active'] = $agent_active;
         $result = $history->add($data);
         unset($data, $history);
     }
@@ -535,17 +539,21 @@ class FckModel extends CommonModel
             }
             // 报单中心的推荐人ID
             $uid = $frs['re_id'];
-            $one = $this->where('id=' . $uid . ' and is_pay=1 ')
-                ->field('id,user_id,is_agent')
-                ->find();
-            // 如果推荐人也为报单中心
-            if ($one['is_agent'] == 2) {
-                // 报单中心推报单中心的奖励金额
-                $money = bcmul($cpzj, $s7, 2);
-                if ($money > 0) {
-                    $this->rw_bonus($one['id'], $inUserID, 7, $money);
+            $re_path = $frs['re_path'];
+            $lirs = $this->where('id in (0' . $re_path . '0)  and is_fenh=0 and is_pay=1')->order('id desc')->select();
+            // 循环检索报单中心上面的报单中心分配报单中心推报单中心的奖励
+            foreach ($lirs as $lrs) {
+                // 如果推荐人也为报单中心
+                if ($lrs['is_agent'] == 2) {
+                    // 报单中心推报单中心的奖励金额
+                    $money = bcmul($cpzj, $s7, 2);
+                    if ($money > 0) {
+                        $this->rw_bonus($lrs['id'], $inUserID, 7, $money);
+                        break;
+                    }
                 }
             }
+            
         }
         unset($fee, $fee_rs, $frs, $s14);
     }
@@ -602,65 +610,67 @@ class FckModel extends CommonModel
             if (empty($ach)) {
                 $ach = 0.00;
             }
-            // 左右区各有一个推荐
-            $countleft = 0;
-            $countright = 0;
-            $tree0 = $this->where('treeplace=0 and father_id=' . $myid)->field('id,user_id,re_id')->find();
-            $tree1 = $this->where('treeplace=1 and father_id=' . $myid)->field('id,user_id,re_id')->find();
-            if ($tree0['re_id'] == $myid) {
-                $jiadan0Tmp = $jiadan->where("uid=".$tree0["id"]." and is_pay = 0")->select();
-                if ($jiadan0Tmp) {
-                    $countleft += 1;
-                } else {
-                    $tree0Result = $this->where("p_path like '%,{$tree0['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
-                    if ($tree0Result) {
-                        foreach ($tree0Result as $value) {
-                            $jiadan0Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
-                            if ($jiadan0Tmp) {
-                                $countleft += 1;
-                            }
-                        }
-                    }
-                }
-            } else {
-                $tree0Result = $this->where("p_path like '%,{$tree0['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
-                if ($tree0Result) {
-                    foreach ($tree0Result as $value) {
-                        $jiadan0Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
-                        if ($jiadan0Tmp) {
-                            $countleft += 1;
-                        }
-                    }
-                }
-            }
-            if ($tree1['re_id'] == $myid) {
-                $jiadan1Tmp = $jiadan->where("uid=".$tree1["id"]." and is_pay = 0")->select();
-                if ($jiadan1Tmp) {
-                    $countright += 1;
-                } else {
-                    $tree1Result = $this->where("p_path like '%,{$tree1['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
-                    if ($tree1Result > 0) {
-                        foreach ($tree1Result as $value) {
-                            $jiadan1Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
-                            if ($jiadan1Tmp) {
-                                $countright += 1;
-                            }
-                        }
-                    }
-                }
-            } else {
-                $tree1Result = $this->where("p_path like '%,{$tree1['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
-                if ($tree1Result > 0) {
-                    foreach ($tree1Result as $value) {
-                        $jiadan1Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
-                        if ($jiadan1Tmp) {
-                            $countright += 1;
-                        }
-                    }
-                }
-            }
-            
-            if ($countleft >= 1 && $countright >= 1) {
+//             // 左右区各有一个推荐
+//             $countleft = 0;
+//             $countright = 0;
+//             $tree0 = $this->where('treeplace=0 and father_id=' . $myid)->field('id,user_id,re_id')->find();
+//             $tree1 = $this->where('treeplace=1 and father_id=' . $myid)->field('id,user_id,re_id')->find();
+//             if ($tree0['re_id'] == $myid) {
+//                 $jiadan0Tmp = $jiadan->where("uid=".$tree0["id"]." and is_pay = 0")->select();
+//                 if ($jiadan0Tmp) {
+//                     $countleft += 1;
+//                 } else {
+//                     $tree0Result = $this->where("p_path like '%,{$tree0['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
+//                     if ($tree0Result) {
+//                         foreach ($tree0Result as $value) {
+//                             $jiadan0Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
+//                             if ($jiadan0Tmp) {
+//                                 $countleft += 1;
+//                             }
+//                         }
+//                     }
+//                 }
+//             } else {
+//                 $tree0Result = $this->where("p_path like '%,{$tree0['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
+//                 if ($tree0Result) {
+//                     foreach ($tree0Result as $value) {
+//                         $jiadan0Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
+//                         if ($jiadan0Tmp) {
+//                             $countleft += 1;
+//                         }
+//                     }
+//                 }
+//             }
+//             if ($tree1['re_id'] == $myid) {
+//                 $jiadan1Tmp = $jiadan->where("uid=".$tree1["id"]." and is_pay = 0")->select();
+//                 if ($jiadan1Tmp) {
+//                     $countright += 1;
+//                 } else {
+//                     $tree1Result = $this->where("p_path like '%,{$tree1['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
+//                     if ($tree1Result > 0) {
+//                         foreach ($tree1Result as $value) {
+//                             $jiadan1Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
+//                             if ($jiadan1Tmp) {
+//                                 $countright += 1;
+//                             }
+//                         }
+//                     }
+//                 }
+//             } else {
+//                 $tree1Result = $this->where("p_path like '%,{$tree1['id']},%' and re_id=" . $myid)->field("id,user_id")->select();
+//                 if ($tree1Result > 0) {
+//                     foreach ($tree1Result as $value) {
+//                         $jiadan1Tmp = $jiadan->where("uid=".$value["id"]." and is_pay = 0")->select();
+//                         if ($jiadan1Tmp) {
+//                             $countright += 1;
+//                         }
+//                     }
+//                 }
+//             }
+            // 推荐人数 >= 2
+            $re_count = $this->where('re_id=' . $myid)->count();
+//             if ($countleft >= 1 && $countright >= 1) {
+            if ($re_count >= 2) {
                 // 合伙人
                 if ($sh_level < 1) {
 //                     $one11 = $this->where('treeplace=0 and father_id=' . $myid)
@@ -1025,60 +1035,6 @@ class FckModel extends CommonModel
         }
     }
     
-    // 奖金池
-    public function jjc($user_id, $sum)
-    {
-        $fee = M('Fee');
-        $fee_rs = $fee->field('str4')->find(1);
-        $str4 = explode("|", $fee_rs['str4']);
-        
-        $fck = M('Fck');
-        
-        $list = $fck->where('u_level>=9')
-            ->field('id,user_id,gdt,u_level')
-            ->select();
-        
-        foreach ($list as $key => $value) {
-            
-            $uLevel = $value['u_level'];
-            
-            if ($uLevel == 9) {
-                $pice = $str4[0];
-            }
-            if ($uLevel == 10) {
-                $pice = $str4[0] + $str4[1];
-            }
-            if ($uLevel == 11) {
-                $pice = $str4[0] + $str4[1] + $str4[2];
-            }
-            if ($uLevel == 12) {
-                $pice = $str4[0] + $str4[1] + $str4[2] + $str4[3];
-            }
-            $money = $sum * $pice / 100;
-            if ($money) {
-                $this->rw_bonus($value['id'], $user_id, 6, $money);
-                $this->execute("update __TABLE__ set gdt={$nowdate} where id=" . $value['id']);
-            }
-        }
-    }
-    
-    // 扶持奖
-    public function fuchi($fid)
-    {
-        $fee = M('fee');
-        $fck = M('fck');
-        $fee_rs = $fee->field('s12')->find(1);
-        $s12 = $fee_rs['s12'];
-        $count = $fck->where('father_id=' . $fid)->count();
-        $one = $fck->where('id=' . $fid)->find();
-        if ($count >= 2) {
-            $money_count = $s12;
-            $this->rw_bonus($one['father_id'], $one['user_id'], 3, $money_count);
-            $this->jjc($one['user_id'], $money_count);
-        }
-        unset($fee, $fee_rs, $fck, $one, $count);
-    }
-    
     // 对碰奖
     public function duipeng($ppath, $level)
     {
@@ -1254,147 +1210,6 @@ class FckModel extends CommonModel
         }
     }
     
-    // 业绩,vip,周计算
-    public function yeji($ppath, $level, $money)
-    {
-        $fck = M('fck');
-        $lirs = $this->where('id in (0' . $ppath . '0)')
-            ->field('id,is_fenh,u_level,re_nums,user_id')
-            ->order('rdt desc')
-            ->select();
-        foreach ($lirs as $key => $v) {
-            if ($level >= 4) {
-                $this->execute("update __TABLE__ set vip4=vip4+1 where id=" . $v['id']);
-            }
-        }
-        
-        $nowdate = time();
-        $list = $fck->where('u_level>=5')
-            ->field('*')
-            ->select();
-        foreach ($list as $key => $value) {
-            $ulevel = $value['u_level'];
-            $l = $value['l'];
-            $r = $value['r'];
-            $ach = $value['ach'];
-            $re_nums = $value['re_nums'];
-            $zdt = $value['zdt'];
-            
-            $shang_l = $value['shang_l'];
-            $shang_r = $value['shang_r'];
-            $shang_nums = $value['shang_nums'];
-            $shang_ach = $value['shang_ach'];
-            
-            if ($zdt == 0) {
-                $zdt = $value['pdt'];
-            }
-            // $outdate=$t+60*60*24*30;
-            $outdate = $zdt + 30;
-            if ($nowdate >= $outdate) {
-                // 新增
-                $ls = $l - $shang_l;
-                $rs = $r - $shang_r;
-                $num = $re_nums - $shang_nums;
-                if ($ulevel == 5) {
-                    if ($ls >= 6 && $rs >= 6 && $num >= 6) {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},tz_nums=tz_nums+1 where id=" . $value['id']);
-                    } else {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},tz_nums=0 where id=" . $value['id']);
-                    }
-                }
-                
-                if ($ulevel == 6) {
-                    if ($ls >= 8 && $rs >= 8 && $num >= 6) {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},tz_nums=tz_nums+1 where id=" . $value['id']);
-                    } else {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},tz_nums=0 where id=" . $value['id']);
-                    }
-                }
-                
-                if ($ulevel == 7) {
-                    if ($ls >= 12 && $rs >= 12 && $num >= 6) {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},tz_nums=tz_nums+1 where id=" . $value['id']);
-                    } else {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},tz_nums=0 where id=" . $value['id']);
-                    }
-                }
-                
-                if ($ulevel == 8) {
-                    if ($ls >= 18 && $rs >= 18 && $num >= 6) {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},tz_nums=tz_nums+1 where id=" . $value['id']);
-                    } else {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},tz_nums=0 where id=" . $value['id']);
-                    }
-                }
-                
-                if ($ulevel >= 9) {
-                    $res = $fck->where('father_id=' . $value['id'])
-                        ->order('id desc')
-                        ->select();
-                    $l_nums = $res[0]['ach'] + $res[0]['cpzj'];
-                    $r_nums = $lis[1]['ach'] + $res[0]['cpzj'];
-                    $achs = $ach - $shang_ach;
-                }
-                
-                if ($ulevel == 9) {
-                    if ($l_nums > 20000 || $r_nums > 20000) {
-                        $one = 1;
-                    } else {
-                        $one = 0;
-                    }
-                    
-                    if ($ls >= 24 && $rs >= 24 && $num >= 6 && $achs >= 40000 && $one == 0) {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},shang_ach={$achs},jia_nums=jia_nums+1 where id=" . $value['id']);
-                    } else {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},shang_ach={$achs},jia_nums=0 where id=" . $value['id']);
-                    }
-                }
-                
-                if ($ulevel == 10) {
-                    if ($l_nums > 30000 || $r_nums > 30000) {
-                        $one = 1;
-                    } else {
-                        $one = 0;
-                    }
-                    
-                    if ($ls >= 36 && $rs >= 36 && $num >= 6 && $achs >= 60000 && $one == 0) {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},shang_ach={$achs},jia_nums=jia_nums+1 where id=" . $value['id']);
-                    } else {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},shang_ach={$achs},jia_nums=0 where id=" . $value['id']);
-                    }
-                }
-                
-                if ($ulevel == 11) {
-                    if ($l_nums > 80000 || $r_nums > 80000) {
-                        $one = 1;
-                    } else {
-                        $one = 0;
-                    }
-                    
-                    if ($ls >= 50 && $rs >= 50 && $num >= 6 && $achs >= 150000 && $one == 0) {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},shang_ach={$achs},jia_nums=jia_nums+1 where id=" . $value['id']);
-                    } else {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},shang_ach={$achs},jia_nums=0 where id=" . $value['id']);
-                    }
-                }
-                
-                if ($ulevel == 12) {
-                    if ($l_nums > 160000 || $r_nums > 160000) {
-                        $one = 1;
-                    } else {
-                        $one = 0;
-                    }
-                    
-                    if ($ls >= 75 && $rs >= 75 && $num >= 6 && $achs >= 300000 && $one == 0) {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},shang_ach={$achs},jia_nums=jia_nums+1 where id=" . $value['id']);
-                    } else {
-                        $thi->execute("update __TABLE__ set shang_l={$ls},shang_r={$rs},shang_nums={$num},shang_ach={$achs},jia_nums=0 where id=" . $value['id']);
-                    }
-                }
-            }
-        }
-    }
-
     public function getReid($id)
     {
         $rs = $this->where('id=' . $id)
@@ -1405,241 +1220,6 @@ class FckModel extends CommonModel
             're_nums' => $rs['re_nums'],
             'is_fenh' => $rs['is_fenh']
         );
-    }
-    
-    // 劳务奖b3
-    public function guanglij($repath, $inUserID = 0, $money = 0)
-    {
-        $fee = M('fee');
-        $fee_rs = $fee->field('s7')->find(1);
-        $s7 = explode("|", $fee_rs['s7']); // 代数
-        
-        $lirs = $this->where('id in (0' . $repath . '0)')
-            ->field('id,u_level,re_nums,is_fenh')
-            ->order('re_level desc')
-            ->limit(1)
-            ->select();
-        
-        $i = 1;
-        foreach ($lirs as $lrs) {
-            $myid = $lrs['id'];
-            $is_fenh = $lrs['is_fenh'];
-            $re_nums = $lrs['re_nums'];
-            
-            if ($re_nums > 10) {
-                $re_nums = 10;
-            }
-            
-            $sss = $re_nums - 1;
-            $myccc = $s7[$sss] / 100;
-            
-            $money_count = bcmul($myccc, $money, 2);
-            
-            if ($money_count > 0 && $is_fenh == 0) {
-                $this->rw_bonus($myid, $inUserID, 5, $money_count);
-            }
-            
-            $i ++;
-        }
-        unset($fee, $fee_rs, $s15, $lirs, $lrs);
-    }
-    
-    // 互助奖(加权平分)
-    public function Huzhufenhong($uid, $relevel, $inUserID, $money)
-    {
-        $fee = M('fee');
-        $fee_rs = $fee->field('s12')->find(1);
-        $s12 = $fee_rs['s12'];
-        
-        $prii = $s12 / 100;
-        $b5_money = bcmul($prii, $money, 2);
-        $max_re_level = $relevel + 2;
-        $where1 = "is_pay>0 and re_path like '%," . $uid . ",%' and re_level<=" . $max_re_level;
-        $rs_count1 = $this->where($where1)->count();
-        if ($rs_count1 > 0) {
-            $rs = $this->where($where1)->select();
-            foreach ($rs as $vo) {
-                $money_count = 0;
-                $myid = $vo['id'];
-                $mis_fenh = $vo['is_fenh'];
-                $money_count = $b5_money / $rs_count1;
-                if ($money_count > 0 && $mis_fenh == 0) {
-                    $this->rw_bonus($myid, $inUserID, 6, $money_count);
-                }
-            }
-        }
-        unset($where1, $rs_count1, $rs);
-    }
-    
-    // 每日分红
-    public function mr_fenhong($type = 0)
-    {
-        $now_time = strtotime(date('Y-m-d'));
-        $fee = M('fee');
-        $promo = M('promo');
-        $fee_rs = $fee->field('s1,s3,f_time')->find(1);
-        $s15 = $fee_rs['s1'] / 100;
-        $s3 = explode("|", $fee_rs['s3']);
-        
-        $f_time = $fee_rs['f_time'];
-        if ($f_time < $now_time || $type == 1) {
-            $result = $fee->execute("update __TABLE__ set f_time=" . $now_time . " where id=1 and f_time=" . $f_time);
-            if ($result || $type == 1) {
-                $where = "is_pay=1 and is_fenh=0 and is_lockfh=0 and fanli=0 and fanli_time<" . $now_time;
-                $list = $this->where($where)
-                    ->field('id,user_id,u_level,fanli_money,xy_money,fanli_time,re_path,cpzj')
-                    ->select();
-                foreach ($list as $lrs) {
-                    $myid = $lrs['id'];
-                    $inUserID = $lrs['user_id'];
-                    $fanli_money = $lrs['fanli_money'];
-                    $xy_money = $lrs['xx_money'];
-                    $fanli_time = $lrs['fanli_time'];
-                    $mycpzj = $lrs['cpzj'];
-                    $myulv = $lrs['u_level'];
-                    $repath = $lrs['re_path'];
-                    
-                    if ($myulv == 1) {
-                        $beii = 2;
-                    } elseif ($myulv == 2) {
-                        $beii = 2;
-                    } elseif ($myulv == 3) {
-                        $beii = 2;
-                    } elseif ($myulv == 4) {
-                        $beii = 2;
-                    } elseif ($myulv == 5) {
-                        $beii = 2;
-                    }
-                    
-                    // $pcount = $promo -> where('danshu=0 and uid='.$myid)->count();
-                    // if($pcount>0){
-                    // $small_level = $promo->where('danshu=0 and uid='.$myid)->min('u_level');
-                    // $mycpzj = $s3[$small_level-1];
-                    // }
-                    
-                    $maxfenhong = $mycpzj * $beii;
-                    
-                    $money_count = bcmul($s15, $mycpzj, 2);
-                    
-                    $all_g = $fanli_money + $money_count;
-                    if ($all_g >= $maxfenhong) {
-                        if ($fanli_money < $maxfenhong) {
-                            $money_count = $maxfenhong - $fanli_money;
-                        } else {
-                            $money_count = 0;
-                        }
-                        $this->execute("update __TABLE__ set fanli=1 where id=" . $myid);
-                    }
-                    
-                    if ($now_time > $fanli_time) {
-                        $this->query("UPDATE __TABLE__ SET `fanli_time`=" . $now_time . " where `id`=" . $myid);
-                        if ($money_count > 0) {
-                            $this->query("UPDATE __TABLE__ SET `fanli_money`=fanli_money+" . $money_count . " where `id`=" . $myid);
-                            
-                            $this->rw_bonus($myid, $inUserID, 1, $money_count);
-                            // 领导奖
-                            $this->lingdaojiang($repath, $inUserID, $money_count);
-                        }
-                    }
-                }
-                unset($list, $lrs, $where);
-            }
-        }
-        unset($fee_rs);
-    }
-
-    public function jingtaibufa($uid, $money)
-    {
-        echo $now_time = strtotime(date('Y-m-d'));
-        $fee = M('fee');
-        $fee_rs = $fee->field('s1,s3,f_time')->find(1);
-        $s15 = $fee_rs['s1'] / 100;
-        $s3 = explode("|", $fee_rs['s3']);
-        
-        $where = "is_pay=1 and is_fenh=0 and is_lockfh=0 and fanli=0 and id=" . $uid;
-        $lrs = $this->where($where)
-            ->field('id,user_id,u_level,fanli_money,xy_money,fanli_time,re_path,cpzj')
-            ->find();
-        if ($lrs) {
-            $myid = $lrs['id'];
-            $inUserID = $lrs['user_id'];
-            $fanli_money = $lrs['fanli_money'];
-            $xy_money = $lrs['xy_money'];
-            // echo $fanli_time = $lrs['fanli_time'];
-            $mycpzj = $lrs['cpzj'];
-            $myulv = $lrs['u_level'];
-            $repath = $lrs['re_path'];
-            
-            if ($myulv == 1) {
-                $beii = 2;
-            } elseif ($myulv == 2) {
-                $beii = 2;
-            } elseif ($myulv == 3) {
-                $beii = 2;
-            } elseif ($myulv == 4) {
-                $beii = 2;
-            } elseif ($myulv == 5) {
-                $beii = 2;
-            }
-            
-            $maxfenhong = $mycpzj * $beii;
-            
-            if ($fanli_time < $now_time) {
-                $money_count = bcmul($s15, $mycpzj, 2);
-            } else {
-                $money_count = bcmul($s15, $money, 2);
-            }
-            
-            $all_g = $fanli_money + $money_count;
-            if ($all_g >= $maxfenhong) {
-                if ($fanli_money < $maxfenhong) {
-                    $money_count = $maxfenhong - $fanli_money;
-                } else {
-                    $money_count = 0;
-                }
-                $this->execute("update __TABLE__ set fanli=1 where id=" . $myid);
-            }
-            
-            if ($now_time > $fanli_time) {
-                $this->query("UPDATE __TABLE__ SET `fanli_time`=" . $now_time . " where `id`=" . $myid);
-            }
-            
-            if ($money_count > 0) {
-                $this->rw_bonus($myid, $inUserID, 1, $money_count);
-                // 领导奖
-                $this->lingdaojiang($repath, $inUserID, $money_count);
-            }
-        }
-    }
-    
-    // 层奖和对碰奖的日封顶
-    public function zfd_jj($uid, $money = 0)
-    {
-        $fee = M('fee');
-        $fee_rs = $fee->field('str1')->find();
-        $str1 = explode("|", $fee_rs['str1']); // 分红奖封顶
-        
-        $rs = $this->where('id=' . $uid)
-            ->field('u_level,day_feng')
-            ->find();
-        if ($rs) {
-            $day_feng = $rs['day_feng'];
-            $feng = $str1[$rs['u_level'] - 1];
-            if ($money > $feng) {
-                $money = $feng;
-            }
-            
-            if ($day_feng >= $feng) {
-                $money = 0;
-            } else {
-                $tt_money = $money + $day_feng;
-                if ($tt_money > $feng) {
-                    $money = $feng - $day_feng;
-                }
-            }
-        }
-        
-        return $money;
     }
     
     /**
@@ -1743,88 +1323,6 @@ class FckModel extends CommonModel
         unset($bonus);
         unset($fee, $fee_rs, $s9, $mrs);
     }
-
-    public function _getTimeTableList1($uid)
-    {
-        $fck = M('fck');
-        $bonus = M('bonus');
-        $times1 = M('times1');
-        $bonus1 = M('bonus1');
-        $boid = 0;
-        $one = $this->where("id={$uid}")
-            ->field('id,user_id,is_cha')
-            ->find();
-        $nowdate = strtotime(date('Y-m-d'));
-        // $nowdate = time();
-        
-        $res = $one['is_cha'];
-        $brs = $bonus1->where("uid={$uid}")->select();
-        
-        foreach ($brs as $key => $value) {
-            $ar[] .= $value['id'];
-        }
-        
-        if ($res > 0) {
-            if ($res == 0) {
-                
-                $arr = $ar;
-                
-                $this->execute("update __TABLE__ set  is_cha=0 where id=" . $uid);
-                return $arr;
-            } else {
-                
-                $frs = $this->where("id={$uid}")
-                    ->field('id,user_id')
-                    ->find();
-                $data = array();
-                $data['did'] = $boid;
-                $data['uid'] = $frs['id'];
-                $data['user_id'] = $frs['user_id'];
-                $data['e_date'] = $nowdate;
-                $data['s_date'] = $nowdate;
-                $data['nums'] = 0;
-                $data['re_nums'] = $res;
-                $bid = $bonus1->add($data);
-                $cc[] .= $bid;
-                
-                if ($ar[0]) {
-                    $arr = array_merge($ar, $cc);
-                } else {
-                    $arr = $cc;
-                }
-                
-                $this->execute("update __TABLE__ set  is_cha=0 where id=" . $uid);
-                return $arr;
-            }
-        }
-        
-        if ($res == 0) {
-            $arr = $ar;
-            $this->execute("update __TABLE__ set  is_cha=0 where id=" . $uid);
-            return $arr;
-        } else {
-            $frs = $this->where("id={$uid}")
-                ->field('id,user_id')
-                ->find();
-            $data = array();
-            $data['did'] = $boid;
-            $data['uid'] = $frs['id'];
-            $data['user_id'] = $frs['user_id'];
-            $data['e_date'] = $benqi;
-            $data['s_date'] = $shangqi;
-            $data['re_nums'] = 1;
-            $bid = $bonus1->add($data);
-            $cc[] = $bid;
-            
-            if ($ar[0]) {
-                $arr = array_merge($ar, $cc);
-            } else {
-                $arr = $cc;
-            }
-            $this->execute("update __TABLE__ set  is_cha=0 where id=" . $uid);
-            return $arr;
-        }
-    }
     /**
      * 每项奖金加到奖金记录表
      * @param unknown $uid
@@ -1896,8 +1394,6 @@ class FckModel extends CommonModel
     {
         $fenhong = M('fenhong');
         $data = array();
-        // $data['uid'] = 1;
-        // $data['user_id'] = $cj_ss;
         $data['f_num'] = $cj_ss;
         $data['f_money'] = $one_prices;
         $data['pdt'] = mktime();

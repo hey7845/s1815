@@ -463,44 +463,6 @@ class CommonAction extends CheFieldAction {
 		//$this->assign ('Member_Single',$Member_Single);
 	}
 	
-	//三轨小公排
-// 	public function gongpaixtsmall($uid){
-// 		$fck = M ('fck');
-// 		$mouid=$uid;
-//         $field = 'id,user_id,p_level,p_path,u_pai';
-//         $where = 'is_pay>0 and (p_path like "%,'.$mouid.',%" or id='.$mouid.')';
-
-// 		$re_rs = $fck ->where($where)->order('p_level asc,u_pai asc')->field($field)->select();
-// 		$fck_where = array();
-// 		foreach($re_rs as $vo){
-// 			$faid=$vo['id'];
-// 			$fck_where['is_pay']   = array('egt',0);
-// 			$fck_where['father_id']   = $faid;
-// 			$count = $fck->where($fck_where)->count();
-// 			if ( is_numeric($count) == false){
-// 	            $count = 0;
-// 	        }
-// 			if ($count<3){
-// 				$father_id=$vo['id'];
-// 				$father_name=$vo['user_id'];
-// 				$TreePlace=$count;
-// 				$p_level=$vo['p_level']+1;
-// 				$p_path=$vo['p_path'].$vo['id'].',';
-// 				$u_pai=$vo['u_pai']*3+$TreePlace-1;
-
-// 				$arry=array();
-// 				$arry['father_id']=$father_id;
-// 				$arry['father_name']=$father_name;
-// 				$arry['treeplace']=$TreePlace;
-// 				$arry['p_level']=$p_level;
-// 				$arry['p_path']=$p_path;
-// 				$arry['u_pai']=$u_pai;
-// 				return $arry;
-// 				break;
-// 			}
-// 		}
-// 	}
-	
 	//双轨小公排
 	public function gongpaixtsmall($uid){
 		$fck = M ('fck');
@@ -555,30 +517,6 @@ class CommonAction extends CheFieldAction {
             }
         }
         return $arss;
-    }
-    
-    public function check_us_gq($type=0){
-//		$fck = M('fck');
-//		$mapp['id']    = $_SESSION[C('USER_AUTH_KEY')];
-//		$field = 'user_id,is_lockqd';
-//		$aurs = $fck->where($mapp)->field($field)->find();
-//		if(false == $aurs) {
-//			$this->LinkOut();
-//			exit;
-//		}else{
-//			if($aurs['is_lockqd']==1){
-//				echo "<script language=javascript>";
-//				echo 'alert("==您的账户已过期，请续费后在使用==");';
-//				if($type==0){
-//					echo 'history.back(-1);';
-//				}
-//				echo "/<script>";
-//				if($type==0){
-//					exit;
-//				}
-//			}
-//		}
-//		unset($fck,$mapp,$aurs);
     }
     
 	//======================================奖金结算

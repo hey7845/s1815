@@ -1,4 +1,4 @@
-<include file="Public:header" />
+<include file="Public:xyHead" />
 <script language=javascript src="__PUBLIC__/Js/wpCalendar.js"></script>
 <div class="ncenter_box">
 <div class="accounttitle"><h1>提现管理 </h1></div>
@@ -15,7 +15,6 @@
         <th nowrap ><span>开户银行</span></th>
         <th nowrap ><span>银行账号</span></th>
         <th nowrap ><span>电话号码</span></th>
-        <!-- <th nowrap ><span>微信</span></th> -->
         <th nowrap ><span>类型</span></th>
         <th nowrap ><span>提现金额</span></th>
         <th nowrap ><span>实发金额</span></th>
@@ -37,13 +36,10 @@
     <td>{$vo['qq']}</td> -->
     <td>
         <eq name="vo['type']" value="0">银行卡：{$vo['bank_card']}</eq>
-        <eq name="vo['type']" value="1">支付宝：{$vo['qq']}</eq>
-        <eq name="vo['type']" value="2">微信：{$vo['email']}</eq>
     </td>
 	<td><span style="color: #F00;">{$vo['money']}</span></td>
 	<td><span style="color: #F00;">{$vo['money_two']}</span></td>
 	<td>{$vo['bank_address']}</td>
-	<!--<td><eq name="vo['t_type']" value="0">提取K币账户<else/>提取分红帐户</eq></td>-->
 	<td>{$vo.rdt|date='Y-m-d H:i:s',###}</td>
 	<td><eq name="vo['is_pay']" value="1"><span style="color: #F00;">已确认</span></eq><eq name="vo['is_pay']" value="0"><span style="color: #090;">未确认</span></eq></td>
 </tr>

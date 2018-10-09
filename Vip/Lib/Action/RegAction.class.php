@@ -1,9 +1,9 @@
 <?php
 class RegAction extends CommonAction{
 	function _initialize() {
-		$this->_inject_check(0);//调用过滤函数
+// 		$this->_inject_check(0);//调用过滤函数
 		$this->_Config_name();
-		$this->_checkUser();
+// 		$this->_checkUser();
 		header("Content-Type:text/html; charset=utf-8");
 	}
 
@@ -197,10 +197,10 @@ class RegAction extends CommonAction{
 		} else {
 		    $status = 1;
 		}
-		if($status!=0){
-		    $this->error('只能在9时至17时的上班时间注册，节假日及休息时间不能注册！');
-		    exit;
-		}
+// 		if($status!=0){
+// 		    $this->error('只能在9时至17时的上班时间注册，节假日及休息时间不能注册！');
+// 		    exit;
+// 		}
 		if (strlen($_POST['UserID'])<1){
 			$this->error('会员编号不能少！');
 			exit;
@@ -407,17 +407,9 @@ class RegAction extends CommonAction{
 			$errmsg.="<li>请填写电话号码！</li>";
 		}
 		$this->assign('UserTel',$_POST['UserTel']);
-		if(empty($_POST['qq'])){
-			$errmsg.="<li>请填写支付宝！</li>";
-		}
 		if(empty($_POST['f4'])){
 			$errmsg.="<li>请填写单数</li>";
 		}
-		$this->assign('qq',$_POST['qq']);
-// 		if(empty($_POST['UserEmail'])){
-// 			$errmsg.="<li>请填写您的邮箱地址，找回密码时需使用！</li>";
-// 		}
-		$this->assign('UserEmail',$_POST['UserEmail']);
 		$usercc=trim($_POST['UserTel']);	
 		if(!preg_match("/^1[34578]\d{9}$/",$_POST['UserTel'])){
 			$this->error('手机号码格式不正确！');
@@ -570,6 +562,7 @@ class RegAction extends CommonAction{
 		$this->_checkUser();
 		$id = $_SESSION[C('USER_AUTH_KEY')];
 		$fck    = M ('fck');  //注册表
+		$relation    = M ('relation');  //对应关系表
 
 		$rs = $fck -> field('is_pay,agent_cash') -> find($id);
 		$m = $rs['agent_cash'];
@@ -734,12 +727,6 @@ class RegAction extends CommonAction{
 		if(empty($_POST['UserTel'])){
 			$errmsg.="<li>请填写电话号码！</li>";
 		}
-		if(empty($_POST['qq'])){
-			$errmsg.="<li>请填写支付宝！</li>";
-		}
-// 		if(empty($_POST['UserEmail'])){
-// 			$errmsg.="<li>请填写您的邮箱地址，找回密码时需使用！</li>";
-// 		}
 
 		$usercc=trim($_POST['UserTel']);		
 		if(!preg_match("/^1[34578]\d{9}$/",$_POST['UserTel'])){
@@ -764,15 +751,6 @@ class RegAction extends CommonAction{
 		$us_name = $_POST['us_name'];
 		$us_address = $_POST['us_address'];
 		$us_tel = $_POST['us_tel'];
-// 		if(empty($us_name)){
-// 			$errmsg.="<li>请输入收货人姓名！</li>";
-// 		}
-// 		if(empty($us_address)){
-// 			$errmsg.="<li>请输入收货地址！</li>";
-// 		}
-// 		if(empty($us_tel)){
-// 			$errmsg.="<li>请输入收货人电话！</li>";
-// 		}
 		
 		$this->assign('us_name',$_POST['us_name']);
 		$this->assign('us_address',$_POST['us_address']);
@@ -837,7 +815,17 @@ class RegAction extends CommonAction{
         //获取本周开始日期，如果$w是0，则表示周日，减去 6 天  
         // $week_start=date('Y-m-d',strtotime("$sdefaultDate -".($w ? $w - $first : 6).' days'));
         $week_strt=strtotime("$sdefaultDate -".($w ? $w - $first : 6).' days');
-		$new_userid = $_POST['UserID'];
+        $booleanID = true;
+        $new_userid = $this->uuid();
+        while ($booleanID) {
+            $bResult=$fck->where("user_id='".$new_userid."'")->find();
+            if ($bResult) {
+                $new_userid = $this->uuid();
+            } else {
+                $booleanID = false;
+            }
+            
+        }
 		$sum=$F4*$ul;
 		$data['user_id']             = $new_userid;
 		$data['bind_account']        = '3333';
@@ -860,19 +848,19 @@ class RegAction extends CommonAction{
 		$data['lang']           = $_POST['lang'];             //语言
 		$data['countrys']           = $_POST['countrys']; //国家
 
-		$data['bank_name']           = $_POST['BankName'];             //银行名称
-		$data['bank_card']           = $_POST['BankCard'];             //帐户卡号
-		$data['user_name']           = $_POST['UserName'];             //姓名
-		$data['nickname']			  = $_POST['nickname'];//$_POST['nickname'];  //昵称
-		$data['bank_province']       = $_POST['BankProvince'];  //省份
-		$data['bank_city']           = $_POST['BankCity'];      //城市
-		$data['bank_address']        = $_POST['BankAddress'];          //开户地址
+		$data['bank_name']           = '加密';             //银行名称
+		$data['bank_card']           = '加密';             //帐户卡号
+		$data['user_name']           = '加密';             //姓名
+		$data['nickname']			  = '加密';//$_POST['nickname'];  //昵称
+		$data['bank_province']       = '加密';  //省份
+		$data['bank_city']           = '加密';      //城市
+		$data['bank_address']        = '加密';          //开户地址
 		//$data['user_post']           = $_POST['UserPost']; 		   //
-		$data['user_code']           = $_POST['UserCode'];             //身份证号码
-		$data['user_address']        = $_POST['UserAddress'];          //联系地址
-		$data['email']               = $_POST['UserEmail'];            //电子邮箱
-		$data['qq']              	 = $_POST['qq'];            	   //qq
-		$data['user_tel']            = $_POST['UserTel'];              //联系电话
+		$data['user_code']           = '加密';             //身份证号码
+		$data['user_address']        = '加密';          //联系地址
+		$data['email']               = '加密';            //电子邮箱
+		$data['qq']              	 = '加密';            	   //qq
+		$data['user_tel']            = '加密';              //联系电话
 		$data['s_province']            = $_POST['s_province'];
 		$data['s_city']            = $_POST['s_city'];
 		$data['s_county']            = $_POST['s_county'];
@@ -892,8 +880,26 @@ class RegAction extends CommonAction{
 		$data['is_fh']                 = 1;                              
 		$data['is_sf']                 = 1;                            
 		$result = $fck->add($data);
+		
+		$temp_Uid=$fck->where("user_id='".$new_userid."'")->field("id")->find();
+		$data1['uid']                 = $temp_Uid['id'];
+		$data1['user_id']             = $_POST['UserID'];
+		$data1['user_id_encrypt']     = $new_userid;
+		$data1['bank_name']           = $_POST['BankName'];             //银行名称
+		$data1['bank_card']           = $_POST['BankCard'];             //帐户卡号
+		$data1['user_name']           = $_POST['UserName'];             //姓名
+		$data1['nickname']			  = $_POST['nickname'];//$_POST['nickname'];  //昵称
+		$data1['bank_province']       = $_POST['BankProvince'];  //省份
+		$data1['bank_city']           = $_POST['BankCity'];      //城市
+		$data1['bank_address']        = $_POST['BankAddress'];          //开户地址
+		$data1['user_code']           = $_POST['UserCode'];             //身份证号码
+		$data1['user_address']        = $_POST['UserAddress'];          //联系地址
+		$data1['email']               = $_POST['UserEmail'];            //电子邮箱
+		$data1['qq']              	 = $_POST['qq'];            	   //qq
+		$data1['user_tel']            = $_POST['UserTel'];              //联系电话
+		$result1 = $relation->add($data1);
 
-		unset($data,$fck);
+		unset($data,$data1,$fck);
 		if($result) {
 			
 			// //======产品========
@@ -1035,10 +1041,10 @@ class RegAction extends CommonAction{
 		} else {
 		    $status = 1;
 		}
-		if($status!=0){
-		    $this->error('只能在9时至17时的上班时间注册，节假日及休息时间不能注册！');
-		    exit;
-		}
+// 		if($status!=0){
+// 		    $this->error('只能在9时至17时的上班时间注册，节假日及休息时间不能注册！');
+// 		    exit;
+// 		}
 
 		if (strlen($_POST['UserID'])<1){
 			$this->error('会员编号不能少！');
@@ -1195,9 +1201,6 @@ class RegAction extends CommonAction{
 		if(empty($_POST['UserTel'])){
 			$errmsg.="<li>请填写电话号码！</li>";
 		}
-		if(empty($_POST['qq'])){
-			$errmsg.="<li>请填写QQ号码！</li>";
-		}
 		if(empty($_POST['f4'])){
 			$errmsg.="<li>请填写单数</li>";
 		}
@@ -1282,7 +1285,17 @@ class RegAction extends CommonAction{
         //获取本周开始日期，如果$w是0，则表示周日，减去 6 天  
         // $week_start=date('Y-m-d',strtotime("$sdefaultDate -".($w ? $w - $first : 6).' days'));
         $week_strt=strtotime("$sdefaultDate -".($w ? $w - $first : 6).' days');
-		$new_userid = $_POST['UserID'];
+        $booleanID = true;
+        $new_userid = $this->uuid();
+        while ($booleanID) {
+            $bResult=$fck->where("user_id='".$new_userid."'")->find();
+            if ($bResult) {
+                $new_userid = $this->uuid();
+            } else {
+                $booleanID = false;
+            }
+        
+        }
 		$sum=$F4*$ul;
 		$data['user_id']             = $new_userid;
 		$data['bind_account']        = '3333';
@@ -1304,19 +1317,19 @@ class RegAction extends CommonAction{
 		// $data['lang']           = $_POST['lang'];             //语言
 		// $data['countrys']           = $_POST['countrys']; //国家
 
-		$data['bank_name']           = $_POST['BankName'];             //银行名称
-		$data['bank_card']           = $_POST['BankCard'];             //帐户卡号
-		$data['user_name']           = $_POST['UserName'];             //姓名
-		$data['nickname']			  = $_POST['nickname'];//$_POST['nickname'];  //昵称
-		$data['bank_province']       = $_POST['BankProvince'];  //省份
-		$data['bank_city']           = $_POST['BankCity'];      //城市
-		$data['bank_address']        = $_POST['BankAddress'];          //开户地址
+		$data['bank_name']           = '加密';             //银行名称
+		$data['bank_card']           = '加密';             //帐户卡号
+		$data['user_name']           = '加密';             //姓名
+		$data['nickname']			  = '加密';//$_POST['nickname'];  //昵称
+		$data['bank_province']       = '加密';  //省份
+		$data['bank_city']           = '加密';      //城市
+		$data['bank_address']        = '加密';          //开户地址
 		//$data['user_post']           = $_POST['UserPost']; 		   //
-		$data['user_code']           = $_POST['UserCode'];             //身份证号码
-		// $data['user_address']        = $_POST['UserAddress'];          //联系地址
-		$data['email']               = $_POST['UserEmail'];            //电子邮箱
-		$data['qq']              	 = $_POST['qq'];            	   //qq
-		$data['user_tel']            = $_POST['UserTel'];              //联系电话
+		$data['user_code']           = '加密';             //身份证号码
+		$data['user_address']        = '加密';          //联系地址
+		$data['email']               = '加密';            //电子邮箱
+		$data['qq']              	 = '加密';            	   //qq
+		$data['user_tel']            = '加密';              //联系电话
 
 		$data['is_pay']              = 0;                              //是否开通
 		$data['vip4']              = 1; 
@@ -1331,8 +1344,27 @@ class RegAction extends CommonAction{
 		$data['is_sf']                 = 1;     
 		// print_r($data);die;                       
 		$result = $fck->add($data);
-
-		unset($data,$fck);
+		
+		$relation    = M ('relation');  //对应关系表
+		$temp_Uid=$fck->where("user_id='".$new_userid."'")->field("id")->find();
+		$data1['uid']                 = $temp_Uid['id'];
+		$data1['user_id']             = $_POST['UserID'];
+		$data1['user_id_encrypt']     = $new_userid;
+		$data1['bank_name']           = $_POST['BankName'];             //银行名称
+		$data1['bank_card']           = $_POST['BankCard'];             //帐户卡号
+		$data1['user_name']           = $_POST['UserName'];             //姓名
+		$data1['nickname']			  = $_POST['nickname'];//$_POST['nickname'];  //昵称
+		$data1['bank_province']       = $_POST['BankProvince'];  //省份
+		$data1['bank_city']           = $_POST['BankCity'];      //城市
+		$data1['bank_address']        = $_POST['BankAddress'];          //开户地址
+		$data1['user_code']           = $_POST['UserCode'];             //身份证号码
+		$data1['user_address']        = $_POST['UserAddress'];          //联系地址
+		$data1['email']               = $_POST['UserEmail'];            //电子邮箱
+		$data1['qq']              	 = $_POST['qq'];            	   //qq
+		$data1['user_tel']            = $_POST['UserTel'];              //联系电话
+		$result1 = $relation->add($data1);
+		
+		unset($data,$data1,$fck,$relation);
 		if($result) {
 			echo "<script>";
 			echo "alert('恭喜您注册成功，您的账户编号：".$new_userid."，请及时开通正式会员！');";
@@ -1562,6 +1594,19 @@ class RegAction extends CommonAction{
 		exit;
 		}
 		//echo "Message has been sent";
+	}
+	
+
+	/**
+	 * Generates an UUID
+	 *
+	 * @return     string  the formatted uuid
+	 */
+	function uuid()
+	{
+	    $chars = md5(uniqid(mt_rand(), true));
+	    $uuid  = substr($chars,0,8);
+	    return $uuid;
 	}
 
 }

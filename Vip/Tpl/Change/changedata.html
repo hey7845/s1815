@@ -1,13 +1,6 @@
-<include file="Public:header" />
+<include file="Public:xyHead" />
 <load href="__PUBLIC__/Js/UserJs.js" />
-<style>
-.us img{border:1px solid #999; width:100px; height:100px;}
-.us_btn{height:27px; line-height:27px; font-size:12px; font-weight:bold; padding:0 10px; text-decoration:underline;}
-</style>
 <div class="ncenter_box">
-<div class="accounttitle"><h1>修改资料 </h1></div>
-
-    <div class="c_p5"><div class="tips">请认真修改自己的个人信息。</div></div>
         <table width="100%" border="0" cellpadding="3" cellspacing="0">
           <form method='post' id="form1" action="__URL__/changedataSave" >
           <tr>
@@ -138,21 +131,6 @@
             <td></td>
             </tr>
           <tr>
-            <td height="30" align="right">支付宝：</td>
-            <td><input name="qq" type="text" id="qq" value="{$vo['qq']}" class="ipt" onkeyup="javascript:Null_Int(this.name)" onfocus="notice('9','')"  onblur="notice('9','none')" maxlength="19" /></td>
-            <td><div id="qq1" class="info"><div id="9" class="focus_r" style="display:none;"><div class="msg_tip">请输入号码。</div></div></div></td>
-          </tr>
-          <tr>
-            <td height="30" align="right">微信：</td>
-            <td><input name="UserEmail" type="text" id="UserEmail" value="{$vo['email']}" class="ipt" onkeyup="javascript:Null_Int(this.name)" onfocus="notice('9','')"  onblur="notice('9','none')" /></td>
-            <td><div id="UserEmail1" class="info"><div id="10" class="focus_r" style="display:none;"><div class="msg_tip">请输入号码。</div></div></div></td>
-          </tr>
-          <tr style="display:none;">
-            <td height="30" align="right">联系地址：</td>
-            <td><input name="UserAddress" type="text" id="UserAddress" value="{$vo['user_address']}" class="ipt" onkeyup="javascript:Null_Full(this.name)" onfocus="notice('6','')"  onblur="notice('6','none')"/></td>
-            <td><div id="UserAddress1" class="info"><div id="6" class="focus_r" style="display:none;"><div class="msg_tip">请输入联系地址。</div></div></div></td>
-            </tr>
-          <tr>
             <td height="30" align="right">联系电话：</td>
             <td><input name="UserTel" type="text" id="UserTel" value="{$vo['user_tel']}" class="ipt" onkeyup="javascript:Null_Full(this.name)" onfocus="notice('7','')"  onblur="notice('7','none')" /></td>
             <td><div id="UserTel1" class="info"><div id="7" class="focus_r" style="display:none;"><div class="msg_tip">请输入联系电话。</div></div></div></td>
@@ -174,65 +152,65 @@
             </eq></td>
             <td>&nbsp;</td>
           </tr>
-          <tr style="display:none">
-            <td height="30" align="right">修改密保问题：</td>
-            <td>
-          <select name="xg_wenti">
-            	<option value="">选择密保问题</option>
-              <volist name='wentilist' id='voo'>
-                  <option value="{$voo}" <eq name="voo" value="$vo['wenti']">selected</eq> >{$voo}</option>
-              </volist>
-            </select></td>
-            <td></td>
-          </tr>
-          <tr style="display:none">
-            <td height="30" align="right">修改密保答案：</td>
-            <td><input name="xg_wenti_dan" type="text" id="xg_wenti_dan" value="" class="ipt"/></td>
-            <td><div class="info"><div class="focus_r"><div class="msg_tip">不修改请留空。</div></div></div></td>
-          </tr>
-          <tr style="display:none">
-            <td height="30" colspan="3" style="height:5px;"><hr></td>
-          </tr>
-          <tr style="display:none">
-            <td height="30" align="right">昵称：</td>
-              <td><input name="NickName" type="text" id="NickName" value="{$vo['nickname']}" class="ipt"/></td>
-              <td></td>
-          </tr>
-          <tr style="display:none">
-            <td height="30" align="right">密保问题：</td>
-            <td>{$vo['wenti']}</td>
-            <td>&nbsp;</td>
-            </tr>
-          <tr style="display:none">
-            <td height="30" align="right">请回答密保答案：</td>
-            <td><input name="wenti_dan" type="text" id="wenti_dan" value="" class="ipt"/></td>
-            <td>&nbsp;</td>
-          </tr>
-          <tr style="display:none">
-            <td height="30" align="right">用户头像：</td>
-            <td class="us" colspan="2">
-            <div id="addImageURL" style="display:none">
-			<input name="image2" type="text" id="image2" value="" size="50" maxlength="500" />
-			<input name="image" type="text" id="image"  value="{$vo['us_img']}" size="50" maxlength="500" style="display:none" />
-			<input type="button" id="addImg" value="添加" onClick="addNetImg();"><br>
-            </div>
-            <div id="uploadImg">
-                <iframe id="frmPic" name="frmPic" src="__URL__/uploadImg" width="480" height="320" scrolling="no" frameborder="0"></iframe>
-            </div>
-            <div style="display:none">
-                <img style="height:225px;width:330px;" id="imageShow" alt="商品图像" src="{$vo['us_img']}">
-            </div>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="3" style="height:5px;"><hr></td>
-            </tr>
-          <tr>
+<!--           <tr style="display:none"> -->
+<!--             <td height="30" align="right">修改密保问题：</td> -->
+<!--             <td> -->
+<!--           <select name="xg_wenti"> -->
+<!--             	<option value="">选择密保问题</option> -->
+<!--               <volist name='wentilist' id='voo'> -->
+<!--                   <option value="{$voo}" <eq name="voo" value="$vo['wenti']">selected</eq> >{$voo}</option> -->
+<!--               </volist> -->
+<!--             </select></td> -->
+<!--             <td></td> -->
+<!--           </tr> -->
+<!--           <tr style="display:none"> -->
+<!--             <td height="30" align="right">修改密保答案：</td> -->
+<!--             <td><input name="xg_wenti_dan" type="text" id="xg_wenti_dan" value="" class="ipt"/></td> -->
+<!--             <td><div class="info"><div class="focus_r"><div class="msg_tip">不修改请留空。</div></div></div></td> -->
+<!--           </tr> -->
+<!--           <tr style="display:none"> -->
+<!--             <td height="30" colspan="3" style="height:5px;"><hr></td> -->
+<!--           </tr> -->
+<!--           <tr style="display:none"> -->
+<!--             <td height="30" align="right">昵称：</td> -->
+<!--               <td><input name="NickName" type="text" id="NickName" value="{$vo['nickname']}" class="ipt"/></td> -->
+<!--               <td></td> -->
+<!--           </tr> -->
+<!--           <tr style="display:none"> -->
+<!--             <td height="30" align="right">密保问题：</td> -->
+<!--             <td>{$vo['wenti']}</td> -->
+<!--             <td>&nbsp;</td> -->
+<!--             </tr> -->
+<!--           <tr style="display:none"> -->
+<!--             <td height="30" align="right">请回答密保答案：</td> -->
+<!--             <td><input name="wenti_dan" type="text" id="wenti_dan" value="" class="ipt"/></td> -->
+<!--             <td>&nbsp;</td> -->
+<!--           </tr> -->
+<!--           <tr style="display:none"> -->
+<!--             <td height="30" align="right">用户头像：</td> -->
+<!--             <td class="us" colspan="2"> -->
+<!--             <div id="addImageURL" style="display:none"> -->
+<!-- 			<input name="image2" type="text" id="image2" value="" size="50" maxlength="500" /> -->
+<!-- 			<input name="image" type="text" id="image"  value="{$vo['us_img']}" size="50" maxlength="500" style="display:none" /> -->
+<!-- 			<input type="button" id="addImg" value="添加" onClick="addNetImg();"><br> -->
+<!--             </div> -->
+<!--             <div id="uploadImg"> -->
+<!--                 <iframe id="frmPic" name="frmPic" src="__URL__/uploadImg" width="480" height="320" scrolling="no" frameborder="0"></iframe> -->
+<!--             </div> -->
+<!--             <div style="display:none"> -->
+<!--                 <img style="height:225px;width:330px;" id="imageShow" alt="商品图像" src="{$vo['us_img']}"> -->
+<!--             </div> -->
+<!--             </td> -->
+<!--           </tr> -->
+<!--           <tr> -->
+<!--             <td colspan="3" style="height:5px;"><hr></td> -->
+<!--             </tr> -->
+<!--           <tr> -->
           <tr>
             <td height="25" colspan="3" align="center">
             <input type="hidden" name="ID" value="{$vo['id']}" >
-            <input type="submit" value="修改" class="button_text">&nbsp;&nbsp;
-            <input name="重置" type="reset" class="button_text" value="重置"></td>
+<!--             <input type="submit" value="修改" class="button_text">&nbsp;&nbsp; -->
+<!--             <input name="重置" type="reset" class="button_text" value="重置"></td> -->
           </tr>
           </form>
         </table>

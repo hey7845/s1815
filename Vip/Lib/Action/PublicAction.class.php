@@ -52,7 +52,6 @@ class PublicAction extends CommonAction
         $frs = $fck->where($fwhere)
             ->field('*')
             ->find();
-        // dump($frs);
         $HYJJ = '';
         $this->_levelConfirm($HYJJ, 1);
         $this->assign('voo', $HYJJ);
@@ -65,32 +64,10 @@ class PublicAction extends CommonAction
     public function main()
     {
         $this->_checkUser();
-//         $ppfg = $_POST['ppfg'];
         $id = $_SESSION[C('USER_AUTH_KEY')]; // 登录AutoId
         $fck = M('fck');
         $jiadan = M('Jiadan');
         $jiadanb = M('jiadanb');
-//         $cash = M('cash');
-//         $form = M('form');
-//         $map = array();
-//         $map['status'] = array(
-//             'eq',
-//             1
-//         );
-//         $field = '*';
-//         $newslist = $form->where($map)
-//             ->field($field)
-//             ->order('baile desc,id desc')
-//             ->limit(10)
-//             ->select();
-//         $this->assign('newslist', $newslist); // 数据输出到模板
-        
-//         $map = array();
-//         $map['s_uid'] = $id; // 会员ID
-//         $map['s_read'] = 0; // 0 为未读
-//         $info_count = M('msg')->where($map)->count(); // 总记录数
-//         $this->assign('info_count', $info_count);
-        
         // 会员级别
         $urs = $fck->where('id=' . $id)
             ->field('*')
@@ -106,16 +83,7 @@ class PublicAction extends CommonAction
             $all_nmoney = 0.00;
         }
         $this->assign('all_nmoney', $all_nmoney);
-        
         // 出局分红包数
-//         $where = Array();
-//         $where['user_id'] = $urs['user_id'];
-//         $where['is_pay'] = 1;
-//         $out_counts = $jiadan->where($where)->sum('danshu');
-//         if (empty($out_counts)) {
-//             $out_counts = 0;
-//         }
-//         $this->assign('out_counts', $out_counts);
         $where = Array();
         $where['user_id'] = $urs['user_id'];
         $out_counts = $jiadan->where($where)->field("money,danshu")->find();
@@ -125,15 +93,7 @@ class PublicAction extends CommonAction
             $outCounts = 0;
         }
         $this->assign('out_counts', $outCounts);
-        
         // 未出局分红包数
-//         $where['user_id'] = $urs['user_id'];
-//         $where['is_pay'] = 0;
-//         $in_counts = $jiadan->where($where)->sum('danshu');
-//         if (empty($in_counts)) {
-//             $in_counts = 0;
-//         }
-//         $this->assign('in_counts', $in_counts);
         $where['user_id'] = $urs['user_id'];
         $in_counts = $jiadan->where($where)->field("money,danshu")->find();
         if ($in_counts) {
@@ -160,45 +120,6 @@ class PublicAction extends CommonAction
         $netb = M('netb');
         $netb_rs = $netb->where('uid=' . $id)->field('*')->find();
         $this->assign('netB', $netb_rs);
-//         // 直推人数
-//         $one = $fck->where('id=1')
-//             ->field('tz_nums')
-//             ->find();
-//         $this->assign('tz_nums', $one['tz_nums']);
-        
-//         $fee = M('fee');
-//         $fee_rs = $fee->field('s3,s12,str1,str7,str9,str21,str22,str23,gp_one')->find();
-//         $str21 = $fee_rs['str21'];
-//         $str22 = $fee_rs['str22'];
-//         $str23 = $fee_rs['str23'];
-//         $all_img = $str21 . "|" . $str22 . "|" . $str23;
-//         $this->assign('all_img', $all_img);
-//         $s3 = explode("|", $fee_rs['s3']);
-//         $s12 = $fee_rs['s12'];
-//         $str1 = $fee_rs['str1'];
-//         $str5 = explode("|", $fee_rs['str7']);
-//         $str9 = $fee_rs['str9'];
-// //         $one_price = $fee_rs['gp_one'];
-//         $this->assign('s3', $s3);
-//         $this->assign('s12', $s12);
-//         $this->assign('str1', $str1);
-//         $this->assign('str9', $str9);
-        
-//         // 股票价格
-//         $this->assign('one_price', $one_price);
-//         $gupiaojz = $one_price * $urs['live_gupiao'];
-//         $this->assign('gupiaojz', $gupiaojz);
-        
-//         $maxqq = 4;
-//         if (count($str5) > $maxqq) {
-//             $lenn = $maxqq;
-//         } else {
-//             $lenn = count($str5);
-//         }
-//         for ($i = 0; $i < $lenn; $i ++) {
-//             $qqlist[$i] = $str5[$i];
-//         }
-//         $this->assign('qlist', $qqlist);
         
         $HYJJ = "";
         $this->_levelConfirm($HYJJ, 1);
@@ -207,60 +128,6 @@ class PublicAction extends CommonAction
         $see = $_SERVER['HTTP_HOST'] . __APP__;
         $see = str_replace("//", "/", $see);
         $this->assign('server', $see);
-        
-//         $cp = M('product');
-//         $fck = M('fck');
-//         $map['id'] = $_SESSION[C('USER_AUTH_KEY')];
-//         $f_rs = $fck->where($map)->find();
-        
-//         $where = array();
-//         $ss_type = (int) $_REQUEST['tp'];
-//         if ($ss_type > 0) {
-//             $where['cptype'] = array(
-//                 'eq',
-//                 $ss_type
-//             );
-//         }
-//         $this->assign('tp', $ss_type);
-        
-//         $where['yc_cp'] = array(
-//             'eq',
-//             0
-//         );
-        
-//         $cptype = M('cptype');
-//         $tplist = $cptype->where('status=0')
-//             ->order('id asc')
-//             ->select();
-//         $this->assign('tplist', $tplist);
-        
-//         $order = 'id asc';
-//         $field = '*';
-//         // =====================分页开始==============================================
-//         import("@.ORG.ZQPage"); // 导入分页类
-//         $count = $cp->where($where)->count(); // 总页数
-//         $listrows = 20; // 每页显示的记录数
-//         $page_where = 'tp=' . $ss_type; // 分页条件
-//         $Page = new ZQPage($count, $listrows, 1, 0, 3, $page_where);
-//         // ===============(总页数,每页显示记录数,css样式 0-9)
-//         $show = $Page->show(); // 分页变量
-//         $this->assign('page', $show); // 分页变量输出到模板
-//         $list = $cp->where($where)
-//             ->field($field)
-//             ->order('id desc')
-//             ->page($Page->getPage() . ',' . $listrows)
-//             ->select();
-//         // =================================================
-//         foreach ($list as $voo) {
-//             $w_money = $voo['a_money'];
-//             $e_money = $voo['b_money'];
-//             $cc[$voo['id']] = $w_money;
-//             $cc[$voo['cid']] = $e_money;
-//         }
-//         $this->assign('cc', $cc);
-//         $this->assign('list', $list); // 数据输出到模板
-        
-//         $this->assign('f_rs', $f_rs);
         $this->display();
     }
     
@@ -272,7 +139,6 @@ class PublicAction extends CommonAction
         $this->assign('fflv', $fee_rs['str21']);
         $this->assign('i9', $fee_rs['i9']);
         unset($fee, $fee_rs);
-        // $this->display('login3');
         $this->display('login6');
     }
 
@@ -316,17 +182,13 @@ class PublicAction extends CommonAction
         $map = array();
         // 支持使用绑定帐号登录
         $map['user_id'] = $_POST['account'];
-        // $map['nickname'] = $_POST['account']; //用户名也可以登录
-        // $map['_logic'] = 'or';
-        // $map['_complex'] = $where;
-        // $map["status"] = array('gt',0);
         if ($_SESSION['verify'] != md5($_POST['verify'])) {
             $this->error('验证码错误！');
         }
         
         import('@.ORG.RBAC');
         $fck = M('fck');
-        $field = 'id,user_id,password,is_pay,is_lock,nickname,user_name,is_agent,user_type,last_login_time,login_count,is_boss';
+        $field = 'id,user_id,password,is_pay,is_lock,nickname,user_name,is_agent,user_type,last_login_time,login_count,is_boss,is_aa,remark,is_treasure_manager';
         $authInfo = $fck->where($map)
             ->field($field)
             ->find();
@@ -362,8 +224,10 @@ class PublicAction extends CommonAction
             $_SESSION['loginNickName'] = $authInfo['nickname']; // 会员名
             $_SESSION['loginUserName'] = $authInfo['user_name']; // 开户名
             $_SESSION['lastLoginTime'] = $authInfo['last_login_time'];
-            // $_SESSION['login_count'] = $authInfo['login_count'];
             $_SESSION['login_isAgent'] = $authInfo['is_agent']; // 是否报单中心
+            $_SESSION['is_aa'] = $authInfo['is_aa']; // 是否为物流管理员
+            $_SESSION['remark'] = $authInfo['remark']; // 是否为服务中心管理员
+            $_SESSION['is_treasure_manager'] = $authInfo['is_treasure_manager']; // 是否为服务中心管理员
             $_SESSION['UserMktimes'] = mktime();
             $news = M('form');
             $news_result = $news->where('status = 1')->field('title')->select();
@@ -376,33 +240,13 @@ class PublicAction extends CommonAction
             $_SESSION['login_user_type'] = $user_type;
             $where['id'] = $authInfo['id'];
             $fck->where($where)->setField('user_type', $user_type);
-            // $fck->where($where)->setField('last_login_time',mktime());
             // 管理员
-            
             $parmd = $this->_cheakPrem();
             if ($authInfo['id'] == 1 || $parmd[11] == 1) {
                 $_SESSION['administrator'] = 1;
             } else {
                 $_SESSION['administrator'] = 2;
             }
-            
-            // //管理员
-            // if($authInfo['is_boss'] == 1) {
-            // $_SESSION['administrator'] = 1;
-            // }elseif($authInfo['is_boss'] == 2){
-            // $_SESSION['administrator'] = 3;
-            // }elseif($authInfo['is_boss'] == 3){
-            // $_SESSION['administrator'] = 4;
-            // }elseif($authInfo['is_boss'] == 4){
-            // $_SESSION['administrator'] = 5;
-            // }elseif($authInfo['is_boss'] == 5){
-            // $_SESSION['administrator'] = 6;
-            // }elseif($authInfo['is_boss'] == 6){
-            // $_SESSION['administrator'] = 7;
-            // }else{
-            // $_SESSION['administrator'] = 2;
-            // }
-            
             $fck->execute("update __TABLE__ set last_login_time=new_login_time,last_login_ip=new_login_ip,new_login_time=" . time() . ",new_login_ip='" . $_SERVER['REMOTE_ADDR'] . "' where id=" . $authInfo['id']);
             
             // 缓存访问权限

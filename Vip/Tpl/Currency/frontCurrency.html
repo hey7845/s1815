@@ -1,4 +1,4 @@
-<include file="Public:header" />
+<include file="Public:xyHead" />
 <load href="__PUBLIC__/Js/Ajax/ThinkAjax-1.js" />
 <load href="__PUBLIC__/Js/UserJs.js" />
 <script language='javascript'>
@@ -16,7 +16,7 @@ function yhServer(Ful){
 }
 </script>
 <div class="ncenter_box">
-<div class="accounttitle"><h1>提现申请 </h1></div>
+<div class="accounttitle"><h4>提现申请 </h4></div>
 <form name="form1" method="post" action="__URL__/frontCurrencyConfirm" onSubmit="{return CheckForm();}">
   <table width="100%" border="0" cellpadding="3" cellspacing="0">
     
@@ -57,8 +57,6 @@ function yhServer(Ful){
         <td>
         <select name="type">
         <option value="0">银行卡</option>
-        <!--<option value="1">支付宝</option>
-        <option value="2">微信</option>-->
         </select>
         </td>
         <td></td>
@@ -87,7 +85,6 @@ function yhServer(Ful){
 			<th><span>提现金额</span></th>
 			<th><span>扣手续费</span></th>
 			<th><span>实发金额</span></th>
-			<!--<th><span>等于人民币</span></th>-->
 			<th><span>提现时间</span></th>
 			<th><span>提现类型</span></th>
 			<th><span>银行卡号</span></th>

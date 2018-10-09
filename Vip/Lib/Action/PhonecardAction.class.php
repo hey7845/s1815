@@ -4,7 +4,6 @@ class PhonecardAction extends CommonAction{
     function _initialize() {
 		$this->_inject_check(0); //调用过滤函数
 		$this->_checkUser();
-		$this->check_us_gq();
 		header("Content-Type:text/html; charset=utf-8");
 	}
 
