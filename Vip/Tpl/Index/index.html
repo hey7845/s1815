@@ -11,6 +11,29 @@
 </head>
 <script src="__PUBLIC__/resource/js/jquery-1.12.4.min.js"></script>
 <script src="__PUBLIC__/resource/js/bootstrap.min.js"></script>
+<script src="__PUBLIC__/Js/Jquery/jquery.bootstrap.newsbox.min.js"
+	type="text/javascript"></script>
+<script type="text/javascript" src="__PUBLIC__/Js/Jquery/jquery.qrcode.min.js"></script>  
+<script type="text/javascript">
+	window.onload =function(){
+	//默认使用Canvas生成，并显示到图片   
+	 var qrcode= $('#qrDiv').qrcode("http://{$server}/Reg/us_reg/rid/{$fck_rs['id']}/").hide();   
+	 var canvas=qrcode.find('canvas').get(0);  
+	 $('#imagQrDiv').attr('src',canvas.toDataURL('image/png')) ;
+	 }
+	$(function() {
+		$(".demo2").bootstrapNews({
+			newsPerPage : 1,
+			autoplay : true,
+			pauseOnHover : true,
+			navigation : false,
+			direction : 'down',
+			newsTickerInterval : 2500,
+			onToDo : function() {
+			}
+		});
+	});
+</script>
 <style>
 -webkit-touch-callout:default;
 .center {
@@ -44,9 +67,6 @@
   box-pack: center;
   box-align: center;
 }
-body {  
-  padding-right: 0px !important  
-}  
   
 .modal-open {  
   overflow-y: auto;  
@@ -57,7 +77,7 @@ body {
 }
 </style>
 </head>
-<body class="container-fluid" style="background-color: #f0f3ef;">
+<body class="container" style="background-color: #f0f3ef;">
 <div class="row">
 	<div class="col-xs-12 navbar-fixed-up" style="background-color: #41b9e7;">
     	<div class="span3 float-left" style="color: #ffffff; padding-top: 2px; font-size: 16px; height:inherit;">
@@ -114,63 +134,77 @@ body {
                 <div class="text-primary text-left" width="70%">点击获取推荐码</div>
             </div>
         </div>
+        <div class="modal fade" id="myModal" role="dialog">
+		    <div class="modal-dialog">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal">&times;</button>
+		          <h4 class="modal-title">我的推荐码</h4>
+		        </div>
+		        <div class="modal-body">
+					<div id="qrDiv"></div>  
+				    <img id='imagQrDiv'/>  
+				</div>
+		      </div>
+		      </div>
+		    </div>
     </div>
     <div class="col-xs-12 line-style margin-top">
     </div>
-    <div class="col-xs-12">
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+    <div class="col-md-12 col-xs-12 col-sm-12">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-left text-nowrap">现金积分:<font color="red">{$fck_rs['agent_use']}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">电子积分：<font color="red">{$fck_rs['agent_cash']}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">复投积分：<font color="red">{$fck_rs['agent_xf']}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">激活积分：<font color="red">{$fck_rs['agent_active']}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">直推人数：<font color="red">{$fck_rs['tz_nums']}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">团队人数：<font color="red">{$all_nn}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">销售总业绩：<font color="red">{$all_nmoney}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">会员级别：<font color="red">{$voo[$fck_rs['u_level']]}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">报单中心：<font color="red"><eq name="fck_rs['is_agent']" value='2'>是<else/>否</eq></font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">总分红包：<font color="red">{$in_counts+$out_counts}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">未出局分红包：<font color="red">{$in_counts}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">出局分红包：<font color="red">{$out_counts}</font></div>
         </div>
         <gt name="in_countsb" value='0'>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">B网复投积分余额：<font color="red">{$netB['agent_futou']}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">B网注册单数：<font color="red">{$netB['register_danshu']}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">B网复投单数：<font color="red">{$netB['futou_danshu']}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">B网总分红包：<font color="red">{$in_countsb + $out_countsb}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">B网未出局分红包：<font color="red">{$in_countsb}</font></div>
         </div>
-        <div class="col-xs-4 col-sm-3" style="padding-left: 0">
+        <div class="col-md-4 col-xs-6 col-xs-6" style="padding-left: 0">
             <div class="text-default text-nowrap">B网出局分红包：<font color="red">{$out_countsb}</font></div>
         </div>
         </gt>
@@ -270,44 +304,4 @@ body {
 </div>
 <include file="Public:xyFoot" />
 </body>
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">我的推荐码</h4>
-        </div>
-        <div class="modal-body">
-			<div id="qrDiv"></div>  
-		    <img id='imagQrDiv'/>  
-		</div>
-      </div>
-        <div class="modal-footer">
-        </div>
-      </div>
-    </div>
-  </div>
-<script src="__PUBLIC__/Js/Jquery/jquery.bootstrap.newsbox.min.js"
-	type="text/javascript"></script>
-<script type="text/javascript" src="__PUBLIC__/Js/Jquery/jquery.qrcode.min.js"></script>  
-<script type="text/javascript">
-	window.onload =function(){
-	//默认使用Canvas生成，并显示到图片   
-	 var qrcode= $('#qrDiv').qrcode("http://{$server}/Reg/us_reg/rid/{$fck_rs['id']}/").hide();   
-	 var canvas=qrcode.find('canvas').get(0);  
-	 $('#imagQrDiv').attr('src',canvas.toDataURL('image/png')) ;
-	 }
-	$(function() {
-		$(".demo2").bootstrapNews({
-			newsPerPage : 1,
-			autoplay : true,
-			pauseOnHover : true,
-			navigation : false,
-			direction : 'down',
-			newsTickerInterval : 2500,
-			onToDo : function() {
-			}
-		});
-	});
-</script>
 </html>
