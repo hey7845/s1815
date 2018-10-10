@@ -42,12 +42,19 @@ class IndexAction extends CommonAction {
 		$all_nn = $fck->where('re_path like "%,' . $id . ',%" and is_pay=1')->count();
 		$this->assign('all_nn', $all_nn);
 		// 团队总业绩
-		$nowdate = strtotime(date('Y-m-d'));
+// 		$nowdate = strtotime(date('Y-m-d'));
+		$nowdate = strtotime ("now");
 		$all_nmoney = $fck->where('p_path like "%,' . $id . ',%" and is_pay=1 and pdt<' . $nowdate)->sum('cpzj');
 		if (empty($all_nmoney)) {
 		    $all_nmoney = 0.00;
 		}
 		$this->assign('all_nmoney', $all_nmoney);
+		// 推荐总业绩
+		$all_remoney = $fck->where('re_path like "%,' . $id . ',%" and is_pay=1 and pdt<' . $nowdate)->sum('cpzj');
+		if (empty($all_remoney)) {
+		    $all_remoney = 0.00;
+		}
+		$this->assign('all_remoney', $all_remoney);
 		// 出局分红包数
 		$where = Array();
 		$where['user_id'] = $urs['user_id'];
