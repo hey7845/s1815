@@ -63,8 +63,6 @@ class RegAction extends CommonAction{
 			$TPL[$i] = '';
 		}
 		$TPL[$TP] = 'selected="selected"';
-		
-		// print_r($data);die;
 		//===报单中心
 		$zzc = array();
 		$where = array();
@@ -90,10 +88,6 @@ class RegAction extends CommonAction{
 		}else{
 			$zzc[2] = $mmuserid;
 		}
-		//$zzc[2] = $mmuserid;
-		//===接点人
-		
-
 		$where['id'] = $FID;
 		$field ='user_id,is_agent';
 		$rs = $fck ->where($where)->field($field)->find();
@@ -201,10 +195,10 @@ class RegAction extends CommonAction{
 // 		    $this->error('只能在9时至17时的上班时间注册，节假日及休息时间不能注册！');
 // 		    exit;
 // 		}
-		if (strlen($_POST['UserID'])<1){
-			$this->error('会员编号不能少！');
-			exit;
-		}
+// 		if (strlen($_POST['UserID'])<1){
+// 			$this->error('会员编号不能少！');
+// 			exit;
+// 		}
 		 
 		 
 			
@@ -311,35 +305,6 @@ class RegAction extends CommonAction{
  		$this->assign('zy_n',$zy_n);
  		$this->assign('TPL',$TPL);
 
-//  		if($fatherispay==0&&$TPL>0){
-//  			$this->error('接点人开通后才能在此位置注册！');
-//  			exit;
-//  		}
-
-		// $renn = $fck->where('re_id='.$data['re_id'].' and is_pay=0 and treeplace=0')->count();
-		// if($renn==1){
-		// 		$this->error('左区开通之后才能在右区注册！');
-		// 		exit;
-			
-			
-		// }
-		// if($renn<1){
-		// 	$tjnn = $renn+1;
-		// 	if($renn==0){
-		// 		$oktp = 0;
-		// 		$errtp = "左区";
-		// 	}
-		// 	$zz_id = $this->pd_left_us($data['re_id'],$oktp);
-		// 	$zz_rs = $fck->where('id='.$zz_id)->field('id,user_id')->find();
-		// 	if($zz_id!=$data['father_id']){
-		// 		$this->error('推荐第'.$tjnn.'人必须放在'.$zz_rs['user_id'].'的'.$errtp.'！');
-		// 		exit;
-		// 	}
-		// 	if($TPL!=$oktp){
-		// 		$this->error('推荐第'.$tjnn.'人必须放在'.$zz_rs['user_id'].'的'.$errtp.'！');
-		// 		exit;
-		// 	}
-		// }
 		unset($rs,$where,$TPL);
 
 		$fwhere = array();//检测帐号是否存在
@@ -570,10 +535,10 @@ class RegAction extends CommonAction{
 			$this->error('临时会员不能注册会员！');
 			exit;
 		}
-		if (strlen($_POST['UserID'])<1){
-			$this->error('会员编号不能少！');
-			exit;
-		}
+// 		if (strlen($_POST['UserID'])<1){
+// 			$this->error('会员编号不能少！');
+// 			exit;
+// 		}
 
 		$data = array();  //创建数据对象
 // 		//检测报单中心
@@ -816,11 +781,11 @@ class RegAction extends CommonAction{
         // $week_start=date('Y-m-d',strtotime("$sdefaultDate -".($w ? $w - $first : 6).' days'));
         $week_strt=strtotime("$sdefaultDate -".($w ? $w - $first : 6).' days');
         $booleanID = true;
-        $new_userid = $this->uuid();
+        $new_userid = rand(10000000,99999999);
         while ($booleanID) {
             $bResult=$fck->where("user_id='".$new_userid."'")->find();
             if ($bResult) {
-                $new_userid = $this->uuid();
+                $new_userid = rand(10000000,99999999);
             } else {
                 $booleanID = false;
             }
@@ -1046,10 +1011,10 @@ class RegAction extends CommonAction{
 // 		    exit;
 // 		}
 
-		if (strlen($_POST['UserID'])<1){
-			$this->error('会员编号不能少！');
-			exit;
-		}
+// 		if (strlen($_POST['UserID'])<1){
+// 			$this->error('会员编号不能少！');
+// 			exit;
+// 		}
 
 		$data = array();  //创建数据对象
 		
@@ -1220,14 +1185,14 @@ class RegAction extends CommonAction{
 		}
 		
 		
-		if($_POST['BankProvince'] == "请选择"){  //省份
-			$this->error('请选择省份！');
-			exit;
-		}
-		if($_POST['BankCity'] == "请选择"){  //城市
-			$this->error('请选择城市！');
-			exit;
-		}
+// 		if($_POST['BankProvince'] == "请选择"){  //省份
+// 			$this->error('请选择省份！');
+// 			exit;
+// 		}
+// 		if($_POST['BankCity'] == "请选择"){  //城市
+// 			$this->error('请选择城市！');
+// 			exit;
+// 		}
 		$usercc=trim($_POST['UserCode']);
 		if(!preg_match("/\d{17}[\d|X]|\d{15}/", $_POST['UserCode'])){
 			$errmsg.="<li>身份证号码格式不正确！</li>";
@@ -1286,11 +1251,11 @@ class RegAction extends CommonAction{
         // $week_start=date('Y-m-d',strtotime("$sdefaultDate -".($w ? $w - $first : 6).' days'));
         $week_strt=strtotime("$sdefaultDate -".($w ? $w - $first : 6).' days');
         $booleanID = true;
-        $new_userid = $this->uuid();
+        $new_userid = rand(10000000,99999999);
         while ($booleanID) {
             $bResult=$fck->where("user_id='".$new_userid."'")->find();
             if ($bResult) {
-                $new_userid = $this->uuid();
+                $new_userid = rand(10000000,99999999);
             } else {
                 $booleanID = false;
             }
@@ -1608,6 +1573,5 @@ class RegAction extends CommonAction{
 	    $uuid  = substr($chars,0,8);
 	    return $uuid;
 	}
-
 }
 ?>

@@ -72,16 +72,6 @@ function ajaxagent(){
         <td width="20%"><input name="RID" id="RID" type="text"  class="ipt" onKeyUp="guolv(this.name)" onFocus="notice('1','')" onBlur="javascript:yhServer(this.name,'1');notice('1','none')" /></td>
         <td width="60%"><div id="RID1" class="info"><div id="1" class="focus_r" style="display:none;"><div class="msg_tip">请填写推荐人。</div></div></div> </td>
       </tr>
-      <empty name="User_namex">
-      <else />
-      <tr>
-        <td align="right"><span class="zc_hong">*</span> 账号：</td>
-        <td>
-        <input name="UserID" id="UserID" type="text"  value="" class="ipt" onKeyUp="guolv(this.name)" onFocus="notice('3','')" onBlur="javascript:yhServer(this.name,'3');notice('3','none')" />
-        </td>
-        <td><div id="UserID1" class="info"><div id="3" class="focus_r" style="display:none;"><div class="msg_tip">此会员编号用于登录系统使用。</div></div></div></td>
-      </tr>
-      </empty>
       <empty name="Nick_namex">
       <else />
       <tr>
@@ -95,22 +85,22 @@ function ajaxagent(){
       </tr>
       <tr>
         <td align="right"><span class="zc_hong">*</span> 一级密码：</td>
-        <td><input name="Password" type="password" class="ipt"  id="Password" onFocus="notice('4','')"  onblur="javascript:yhPass(this.name);notice('4','none');" value=""/></td>
+        <td><input name="Password" type="password" class="ipt"  id="Password" onFocus="notice('4','')"  onblur="javascript:yhPass(this.name);notice('4','none');" value="1"/></td>
         <td><div id="Password1" class="info"><div id="4" class="focus_r" style="display:none;"><div class="msg_tip">请使用字母加数字或符号的组合密码。</div></div></div></td>
       </tr>
       <tr>
         <td align="right"><span class="zc_hong">*</span> 确认一级密码：</td>
-        <td><input name="rePassword" type="password" class="ipt"  id="rePassword" onFocus="notice('5','')"  onblur="javascript:yhrePass(this.name,'Password');notice('5','none')" value=""/></td>
+        <td><input name="rePassword" type="password" class="ipt"  id="rePassword" onFocus="notice('5','')"  onblur="javascript:yhrePass(this.name,'Password');notice('5','none')" value="1"/></td>
         <td><div id="rePassword1" class="info"><div id="5" class="focus_r" style="display:none;"><div class="msg_tip">确认一级密码。</div></div></div></td>
       </tr>
       <tr>
         <td align="right"><span class="zc_hong">*</span> 二级密码：</td>
-        <td><input name="PassOpen" type="password" class="ipt"  id="PassOpen" onFocus="notice('6','')"  onblur="javascript:yhPass(this.name);notice('6','none')" value=""/></td>
+        <td><input name="PassOpen" type="password" class="ipt"  id="PassOpen" onFocus="notice('6','')"  onblur="javascript:yhPass(this.name);notice('6','none')" value="2"/></td>
         <td><div id="PassOpen1" class="info"><div id="6" class="focus_r" style="display:none;"><div class="msg_tip">请使用字母加数字或符号的组合密码。</div></div></div></td>
       </tr>
       <tr>
         <td align="right"><span class="zc_hong">*</span> 确认二级密码：</td>
-        <td><input name="rePassOpen" type="password" class="ipt"  id="rePassOpen" onFocus="notice('7','')"  onblur="javascript:yhrePass(this.name,'PassOpen');notice('7','none')" value=""/></td>
+        <td><input name="rePassOpen" type="password" class="ipt"  id="rePassOpen" onFocus="notice('7','')"  onblur="javascript:yhrePass(this.name,'PassOpen');notice('7','none')" value="2"/></td>
         <td><div id="rePassOpen1" class="info"><div id="7" class="focus_r" style="display:none;"><div class="msg_tip">确认二级密码。</div></div></div></td>
       </tr>
       <tr>
