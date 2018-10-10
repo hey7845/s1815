@@ -142,10 +142,10 @@ class TransferAction extends CommonAction{
 	    } else {
 	        $status = 1;
 	    }
-	    if($status!=0){
-	        $this->error('只能在9时至17时的上班时间转账，节假日及休息时间不能转账！');
-	        exit;
-	    }
+// 	    if($status!=0){
+// 	        $this->error('只能在9时至17时的上班时间转账，节假日及休息时间不能转账！');
+// 	        exit;
+// 	    }
 		$UserID = $_POST['UserID'];    //转入会员帐号(进帐的用户帐号)
 		//	$ePoints = (int) $_POST['ePoints'];
 		$ePoints = $_POST['ePoints'];  //转入金额

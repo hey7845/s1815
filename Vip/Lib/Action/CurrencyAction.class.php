@@ -162,10 +162,10 @@ class CurrencyAction extends CommonAction {
 			} else {
 			    $status = 1;
 			}
-			if($status!=0){
-				$this->error('只能在9时至17时的上班时间提现，节假日及休息时间不能提现！');
-				exit;
-			}
+// 			if($status!=0){
+// 				$this->error('只能在9时至17时的上班时间提现，节假日及休息时间不能提现！');
+// 				exit;
+// 			}
 			$where = array();
 			$ID = $_SESSION[C('USER_AUTH_KEY')];
 

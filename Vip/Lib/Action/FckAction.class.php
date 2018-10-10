@@ -693,7 +693,6 @@ private function _transferMoneyConfirm($UserID='0',$ePoints=0,$content=null,$sel
         $fck = D('Fck');
         // $fck->rifenhong();
         $fck->fenhong();
-     
         echo "<p style='text-align:center;color:blue;margin-top:100px'>分红成功</p>";
         
     }

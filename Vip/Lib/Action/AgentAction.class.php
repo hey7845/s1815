@@ -708,10 +708,10 @@ class AgentAction extends CommonAction
         } else {
             $status = 1;
         }
-        if($status!=0){
-            $this->error('只能在9时至17时的上班时间复投，节假日及休息时间不能复投！');
-            exit;
-        }
+//         if($status!=0){
+//             $this->error('只能在9时至17时的上班时间复投，节假日及休息时间不能复投！');
+//             exit;
+//         }
         
         $content = $_POST['content'];
         $agentMax = $_POST['agentMax'];
