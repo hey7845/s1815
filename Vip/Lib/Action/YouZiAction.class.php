@@ -4371,7 +4371,7 @@ class YouZiAction extends CommonAction
             $sql .= "get_level=0,is_xf=0,xf_money=0,is_zy=0,zyi_date=0,zyq_date=0,down_num=0,agent_xf=0,agent_kt=0,agent_gp=0,gp_num=0,xy_money=0,";
             $sql .= "peng_num=0,re_f4=0,agent_cf=0,is_aa=0,is_bb=0,is_cc=0,is_fh=0,ach=0,tz_nums=0,shangqi_use=0,shangqi_tz=0,gdt=0,re_pathb=0,kt_id=0,pg_nums=0,fh_nums=0,is_cha=0,tx_num=0,xx_money=0,x_pai=1,is_pp=0,is_p=0,x_out=1,x_num=0,agent_sfw=0,agent_sf=1000,agent_sfo=2000,fanli_money=0,wlf_money=0,";
             $sql .= "re_nums_b=0,vip4=0,vip5=0,vip6=0,zdt=0,shang_l=0,shang_r=0,shang_nums=0,shang_ach=0,z_date=0,c_date=0,jia_nums=0,re_nums_l=0,re_nums_r=0,";
-            $sql .= "buy_gupiao=0,ls=0,rs=0,l_nums=0,r_nums=0,email=456,p_nums=0,sh_level=1,agent_zc=0,in_gupiao=0,out_gupiao=0,flat_gupiao=0,give_gupiao=0";
+            $sql .= "buy_gupiao=0,ls=0,rs=0,l_nums=0,r_nums=0,email=456,p_nums=0,sh_level=0,agent_zc=0,in_gupiao=0,out_gupiao=0,flat_gupiao=0,give_gupiao=0";
             
             $model->execute("UPDATE __TABLE__ SET " . $sql);
             
