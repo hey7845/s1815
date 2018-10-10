@@ -522,7 +522,7 @@ public function aixinAC(){
 							$data['bz']           = '21';
 							$history->create();
 							$rs1 = $history->add($data);
-					}else{
+					}else if($stype==1){
 							$data['uid']          = $vo['uid'];
 							$data['user_id']      = $vo['user_id'];
 							$data['action_type']  = 23;
@@ -531,6 +531,17 @@ public function aixinAC(){
 							$data['did']          = 0;
 							$data['allp']         = 0;
 							$data['bz']           = '23';
+							$history->create();
+							$rs1 = $history->add($data);
+					}else if($stype==2){
+							$data['uid']          = $vo['uid'];
+							$data['user_id']      = $vo['user_id'];
+							$data['action_type']  = 30;
+							$data['pdt']          = $nowdate;
+							$data['epoints']      = $vo['epoint'];
+							$data['did']          = 0;
+							$data['allp']         = 0;
+							$data['bz']           = '30';
 							$history->create();
 							$rs1 = $history->add($data);
 					}
@@ -543,9 +554,12 @@ public function aixinAC(){
 							
 							$fck->execute("UPDATE __TABLE__ set `agent_cash`=agent_cash+". $cz_money ." where `id`=". $vo['uid']);
 							
-						}else{
+						}else if($stype==1){
 							
 							$fck->execute("UPDATE __TABLE__ set `agent_use`=agent_use+". $cz_money. "  where `id`=". $vo['uid']);
+						}else if($stype==2){
+							
+							$fck->execute("UPDATE __TABLE__ set `agent_active`=agent_active+". $cz_money. "  where `id`=". $vo['uid']);
 						}
 						$chongzhi->execute("UPDATE __TABLE__ set `is_pay`=1 ,`pdt`=$nowdate  where `id`=". $vo['id']);
 						$fck->commit();
