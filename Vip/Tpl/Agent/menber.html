@@ -54,15 +54,16 @@
 </table>
 <table width="600" align="center">
     <tr>
-    <td align="center"><form method='post' action="__URL__/menber/">搜索会员：<input type="text" name="UserID" title="帐号查询">
+    <td align="left"><form method='post' action="__URL__/menber/">搜索会员：<input type="text" name="UserID" title="帐号查询">
     <input type="submit" name="Submit" value="查询"  class="bt_tj"/>
     </form></td>
     </tr>
     <tr>
-      <td align="center" colspan="2">
-    <img src="__PUBLIC__/Images/money_dol.png" align="absmiddle"/>&nbsp;&nbsp;&nbsp;
-    电子币:&nbsp;<span class="hong">{$frs['agent_cash']}</span>&nbsp;&nbsp;&nbsp;&nbsp;
-    </td></tr>
+      <td align="left">
+    	电子积分:&nbsp;<span class="hong">{$frs['agent_cash']}</span>
+    	激活积分:&nbsp;<span class="hong">{$frs['agent_active']}</span>
+   	  </td>
+    </tr>
 </table>
 </div>
 </body>
