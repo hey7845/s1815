@@ -8,6 +8,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <link href="__PUBLIC__/Css/login/css/login.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="__PUBLIC__/resource/assets/css/style.css">
+<link rel="stylesheet" href="__PUBLIC__/resource/assets/bootstrap/css/bootstrap.min.css">
 <script type="text/javascript" src="__PUBLIC__/Css/login/js/jquery.js"></script>
 <script src="__PUBLIC__/resource/assets/js/jquery.backstretch.min.js"></script>
 <style>
@@ -63,11 +65,41 @@ jQuery(document).ready(function(){
 <body>
 	<div id="bg"></div>
 	<div class="register-container container">
+	<div class="row">
+		<div class="register span5" style="margin-top:60px;background-size: cover;">
+			<form method='post' name="login" id="form1" onsubmit="return false" style="background:rgba(255,255,255,0.3);margin-bottom:0px;">
+				<div class="form-group" style="margin-top:20px;"><h3>
+						<span>泰诺生物管理系统</span>
+					</h3> <label for="account">用户名：</label> <input type="text"
+					id="account" name="account" placeholder="请输入登录用户名..."
+					maxlength="10"></div>
+				<div class="form-group"><label for="password">密码：</label> <input type="password"
+					id="password" name="password" placeholder="请输入登录密码..."
+					maxlength="16"></div>
+				<div class="form-group"><label for="verify">验证码：</label><input name="verify"
+					id="verify" type="text" onKeyDown="keydown(event)"
+					check="Require" value="" maxlength="4" style="width: 75%" />
+					&nbsp;&nbsp;&nbsp;&nbsp; <img id="verifyImg"
+					src="__URL__/verify/" width="55" onClick="fleshVerify()"
+					border="0" alt="点击刷新验证码" style="cursor: pointer"
+					align="absmiddle" /></div>
+				<div class="form-group"><button name="button" type="submit" id="btn_submit" style="margin-top:20px;"
+						onClick="ThinkAjax.sendForm('form1','__URL__/checkLogin/',loginHandle,'result')">登录</button>
+					<input type="hidden" name="ajax" value="1"></div>
+				<div class="form-group"><div class="error" style="margin-bottom:20px;"><span id="result"></span></div></div>
+			</form>
+		</div>
+		<div class="iphone span6">
+           <img src="__PUBLIC__/resource/assets/img/iphone.png" alt="">
+       </div>
+	</div>
+	
+	<!--
 	<div class="login-layout">
         <form method='post' name="login" id="form1" onsubmit="return false">
             <div class="login-form" style="position: relative">
                 <div class="formContent">
-                	<div class="title" style="width:400px;" align="center">管理中心</div>
+                	<div class="title" align="center">管理中心</div>
                     <div class="formInfo">
                     	<div class="formText">
                         	<i class="icon icon-user"></i>
@@ -85,24 +117,19 @@ jQuery(document).ready(function(){
                         </span>
 
                         </div>
-                       <!--  <div class="formText">
+                       <div class="formText">
                             <a href="/index.php/admin/Admin/forget_pwd" class="forget_pwd">忘记密码？</a>
-                        </div> -->
-						<div class="formText submitDiv">
-                          <span class="submit_span">
-                          	<input type="submit" name="submit" class="sub" id="btn_submit" value="登录" onClick="ThinkAjax.sendForm('form1','__URL__/checkLogin/',loginHandle,'result')">
+                        </div>
+						<div class="formText">
+                          	<input type="submit" name="submit" class="btn btn-info" style="width:200px; height:30px;" id="btn_submit" value="登录" onClick="ThinkAjax.sendForm('form1','__URL__/checkLogin/',loginHandle,'result')">
                             <input type="hidden" name="ajax" value="1">
-                          </span>
                        </div>
                     </div>
-                </div>
-                <div id="error" style="position: absolute;left:0px;bottom: 12px;text-align: center;width:441px;">
-
                 </div>
             </div>
             <div class="form-group"><div class="error"><span id="result"></span></div></div>
         </form>
-    </div>
+    </div>--> 
     <!--<script type="text/javascript" src="js/jquery.purebox.js"></script> -->   
 
 

@@ -527,10 +527,10 @@ input[type='type'] {
 	padding: 2px; border: 1px solid rgb(213, 220, 229); border-image: none; height: 24px; line-height: 24px; font-size: 12px;
 }
 .tab3 th {
-	background: url("../Images/bar_header.gif") repeat-x; border: 1px solid rgb(213, 220, 229); border-image: none; height: 28px; text-align: center; line-height: 28px; font-size: 12px; font-weight: bold;
+	 border: 1px solid rgb(213, 220, 229); border-image: none; height: 28px; text-align: center; line-height: 28px; font-size: 12px; font-weight: bold;
 }
 .tab3 th:hover {
-	background: url("../Images/th_hover3.gif") repeat-x; height: 28px; text-align: center; line-height: 28px; font-weight: bold;
+     height: 28px; text-align: center; line-height: 28px; font-weight: bold;
 }
 .tab3 {
 	padding: 2px 20px; border-collapse: collapse; border-spacing: 0;
@@ -572,10 +572,10 @@ input[type='type'] {
 	background: url("../Images/button-img2.jpg") no-repeat 0% 0% / cover; float: right;
 }
 .offer p {
-	color: rgb(255, 255, 255); font-family: "Î¢ÈíÑÅºÚ"; font-size: 20px; margin-top: 40px; text-shadow: 1px 1px 0px #303030;
+	color: rgb(255, 255, 255); font-family: "Î¢ï¿½ï¿½ï¿½Åºï¿½"; font-size: 20px; margin-top: 40px; text-shadow: 1px 1px 0px #303030;
 }
 .req_b p {
-	color: rgb(255, 255, 255); font-family: "Î¢ÈíÑÅºÚ"; font-size: 20px; margin-top: 40px; text-shadow: 1px 1px 0px #303030;
+	color: rgb(255, 255, 255); font-family: "Î¢ï¿½ï¿½ï¿½Åºï¿½"; font-size: 20px; margin-top: 40px; text-shadow: 1px 1px 0px #303030;
 }
 .offer span {
 	color: rgb(85, 204, 30); display: block; text-shadow: 1px 1px 0px #143305;
@@ -584,10 +584,10 @@ input[type='type'] {
 	color: rgb(85, 204, 30); display: block; text-shadow: 1px 1px 0px #143305;
 }
 .offer a {
-	margin: 40px auto 0px; border-radius: 4px; width: 150px; height: 66px; color: rgb(255, 255, 255); line-height: 66px; font-family: "Î¢ÈíÑÅºÚ"; font-size: 22px; font-weight:bold; display: block; opacity: 0.9;
+	margin: 40px auto 0px; border-radius: 4px; width: 150px; height: 66px; color: rgb(255, 255, 255); line-height: 66px; font-family: "Î¢ï¿½ï¿½ï¿½Åºï¿½"; font-size: 22px; font-weight:bold; display: block; opacity: 0.9;
 }
 .req_b a {
-	margin: 40px auto 0px; border-radius: 4px; width: 150px; height: 66px; color: rgb(255, 255, 255); line-height: 66px; font-family: "Î¢ÈíÑÅºÚ"; font-size: 22px; font-weight:bold; display: block; opacity: 0.9;
+	margin: 40px auto 0px; border-radius: 4px; width: 150px; height: 66px; color: rgb(255, 255, 255); line-height: 66px; font-family: "Î¢ï¿½ï¿½ï¿½Åºï¿½"; font-size: 22px; font-weight:bold; display: block; opacity: 0.9;
 }
 .offer a:hover {
 	background: rgb(116, 211, 72); color: rgb(255, 255, 255);
@@ -608,7 +608,7 @@ input[type='type'] {
 	background: rgb(255, 255, 255); margin: 30px 0px 0px 30px; border-radius: 2px; border: 1px solid rgb(228, 229, 231); border-image: none; width: 32%; text-align: center; float: left; min-width: 300px;
 }
 .virtual h1 {
-	padding: 30px 0px 20px; font-family: "Î¢ÈíÑÅºÚ"; font-size: 20px; font-weight: normal;
+	padding: 30px 0px 20px; font-family: "Î¢ï¿½ï¿½ï¿½Åºï¿½"; font-size: 20px; font-weight: normal;
 }
 .virtual h2 {
 	border: currentColor; border-image: none; font-size: 20px;

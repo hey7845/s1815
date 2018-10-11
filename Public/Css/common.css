@@ -60,7 +60,7 @@ body {font-size:12px; color:#666; font-family:simsun,arial,tahoma; }
 			-webkit-border-radius: 3px;
 			border-radius: 3px;
    background:url(../Images/bar_bg.gif);}
-   .bar_header { background:url(../Images/bar_header.gif) repeat-x; height:22px; line-height:22px; text-indent:10px; font-weight:bold; color:#1083c3}
+   .bar_header {  height:22px; line-height:22px; text-indent:10px; font-weight:bold; color:#1083c3}
    .bar_header2 { background:url(../Images/bar_header2.gif) repeat-x; height:22px; line-height:22px; text-indent:10px; font-weight:bold; color:#333}
    .bar_cont { padding:5px; line-height:22px;}
 /*]]>*/
@@ -72,7 +72,7 @@ body {font-size:12px; color:#666; font-family:simsun,arial,tahoma; }
 .bor2 td{ border-right:1px solid #b0bec7; padding-left:5px;}
 .bor2 th { border:0; padding-left:5px;}
 .tab3 td{ background:url(../Images/bar_bg.gif); height:24px; line-height:24px; padding:0 2px;font-size:12px;}
-.tab3 th{ background:url(../Images/bar_header.gif) repeat-x; height:22px; line-height:22px; text-align:center;font-weight:bold;color:#1083C3;font-size:12px;}
+.tab3 th{ height:22px; line-height:22px; text-align:center;font-weight:bold;color:#1083C3;font-size:12px;}
 .tab3 th:hover{ background:url(../Images/th_hover.gif) repeat-x; height:22px; line-height:22px; text-align:center; font-weight:bold;}
 .tab3 th:hover span{ background:url(../Images/th_list.gif) right no-repeat; display:block; height:22px; line-height:22px;text-align:center;font-weight:bold;}
 .tab3_bottom{background:url(../Images/bar_bg.gif);height:24px; line-height:24px; padding:0 2px;font-size:12px;border-right:1px solid #b0bec7; border-bottom:1px solid #b0bec7; border-left:1px solid #b0bec7; padding-left:20px;}
@@ -141,7 +141,7 @@ body {font-size:12px; color:#666; font-family:simsun,arial,tahoma; }
 			-khtml-border-radius: 3px;
 			-webkit-border-radius: 3px;
 			border-radius: 3px; padding-top:5px;}
-.index_kj { background:url(../Images/bar_header.gif) repeat-x; height:22px; line-height:22px; text-indent:10px; font-weight:bold; color:#1083c3}
+.index_kj {  height:22px; line-height:22px; text-indent:10px; font-weight:bold; color:#1083c3}
 .index_kjnr { padding:5px; line-height:22px; height:150px; }
 .index_kjnr ul li{ border-bottom:1px #CCC dashed;}
    .bar_kj {border:1px solid #b0c3c7; width:100%;

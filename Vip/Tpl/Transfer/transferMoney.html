@@ -43,14 +43,13 @@ function yhServer(Ful){
             <td colspan="2">
             <select name="select" id="select" onchange="Selev(this.value)" onpropertychange="Selev(this.value)">
               <!-- <option value="1"> 现金币 转给 其他会员 </option>-->
-              <?php if(  $_SESSION['loginUseracc']  !=  "aa" && $_SESSION['loginUseracc']  !=  "bb"): ?>
+              <?php if(  $_SESSION['is_treasure_manager']  !=  "1"): ?>
               	<option value="1"> 电子积分 转 消费积分</option>
               	<option value="2"> 消费积分 转 电子积分 </option>
       		   	<option value="3"> 消费积分 转 复投积分 </option>
       		   <?php endif; ?>
       		    <option value="4"> 电子积分 转给 其他会员 </option>
       		    <option value="5"> 激活积分 转给 其他会员 </option>
-      		    <!-- <option value="5"> M币 转  重销积分 </option> -->
             </select>
             </td>
           </tr>
@@ -123,8 +122,6 @@ function Selev(o){
 	if(o==1||o==3||o==2){document.getElementById('Selev').style.display = '';}
 	// if(o==4||o==5||o==6){document.getElementById('Selev').style.display = 'none';}
 }
-new TableSorter("tb1");
-
 function getUserName(vv){
     var xmlHttp;
 		try{
