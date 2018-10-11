@@ -981,7 +981,7 @@ class AgentAction extends CommonAction
             // 推荐奖
             $fck->tuijj($fck_rs['re_path'], $fck_rs['user_id'], $money/2);
             // 领导奖
-            $fck->lingdao22($fck_rs['p_path'], $fck_rs['user_id'], $money/2);
+            $fck->lingdao33($fck_rs['p_path'], $fck_rs['user_id'], $money);
             // 领导级别统计
             $fck->sh_level($fck_rs['p_path']);
             

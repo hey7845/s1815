@@ -891,6 +891,46 @@ class FckModel extends CommonModel
         }
         unset($fee, $fee_rs, $s13, $lirs, $lrs);
     }
+    /**
+     * 复投领导奖
+     * $p_path ：节点路径
+     * $inUserID：正在投资的会员ID
+     * $money:投资的金额
+     * **/
+    public function lingdao33($p_path, $inUserID, $money)
+    {
+        $fee = M('fee');
+        // 领导奖比例：合伙人，市场总监，市场监理，市场董事
+        $fee_rs = $fee->field('s4')->find(1);
+        $s4 = explode("|", $fee_rs['s4']);
+        // 搜索节点路径下的会员数据
+        $lirs = $this->where('id in (0' . $p_path . '0)  and is_fenh=0 and is_pay=1')
+        ->field('id,re_nums,is_fenh,sh_level')
+        ->order('id asc')
+        ->select();
+        // 循环分配奖金
+        foreach ($lirs as $lrs) {
+            $money_count = 0;
+            $myid = $lrs['id'];
+            $is_fenh = $lrs['is_fenh'];
+            // 合伙人级别
+            $sh_level = $lrs['sh_level'];
+            $small_level = $this->where('id in (0' . $p_path . '0) and id>' . $myid . '')->max('sh_level');
+            if ($small_level >= $sh_level) {
+                continue;
+            } else {
+                $mm = $s4[$sh_level - 1] - $s4[$small_level - 1];
+                $prii = $mm / 200;
+            }
+            // 根据投资金额领导奖比例算出应得金额
+            $money_count = bcmul($money, $prii, 2);
+            if ($money_count > 0 && $is_fenh == 0) {
+                // 6为领导奖
+                $this->rw_bonus($myid, $inUserID, 6, $money_count);
+            }
+        }
+        unset($fee, $fee_rs, $s13, $lirs, $lrs);
+    }
     // 
     /**
      * 报单奖
