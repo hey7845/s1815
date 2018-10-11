@@ -270,33 +270,33 @@ class TransferAction extends CommonAction{
 	
 			if($select==1){
 				$Agent_cash = $mmrs['agent_cash'];
-				if ($Agent_cash < $ePoints){            //判断电子币余额
-					$this->error('电子币余额不足!');
+				if ($Agent_cash < $ePoints){            //判断电子积分
+					$this->error('电子积分余额不足!');
 					exit;
 				}
 			}
 			if($select==3 || $select==2){
 				$AgentUse = $mmrs['agent_use'];
-				if ($AgentUse < $ePoints){            //判断注册币余额
-					$this->error('现金币余额不足!');
+				if ($AgentUse < $ePoints){            //判断消费积分
+					$this->error('消费积分余额不足!');
 					exit;
 				}
 			}
-				if($select==4){
-				$AgentUse2 = $mmrs['agent_cash'];
-				if ($AgentUse2 < $ePoints){            //判断注册币余额
-					$this->error('电子币余额不足!');
-					exit;
-				}
+			if($select==4){
+			    $AgentUse2 = $mmrs['agent_cash'];
+    			if ($AgentUse2 < $ePoints){            //判断电子积分
+    				$this->error('电子积分余额不足!');
+    				exit;
+    			}
 			}
-
-			// if($select==3){
-			// 	$AgentUseTwo = $mmrs['agent_zc'];
-			// 	if ($AgentUseTwo < $ePoints){            //判断奖金余额
-			// 		$this->error('注册积分余额不足!');
-			// 		exit;
-			// 	}
-			// }
+			
+			if($select==5){
+			    $AgentActive = $mmrs['agent_active'];
+			    if ($AgentActive < $ePoints){            //判断激活积分
+    				$this->error('激活积分余额不足!');
+    				exit;
+			    }
+			}
 				
 			$history->startTrans();//开始事物处理
 			$zz_content = "转帐";
@@ -326,8 +326,6 @@ class TransferAction extends CommonAction{
 				} else {
 				    $fck->execute("update `xt_fck` Set `agent_xf`=agent_xf+".$ePoints." where `id`=".$vo['id']);
 				}
-				
-				
 			}
 
 			if($select==4){
