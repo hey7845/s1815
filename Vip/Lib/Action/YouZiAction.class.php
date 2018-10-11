@@ -1856,10 +1856,10 @@ class YouZiAction extends CommonAction
             case '解除转账管理员':
                 $this->_treasureManagerCancel($PTid);
                 break;
-            case '设为实体服务中心':
+            case '设为物流管理员':
                 $this->_relAgent($PTid);
                 break;
-            case '解除实体服务中心':
+            case '解除物流管理员':
                 $this->_relAgentCancel($PTid);
                 break;
             case '设为服务中心管理员':
@@ -2288,7 +2288,7 @@ class YouZiAction extends CommonAction
     // 转账管理员设置
     private function _treasureManager($PTid = 0)
     {
-        // 设置实体服务中心
+        // 设置物流管理员
         if ($_SESSION['UrlPTPass'] == 'MyssGuanShuiPuTao') {
             $fck = M('fck');
             $where['id'] = array('in',$PTid);
@@ -2315,7 +2315,7 @@ class YouZiAction extends CommonAction
     // 转账管理员解除
     private function _treasureManagerCancel($PTid = 0)
     {
-        // 设置实体服务中心
+        // 设置物流管理员
         if ($_SESSION['UrlPTPass'] == 'MyssGuanShuiPuTao') {
             $fck = M('fck');
             $where['is_treasure_manager'] = array('egt',1);
@@ -2340,10 +2340,10 @@ class YouZiAction extends CommonAction
         }
     }
     
-    // 实体服务中心设置
+    // 物流管理员设置
     private function _relAgent($PTid = 0)
     {
-        // 设置实体服务中心
+        // 设置物流管理员
         if ($_SESSION['UrlPTPass'] == 'MyssGuanShuiPuTao') {
             $fck = M('fck');
             $where['id'] = array('in',$PTid);
@@ -2355,11 +2355,11 @@ class YouZiAction extends CommonAction
     
             if ($rs) {
                 $bUrl = __URL__ . '/adminMenber';
-                $this->_box(1, '实体服务中心设置成功！', $bUrl, 1);
+                $this->_box(1, '物流管理员设置成功！', $bUrl, 1);
                 exit();
             } else {
                 $bUrl = __URL__ . '/adminMenber';
-                $this->_box(0, '实体服务中心设置失败！', $bUrl, 1);
+                $this->_box(0, '物流管理员设置失败！', $bUrl, 1);
                 exit();
             }
         } else {
@@ -2367,10 +2367,10 @@ class YouZiAction extends CommonAction
         }
     }
     
-    // 实体服务中心解除
+    // 物流管理员解除
     private function _relAgentCancel($PTid = 0)
     {
-        // 设置实体服务中心
+        // 设置物流管理员
         if ($_SESSION['UrlPTPass'] == 'MyssGuanShuiPuTao') {
             $fck = M('fck');
             $where['is_aa'] = array('egt',1);
@@ -2383,11 +2383,11 @@ class YouZiAction extends CommonAction
     
             if ($rs) {
                 $bUrl = __URL__ . '/adminMenber';
-                $this->_box(1, '实体服务中心解除成功！', $bUrl, 1);
+                $this->_box(1, '物流管理员解除成功！', $bUrl, 1);
                 exit();
             } else {
                 $bUrl = __URL__ . '/adminMenber';
-                $this->_box(0, '实体服务中心解除失败！', $bUrl, 1);
+                $this->_box(0, '物流管理员解除失败！', $bUrl, 1);
                 exit();
             }
         } else {
