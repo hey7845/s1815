@@ -11,12 +11,8 @@
         <th></th>
         <th><span>会员编号</span></th>
 		<th><span>推荐人</span></th>
-        <th><span>姓名</span></th>
-        <th><span>昵称</span></th>
-        <th><span>会员级别</span></th>
-        <th><span>联系电话</span></th>
         <th><span>报单中心</span></th>
-        <th><span>合伙人</span></th>
+        <th><span>领导人级别</span></th>
         <th><span>转账管理员</span></th>
         <th><span>实体服务中心</span></th>
         <th><span>服务中心管理员</span></th>
@@ -34,10 +30,6 @@
         <td><input type="checkbox" name="tabledb[]" value="{$vo['id']}" class="btn2" /></td>
         <td><a href="__URL__/adminuserData/PT_id/{$vo['id']}">{$vo['user_id']}</a></td>
 		<td>{$vo['re_name']}</td>
-        <td>{$vo['user_name']}</td>
-        <td>{$vo['nickname']}</td>
-        <td>{$voo[$vo['u_level']]}</td>
-        <td>{$vo['user_tel']}</td>
         <td><eq name="vo['is_agent']" value='2'><span style="color:BLUE;">是</span><else/>否</eq></td>
         <td><eq name="vo['sh_level']" value='0'>否</eq>
             <eq name="vo['sh_level']" value='1'><span style="color:BLUE;">一星</span></eq>
