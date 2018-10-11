@@ -916,15 +916,20 @@ class FckModel extends CommonModel
             // 合伙人级别
             $sh_level = $lrs['sh_level'];
             $small_level = $this->where('id in (0' . $p_path . '0) and id>' . $myid . '')->max('sh_level');
+            if ($small_level == null) {
+                $small_result = $this->where("user_id = '".$inUserID."'")->field('sh_level')->find();
+                $small_level = $small_result['sh_level'];
+            }
             if ($small_level >= $sh_level) {
                 continue;
             } else {
                 $mm = $s4[$sh_level - 1] - $s4[$small_level - 1];
-                $prii = $mm / 200;
+                $prii = $mm / 100;
             }
             // 根据投资金额领导奖比例算出应得金额
             $money_count = bcmul($money, $prii, 2);
             if ($money_count > 0 && $is_fenh == 0) {
+                $money_count = bcdiv($money_count, 2, 2);
                 // 6为领导奖
                 $this->rw_bonus($myid, $inUserID, 6, $money_count);
             }
