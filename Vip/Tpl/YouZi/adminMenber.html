@@ -3,7 +3,7 @@
 <script language=javascript src="__PUBLIC__/Js/wpCalendar.js"></script>
 <div class="ncenter_box">
 <div class="accounttitle"><h1>会员管理 </h1></div>
-<div><h1>总业绩：{$f4_count22} </h1></div>
+<div><h4>&nbsp;&nbsp;&nbsp;&nbsp;总业绩：{$f4_count22} </h4></div>
 <form name="form3" method="post" action="__URL__/adminMenberAC">
 <table width="100%" class="tab3" border="0" cellpadding="3" cellspacing="1" id="tb1" bgcolor="#b9c8d0">
 	<thead>
@@ -26,7 +26,8 @@
          <th><span>复投单数</span></th>
         <th><span>提现总额</span></th>
         <th><span>状态</span></th>
-        <th><span>是否奖金</span></th>
+        <th><span>是否开启奖金</span></th>
+        <th><span>是否锁定现金积分</span></th>
         </tr>
     </thead>
     <volist name="list" id="vo">
@@ -55,7 +56,8 @@
         <td>{$vo['shang_ach']}</td>
         <td><eq name="vo['is_lock']" value='0'><span style="color: #FF0000;">未锁定</span><else />已锁定</eq><eq name="vo['is_pay']" value='2'>[空单]</eq></td>
         <!--<td><eq name="vo['is_aa']" value='0'><span style="color: #FF0000;">正常</span><else />出局</eq></td>-->
-        <td><eq name="vo['is_fenh']" value='0'><span style="color: #FF0000;">开启奖金</span><else />关闭奖金</eq></td>
+        <td><eq name="vo['is_fenh']" value='0'><span style="color: #FF0000;">已开启</span><else />已关闭</eq></td>
+        <td><eq name="vo['is_lock_use']" value='0'><span style="color: #FF0000;">已开启</span><else />已锁定</eq></td>
         </tr>
     </volist>
 
@@ -69,29 +71,20 @@
 <table width="100%" class="tab3_bottom" border="0" cellpadding="0" cellspacing="1">
     <tr>
    	  <td width="60%">
-      <input name="全选" type="button" class="button_text" id="全选" onclick="CheckAll(this.form)" value="全选" />	  &nbsp;&nbsp;
-	  <input type="submit" name="action" value="开启会员" class="button_text" onclick="{if(confirm('确定要开启会员吗?')){return true;}return false;}">&nbsp;&nbsp;
-	  <input type="submit" name="action" value="锁定会员" class="button_text" onclick="{if(confirm('确定要锁定会员吗?')){return true;}return false;}">&nbsp;&nbsp;
-      <input type="submit" name="action" value="删除会员" class="button_text" onclick="{if(confirm('确定要删除会员吗?')){return true;}return false;}">&nbsp;&nbsp;
-	  <input type="submit" name="action" value="开启奖金" class="button_text" onclick="{if(confirm('确定要开启奖金吗?')){return true;}return false;}">&nbsp;&nbsp;
-	  <input type="submit" name="action" value="关闭奖金" class="button_text" onclick="{if(confirm('确定要关闭奖金吗?')){return true;}return false;}">&nbsp;&nbsp;
-	  <input type="submit" name="action" value="设为转账管理员" class="button_text" onclick="{if(confirm('确定要设为转账管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
-	  <input type="submit" name="action" value="解除转账管理员" class="button_text" onclick="{if(confirm('确定要解除转账管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
-  	  <input type="submit" name="action" value="设为物流管理员" class="button_text" onclick="{if(confirm('确定要设为物流管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
-	  <input type="submit" name="action" value="解除物流管理员" class="button_text" onclick="{if(confirm('确定要解除物流管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
-   	  <input type="submit" name="action" value="设为服务中心管理员" class="button_text" onclick="{if(confirm('确定要设为服务中心管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
-	  <input type="submit" name="action" value="解除服务中心管理员" class="button_text" onclick="{if(confirm('确定要解除服务中心管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
-      <!--<input type="submit" name="action" value="开启打卡奖" class="button_text" onclick="{if(confirm('确定要开启打卡奖吗?')){return true;}return false;}">&nbsp;&nbsp;
-	  <input type="submit" name="action" value="关闭打卡奖" class="button_text" onclick="{if(confirm('确定要关闭打卡奖吗?')){return true;}return false;}">&nbsp;&nbsp;-->
-    <!--  <input type="submit" name="action" value="开启分红奖" class="button_text" onclick="{if(confirm('确定要开启会员分红奖吗?')){return true;}return false;}">&nbsp;&nbsp;
-	  <input type="submit" name="action" value="关闭分红奖" class="button_text" onclick="{if(confirm('确定要关闭会员分红奖吗?')){return true;}return false;}">&nbsp;&nbsp;
-      <input type="submit" name="action" value="设为代理商" class="button_text" onclick="{if(confirm('确定要将选中的会员设为代理商吗?')){return true;}return false;}">&nbsp;&nbsp;
-	  <input type="submit" name="action" value="取消代理商" class="button_text" onclick="{if(confirm('确定要将选中的会员取消代理商资格吗?')){return true;}return false;}">&nbsp;&nbsp;-->
-	  <!--<input type="submit" name="action" value="设为财务管理" class="button_text" onclick="{if(confirm('确定要将选中的会员设为财务管理吗?')){return true;}return false;}">&nbsp;&nbsp;
-      <input type="submit" name="action" value="设为物流管理" class="button_text" onclick="{if(confirm('确定要将选中的会员设为物流管理吗?')){return true;}return false;}">&nbsp;&nbsp;
-	  <input type="submit" name="action" value="取消管理员" class="button_text" onclick="{if(confirm('确定要将选中的会员取消管理员资格吗?')){return true;}return false;}">&nbsp;&nbsp;-->
-     <!--  <input type="submit" name="action" value="设为报单中心" class="button_text" onclick="{if(confirm('确定要将选中会员设为报单中心吗?')){return true;}return false;}">&nbsp;&nbsp; -->
-	  <!--<input type="submit" name="action" value="奖金转注册币" class="button_text" onclick="{if(confirm('确定要将此会员的K币账户全部转为注册币吗?')){return true;}return false;}">--></td>
+      <input name="全选" type="button" class="btn-xs btn-default" id="全选" onclick="CheckAll(this.form)" value="全选" />	  &nbsp;&nbsp;
+	  <input type="submit" name="action" value="开启会员" class="btn-xs btn-success" onclick="{if(confirm('确定要开启会员吗?')){return true;}return false;}">&nbsp;&nbsp;
+	  <input type="submit" name="action" value="锁定会员" class="btn-xs btn-default" onclick="{if(confirm('确定要锁定会员吗?')){return true;}return false;}">&nbsp;&nbsp;
+      <input type="submit" name="action" value="删除会员" class="btn-xs btn-danger" onclick="{if(confirm('确定要删除会员吗?')){return true;}return false;}">&nbsp;&nbsp;
+	  <input type="submit" name="action" value="开启奖金" class="btn-xs btn-success" onclick="{if(confirm('确定要开启奖金吗?')){return true;}return false;}">&nbsp;&nbsp;
+	  <input type="submit" name="action" value="关闭奖金" class="btn-xs btn-default" onclick="{if(confirm('确定要关闭奖金吗?')){return true;}return false;}">&nbsp;&nbsp;
+	  <input type="submit" name="action" value="设为转账管理员" class="btn-xs btn-success" onclick="{if(confirm('确定要设为转账管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
+	  <input type="submit" name="action" value="解除转账管理员" class="btn-xs btn-default" onclick="{if(confirm('确定要解除转账管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
+  	  <input type="submit" name="action" value="设为物流管理员" class="btn-xs btn-success" onclick="{if(confirm('确定要设为物流管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
+	  <input type="submit" name="action" value="解除物流管理员" class="btn-xs btn-default" onclick="{if(confirm('确定要解除物流管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
+   	  <input type="submit" name="action" value="设为服务中心管理员" class="btn-xs btn-success" onclick="{if(confirm('确定要设为服务中心管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
+	  <input type="submit" name="action" value="解除服务中心管理员" class="btn-xs btn-default" onclick="{if(confirm('确定要解除服务中心管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
+	  <input type="submit" name="action" value="开启现金积分" class="btn-xs btn-success" onclick="{if(confirm('确定要开启现金积分吗?')){return true;}return false;}">&nbsp;&nbsp;
+	  <input type="submit" name="action" value="锁定现金积分" class="btn-xs btn-default" onclick="{if(confirm('确定要锁定现金积分吗?')){return true;}return false;}">&nbsp;&nbsp;
     </tr>
 </table>
 <table width="100%" class="tab3_bottom" border="0" cellpadding="0" cellspacing="1">
@@ -112,9 +105,13 @@
     </volist>
     </select>
     &nbsp;&nbsp;
-    <input type="submit" name="Submit" value="查询"  class="button_text"/>
+    <input type="submit" name="Submit" value="查询"  class="btn-xs btn-default"/>
     &nbsp;
-    <input name="button3" type="button" onclick="window.location.href='__URL__/financeDaoChu_MM/'" value="将所有会员导出Excel表格" class="button_text" />
+    <input name="button3" type="button" onclick="window.location.href='__URL__/memberInfoDaochu/'" value="将所有会员平台信息导出Excel表格" class="btn-xs btn-success" />
+    <input name="button3" type="button" onclick="window.location.href='__URL__/memberDataDaochu/'" value="将所有会员个人信息导出Excel表格" class="btn-xs btn-info" />
+    <input name="button3" type="button" onclick="window.location.href='__URL__/transferDataDaochu/'" value="将所有会员转账信息导出Excel表格" class="btn-xs btn-primary" />
+    <input name="button3" type="button" onclick="window.location.href='__URL__/withdrawDataDaochu/'" value="将所有会员提现已确认信息导出Excel表格" class="btn-xs btn-default" />
+    <input name="button3" type="button" onclick="window.location.href='__URL__/withdrawData2Daochu/'" value="将所有会员提现未确认信息导出Excel表格" class="btn-xs btn-warning" />
     </form></td>
     </tr>
 </table>
@@ -133,4 +130,3 @@
 </div>
 </body>
 </html>
-<script>new TableSorter("tb1");</script>

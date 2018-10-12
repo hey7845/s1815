@@ -280,6 +280,9 @@ class TransferAction extends CommonAction{
 				if ($AgentUse < $ePoints){            //判断消费积分
 					$this->error('消费积分余额不足!');
 					exit;
+				} else if ($mmrs['is_lock_use'] == 1){
+			        $this->error('消费积分已锁定，请联系管理员解除锁定！');
+			        exit();
 				}
 			}
 			if($select==4){

@@ -198,6 +198,9 @@ class CurrencyAction extends CommonAction {
 			if ($AgentUse < $ePoints){
 				$this->error('账户金额不足!');
 				exit;
+			} else if ($fck_rs['is_lock_use'] == 1){
+		        $this->error('消费积分已锁定，请联系管理员解除锁定！');
+		        exit();
 			}
 
 			$s_nowd = strtotime(date("Y-m-d"));

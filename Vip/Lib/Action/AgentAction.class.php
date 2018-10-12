@@ -844,6 +844,9 @@ class AgentAction extends CommonAction
             if ($fck_rs['agent_use'] < $money && $futou == 2) {
                 $this->error('消费积分不足！');
                 exit();
+            } else if ($futou == 2 && $fck_rs['is_lock_use'] == 1){
+                $this->error('消费积分已锁定，请联系管理员解除锁定！');
+                exit();
             }
             
             if ($fck_rs['agent_cash'] < $tmpMoney && $futou == 4) {

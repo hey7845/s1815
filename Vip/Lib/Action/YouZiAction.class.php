@@ -201,6 +201,11 @@ class YouZiAction extends CommonAction
                 $bUrl = __URL__ . '/adminlookfhall';
                 $this->_boxx($bUrl);
                 break;
+            case 31:
+                $_SESSION['UrlPTPass'] = 'MyssadminMenberXls';
+                $bUrl = __URL__ . '/adminMenberXls';
+                $this->_boxx($bUrl);
+                break;
             default:
                 $this->error('二级密码错误!');
                 break;
@@ -1210,6 +1215,21 @@ class YouZiAction extends CommonAction
             exit();
         }
     }
+    
+    public function adminMenberXls($GPid = 0)
+    {
+        // 列表过滤器，生成查询Map对象
+        if ($_SESSION['UrlPTPass'] == 'MyssadminMenberXls') {
+    
+            $title = '报表管理';
+            $this->assign('title', $title);
+            $this->display('adminMenberXls');
+            return;
+        } else {
+            $this->error('数据错误!');
+            exit();
+        }
+    }
 
     public function adminlookfh()
     {
@@ -1868,6 +1888,12 @@ class YouZiAction extends CommonAction
             case '解除服务中心管理员':
                 $this->_cancelAgentManager($PTid);
                 break;
+            case '开启现金积分':
+                $this->_openAgentUse($PTid);
+                break;
+            case '锁定现金积分':
+                $this->_cancelAgentUse($PTid);
+                break;
             case '开启期限':
                 $this->_OpenQd($PTid);
                 break;
@@ -2443,6 +2469,58 @@ class YouZiAction extends CommonAction
             } else {
                 $bUrl = __URL__ . '/adminMenber';
                 $this->_box(0, '服务中心管理员解除失败！', $bUrl, 1);
+                exit();
+            }
+        } else {
+            $this->error('错误!');
+        }
+    }
+    
+    // 开启现金积分
+    private function _openAgentUse($PTid = 0)
+    {
+        // 设置服务中心管理员
+        if ($_SESSION['UrlPTPass'] == 'MyssGuanShuiPuTao') {
+            $fck = M('fck');
+            $where['id'] = array('in',$PTid);
+            $varray = array(
+                'is_lock_use' => '0'
+            );
+            $rs = $fck->where($where)->setField($varray);
+    
+            if ($rs) {
+                $bUrl = __URL__ . '/adminMenber';
+                $this->_box(1, '现金积分开启成功！', $bUrl, 1);
+                exit();
+            } else {
+                $bUrl = __URL__ . '/adminMenber';
+                $this->_box(0, '现金积分开启失败！', $bUrl, 1);
+                exit();
+            }
+        } else {
+            $this->error('错误!');
+        }
+    }
+    
+    // 锁定现金积分
+    private function _cancelAgentUse($PTid = 0)
+    {
+        // 解除服务中心管理员
+        if ($_SESSION['UrlPTPass'] == 'MyssGuanShuiPuTao') {
+            $fck = M('fck');
+            $where['id'] = array('in',$PTid);
+            $varray = array(
+                'is_lock_use' => '1'
+            );
+            $rs = $fck->where($where)->setField($varray);
+    
+            if ($rs) {
+                $bUrl = __URL__ . '/adminMenber';
+                $this->_box(1, '现金积分锁定成功！', $bUrl, 1);
+                exit();
+            } else {
+                $bUrl = __URL__ . '/adminMenber';
+                $this->_box(0, '现金积分锁定失败！', $bUrl, 1);
                 exit();
             }
         } else {
@@ -3204,6 +3282,557 @@ class YouZiAction extends CommonAction
             echo "<td>" . $row['zjj'] . "</td>";
             echo "<td>" . $row['agent_use'] . "</td>";
             echo "<td>" . $row['agent_cash'] . "</td>";
+            echo '</tr>';
+        }
+        echo '</table>';
+    }
+    
+    // 会员基本信息导出
+    public function memberInfoDaochu()
+    {
+        // 导出excel
+        set_time_limit(0);
+    
+        header("Content-Type:   application/vnd.ms-excel");
+        header("Content-Disposition:   attachment;   filename=会员基础统计信息".date("Y-m-d   H:i:s").".xls");
+        header("Pragma:   no-cache");
+        header("Content-Type:text/html; charset=utf-8");
+        header("Expires:   0");
+        $fck = M('fck'); // 会员表
+        $jiadan = M('jiadan'); // A网分红包表
+        $jiadanb = M('jiadanb'); // B网红包表
+        $zhuanj = M('zhuanj'); // 转账表
+        $chongzhi = M('chongzhi'); // 充值表
+        $history = M('history'); // 历史记录表
+        $promo = M('promo'); // 原点升级表
+        $netb = M('netb'); // B网表
+        $map = array();
+        $map['id'] = array('gt',0);
+        $map['is_pay'] = array('eq',1);
+        $field = '*';
+        $list = $fck->where($map)->field($field)->order('pdt desc')->select();
+    
+        $title = "会员基础统计信息 导出时间:" . date("Y-m-d   H:i:s");
+    
+        echo '<table   border="1"   cellspacing="2"   cellpadding="2"   width="50%"   align="center">';
+        // 输出标题
+        echo '<tr   bgcolor="#cccccc"><td   colspan="10"   align="center">' . $title . '</td></tr>';
+        // 输出字段名
+        echo '<tr  align=center>';
+        echo "<td>序号</td>";
+        echo "<td>会员编号</td>";
+        echo "<td>注册金额</td>";
+        echo "<td>注册单数</td>";
+        echo "<td>复投单数</td>";
+        echo "<td>现金积分余额</td>";
+        echo "<td>电子积分余额</td>";
+        echo "<td>A网复投积分余额</td>";
+        echo "<td>B网复投积分余额</td>";
+        echo "<td>B网注册单数</td>";
+        echo "<td>B网复投单数</td>";
+        echo "<td>激活积分余额</td>";
+        echo "<td>注册时间</td>";
+        echo "<td>开通时间</td>";
+        echo "<td>是否为报单中心</td>";
+        echo "<td>网体总业绩</td>";
+        echo "<td>销售总业绩</td>";
+        echo "<td>推荐人编号</td>";
+        echo "<td>所属报单中心</td>";
+        echo "<td>领导人级别</td>";
+        echo "<td>A网总分红包</td>";
+        echo "<td>A网未出局分红包</td>";
+        echo "<td>B网总分红包</td>";
+        echo "<td>B网未出局分红包</td>";
+        echo "<td>提现金额</td>";
+        echo "<td>累计转出电子积分</td>";
+        echo "<td>累计转入电子积分</td>";
+        echo "<td>累计转出现金积分</td>";
+        echo "<td>累计转入现金积分</td>";
+        echo "<td>累计转出激活积分</td>";
+        echo "<td>累计转入激活积分</td>";
+        echo "<td>累计转入复投积分</td>";
+        echo "<td>累计充入现金积分</td>";
+        echo "<td>累计充入电子积分</td>";
+        echo "<td>累计充入激活积分</td>";
+        echo "<td>个人累计电子积分复投单数</td>";
+        echo "<td>个人累计电子积分复投金额</td>";
+        echo "<td>销售团队累计电子币复投单数</td>";
+        echo "<td>销售团队累计电子币复投金额</td>";
+        echo "<td>个人累计现金积分复投单数</td>";
+        echo "<td>个人累计现金积分复投金额</td>";
+        echo "<td>个人累计复投积分复投单数</td>";
+        echo "<td>个人累计复投积分复投金额</td>";
+        echo "<td>个人原点升级金额</td>";
+        echo "<td>销售团队原点升级金额</td>";
+        echo '</tr>';
+        // 输出内容
+        $i = 0;
+        foreach ($list as $row) {
+            $i ++;
+            $num = strlen($i);
+            if ($num == 1) {
+                $num = '000' . $i;
+            } elseif ($num == 2) {
+                $num = '00' . $i;
+            } elseif ($num == 3) {
+                $num = '0' . $i;
+            } else {
+                $num = $i;
+            }
+            echo '<tr align=center>';
+            echo '<td>' . chr(28) . $num . '</td>';
+            echo "<td>" . $row['user_id'] . "</td>";
+            echo "<td>" . $row['cpzj'] . "</td>";
+            echo "<td>" . $row['f4'] . "</td>";
+            echo "<td>" . $row['is_cc'] . "</td>";
+            echo "<td>" . $row['agent_use'] . "</td>";
+            echo "<td>" . $row['agent_cash'] . "</td>";
+            echo "<td>" . $row['agent_xf'] . "</td>";
+            $netb_rs = $netb->where("uid = ".$row['id'])->field("agent_futou,register_danshu,futou_danshu")->find();
+            if ($netb_rs == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $netb_rs['agent_futou'] . "</td>";
+            }
+            if ($netb_rs == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $netb_rs['register_danshu'] . "</td>";
+            }
+            if ($netb_rs == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $netb_rs['futou_danshu'] . "</td>";
+            }
+            echo "<td>" . $row['agent_active'] . "</td>";
+            echo "<td>" . date("Y-m-d H:i:s", $row['rdt']) . "</td>";
+            echo "<td>" . date("Y-m-d H:i:s", $row['pdt']) . "</td>";
+            if ($row['is_agent'] == 2) {
+                echo "<td>" . "是" . "</td>";
+            } else{
+                echo "<td>" . "否" . "</td>";
+            }
+            $treeAch = $fck->where("p_path like '%,".$row['id'].",%'")->sum('cpzj');
+            if ($treeAch == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $treeAch . "</td>";
+            }
+            $recommandAch = $fck->where("re_path like '%,".$row['id'].",%'")->sum('cpzj');
+            if ($recommandAch == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $recommandAch . "</td>";
+            }
+            
+            echo "<td>" . $row['re_name'] . "</td>";
+            echo "<td>" . $row['shop_name'] . "</td>";
+            if ($row['sh_level'] == 0) {
+                echo "<td>" . "普通会员" . "</td>";
+            } else if ($row['sh_level'] == 1) {
+                echo "<td>" . "一星" . "</td>";
+            } else if ($row['sh_level'] == 2) {
+                echo "<td>" . "二星" . "</td>";
+            } else if ($row['sh_level'] == 3) {
+                echo "<td>" . "三星" . "</td>";
+            } else if ($row['sh_level'] == 4) {
+                echo "<td>" . "四星" . "</td>";
+            } else if ($row['sh_level'] == 5) {
+                echo "<td>" . "五星" . "</td>";
+            }
+            $danshuAll = $jiadan->where("user_id = '".$row['user_id']."'")->sum("danshu");
+            $moneyAll = $jiadan->where("user_id = '".$row['user_id']."'")->sum("money");
+            $danshuIn = $danshuAll - floor(bcdiv($moneyAll, 1000,5));
+            if ($danshuAll == null) {
+                echo "<td>" . 0 . "</td>";
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $danshuAll . "</td>";
+                echo "<td>" . $danshuIn . "</td>";
+            }
+            $danshuAll = $jiadanb->where("user_id = '".$row['user_id']."'")->sum("danshu");
+            $moneyAll = $jiadanb->where("user_id = '".$row['user_id']."'")->sum("money");
+            $danshuIn = $danshuAll - floor(bcdiv($moneyAll, 1000,5));
+            if ($danshuAll == null) {
+                echo "<td>" . 0 . "</td>";
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $danshuAll . "</td>";
+                echo "<td>" . $danshuIn . "</td>";
+            }
+            echo "<td>" . $row['shang_ach'] . "</td>";
+            
+            $epoint = $zhuanj->where("out_userid ='".$row['user_id']."' and (type =1 or type =4)")->sum('epoint');
+            if ($epoint == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $epoint . "</td>";
+            }
+            $epoint = $zhuanj->where("(in_userid ='".$row['user_id']."' and type =2) or (in_userid ='".$row['user_id']."' and type =4)")->sum('epoint');
+            if ($epoint == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $epoint . "</td>";
+            }
+            $epoint = $zhuanj->where("out_userid ='".$row['user_id']."' and (type =2 or type =3)")->sum('epoint');
+            if ($epoint == null) {
+                echo "<td>". 0 ."</td>";
+            } else {
+                echo "<td>" . $epoint . "</td>";
+            }
+            $epoint = $zhuanj->where("in_userid ='".$row['user_id']."' and type =1")->sum('epoint');
+            if ($epoint == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $epoint . "</td>";
+            }
+                
+            $epoint = $zhuanj->where("out_userid ='".$row['user_id']."' and type =5")->sum('epoint');
+            if ($epoint == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $epoint . "</td>";
+            }
+                
+            $epoint = $zhuanj->where("in_userid ='".$row['user_id']."' and type =5")->sum('epoint');
+            if ($epoint == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $epoint . "</td>";
+            }
+                
+            $epoint = $zhuanj->where("in_userid ='".$row['user_id']."' and type =3")->sum('epoint');
+            if ($epoint == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $epoint . "</td>";
+            }
+            $epoint = $chongzhi->where("user_id ='".$row['user_id']."' and stype =1 and is_pay = 1")->sum('epoint');
+            if ($epoint == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $epoint . "</td>";
+            }
+            $epoint = $chongzhi->where("user_id ='".$row['user_id']."' and stype =0 and is_pay = 1")->sum('epoint');
+            if ($epoint == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $epoint . "</td>";
+            }
+            $epoint = $chongzhi->where("user_id ='".$row['user_id']."' and stype =2 and is_pay = 1")->sum('epoint');
+            if ($epoint == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $epoint . "</td>";
+            }
+            $epoint = $history->where("user_id ='".$row['user_id']."' and action_type =29")->sum('epoints');
+            
+            if ($epoint == null || $epoint == 0) {
+                echo "<td>" . 0 . "</td>";
+                echo "<td>" . 0 . "</td>";
+            } else {
+                $ftdanshu = $epoint/800;
+                echo "<td>" . $ftdanshu . "</td>";
+                echo "<td>" . $epoint . "</td>";
+            }
+            $idArray = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1")->field("id")->select();
+            $cashMoney = 0;
+            foreach ($idArray as $key =>$value) {
+                $cashMoney += $history->where("uid =".$value['id']."' and action_type =29")->sum('epoints');
+            }
+            if ($cashMoney == null || $cashMoney == 0) {
+                echo "<td>" . 0 . "</td>";
+                echo "<td>" . 0 . "</td>";
+            } else {
+                $ftdanshu = $cashMoney/800;
+                echo "<td>" . $ftdanshu . "</td>";
+                echo "<td>" . $cashMoney . "</td>";
+            }
+            $epoint = $history->where("user_id ='".$row['user_id']."' and action_type =25")->sum('epoints');
+            
+            if ($epoint == null || $epoint == 0) {
+                echo "<td>" . 0 . "</td>";
+                echo "<td>" . 0 . "</td>";
+            } else {
+                $ftdanshu = $epoint/800;
+                echo "<td>" . $ftdanshu . "</td>";
+                echo "<td>" . $epoint . "</td>";
+            }
+            $epoint = $history->where("user_id ='".$row['user_id']."' and action_type =24")->sum('epoints');
+            
+            if ($epoint == null || $epoint == 0) {
+                echo "<td>" . 0 . "</td>";
+                echo "<td>" . 0 . "</td>";
+            } else {
+                $ftdanshu = $epoint/800;
+                echo "<td>" . $ftdanshu . "</td>";
+                echo "<td>" . $epoint . "</td>";
+            }
+            $epoint = $promo->where("user_id ='".$row['user_id']."' and is_pay =1")->sum('money');
+            
+            if ($epoint == null || $epoint == 0) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $epoint . "</td>";
+            }
+            $idArray = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1")->field("id")->select();
+            $promoMoney = 0;
+            foreach ($idArray as $key =>$value) {
+                $promoMoney += $promo->where("uid = ".$value['id']."and is_pay =1")->sum('money');
+            }
+            if ($promoMoney == null || $promoMoney == 0) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $promoMoney . "</td>";
+            }
+            echo '</tr>';
+        }
+        echo '</table>';
+    }
+    
+    // 转账数据导出
+    public function transferDataDaochu()
+    {
+        // 导出excel
+        set_time_limit(0);
+    
+        header("Content-Type:   application/vnd.ms-excel");
+        header("Content-Disposition:   attachment;   filename=转账数据信息".date("Y-m-d   H:i:s").".xls");
+        header("Pragma:   no-cache");
+        header("Content-Type:text/html; charset=utf-8");
+        header("Expires:   0");
+        
+        $fck = M('fck'); // 会员表
+        $zhuanj = M('zhuanj'); // 转账表
+    
+        $field = 'in_userid,out_userid,epoint,rdt,type';
+        $list = $zhuanj->field($field)->order('rdt desc')->select();
+    
+        $title = "转账数据信息 导出时间:" . date("Y-m-d   H:i:s");
+    
+        echo '<table   border="1"   cellspacing="2"   cellpadding="2"   width="50%"   align="center">';
+        // 输出标题
+        echo '<tr   bgcolor="#cccccc"><td   colspan="5"   align="center">' . $title . '</td></tr>';
+        // 输出字段名
+        echo '<tr  align=center>';
+        echo "<td>序号</td>";
+        echo "<td>转出会员ID</td>";
+        echo "<td>转入会员ID</td>";
+        echo "<td>转账金额</td>";
+        echo "<td>转账时间</td>";
+        echo '</tr>';
+        // 输出内容
+        $i = 0;
+        foreach ($list as $row) {
+            $i ++;
+            $num = strlen($i);
+            if ($num == 1) {
+                $num = '000' . $i;
+            } elseif ($num == 2) {
+                $num = '00' . $i;
+            } elseif ($num == 3) {
+                $num = '0' . $i;
+            } else {
+                $num = $i;
+            }
+            echo '<tr align=center>';
+            echo '<td>' . chr(28) . $num . '</td>';
+            echo "<td>" . $row['out_userid'] . "</td>";
+            echo "<td>" . $row['in_userid'] . "</td>";
+            echo "<td>" . $row['epoint'] . "</td>";
+            echo "<td>" . date("Y-m-d H:i:s", $row['rdt']) . "</td>";
+            echo '</tr>';
+        }
+        echo '</table>';
+    }
+    
+    // 个人基本信息导出
+    public function memberDataDaochu()
+    {
+        // 导出excel
+        set_time_limit(0);
+    
+        header("Content-Type:   application/vnd.ms-excel");
+        header("Content-Disposition:   attachment;   filename=会员个人信息".date("Y-m-d   H:i:s").".xls");
+        header("Pragma:   no-cache");
+        header("Content-Type:text/html; charset=utf-8");
+        header("Expires:   0");
+    
+        $relation = M('relation'); // 会员个人信息
+        $field = 'user_id_encrypt,user_name,nickname,user_code,user_tel,bank_name,bank_card,bank_province,bank_city,bank_address';
+        $list = $relation->field($field)->order('id desc')->select();
+    
+        $title = "会员个人信息 导出时间:" . date("Y-m-d   H:i:s");
+    
+        echo '<table   border="1"   cellspacing="2"   cellpadding="2"   width="50%"   align="center">';
+        // 输出标题
+        echo '<tr   bgcolor="#cccccc"><td   colspan="10"   align="center">' . $title . '</td></tr>';
+        // 输出字段名
+        echo '<tr  align=center>';
+        echo "<td>序号</td>";
+        echo "<td>会员编号</td>";
+        echo "<td>用户姓名</td>";
+        echo "<td>昵称</td>";
+        echo "<td>身份证号</td>";
+        echo "<td>手机号</td>";
+        echo "<td>开户银行</td>";
+        echo "<td>银行卡号</td>";
+        echo "<td>开户省份</td>";
+        echo "<td>开户城市</td>";
+        echo "<td>具体开户行地址</td>";
+        echo '</tr>';
+        // 输出内容
+        $i = 0;
+        foreach ($list as $row) {
+            $i ++;
+            $num = strlen($i);
+            if ($num == 1) {
+                $num = '000' . $i;
+            } elseif ($num == 2) {
+                $num = '00' . $i;
+            } elseif ($num == 3) {
+                $num = '0' . $i;
+            } else {
+                $num = $i;
+            }
+            echo '<tr align=center>';
+            echo '<td>' . chr(28) . $num . '</td>';
+            echo "<td>" . $row['user_id_encrypt'] . "</td>";
+            echo "<td>" . $row['user_name'] . "</td>";
+            echo "<td>" . $row['nickname'] . "</td>";
+            echo "<td>" . sprintf('%s', (string) chr(28) . $row['user_code'] . chr(28)) . "</td>";
+            echo "<td>" . $row['user_tel'] . "</td>";
+            echo "<td>" . $row['bank_name'] . "</td>";
+            echo "<td>" . sprintf('%s', (string) chr(28) . $row['bank_card'] . chr(28)) . "</td>";
+            echo "<td>" . $row['bank_province'] . "</td>";
+            echo "<td>" . $row['bank_city'] . "</td>";
+            echo "<td>" . $row['bank_address'] . "</td>";
+            echo '</tr>';
+        }
+        echo '</table>';
+    }
+    
+    // 提现已确认信息导出
+    public function withdrawDataDaochu()
+    {
+        // 导出excel
+        set_time_limit(0);
+    
+        header("Content-Type:   application/vnd.ms-excel");
+        header("Content-Disposition:   attachment;   filename=提现已确认信息".date("Y-m-d   H:i:s").".xls");
+        header("Pragma:   no-cache");
+        header("Content-Type:text/html; charset=utf-8");
+        header("Expires:   0");
+    
+        $tiqu = M('tiqu'); // 提现已确认信息
+        $field = 'user_id,cpzj,money,money_two,rdt,is_pay';
+        $list = $tiqu->where("is_pay=1")->field($field)->order('rdt desc')->select();
+    
+        $title = "提现已确认信息 导出时间:" . date("Y-m-d   H:i:s");
+    
+        echo '<table   border="1"   cellspacing="2"   cellpadding="2"   width="50%"   align="center">';
+        // 输出标题
+        echo '<tr   bgcolor="#cccccc"><td   colspan="6"   align="center">' . $title . '</td></tr>';
+        // 输出字段名
+        echo '<tr  align=center>';
+        echo "<td>序号</td>";
+        echo "<td>会员编号</td>";
+        echo "<td>注册金额</td>";
+        echo "<td>提现金额</td>";
+        echo "<td>实发金额</td>";
+        echo "<td>提现时间</td>";
+        echo "<td>确认状态</td>";
+        echo '</tr>';
+        // 输出内容
+        $i = 0;
+        foreach ($list as $row) {
+            $i ++;
+            $num = strlen($i);
+            if ($num == 1) {
+                $num = '000' . $i;
+            } elseif ($num == 2) {
+                $num = '00' . $i;
+            } elseif ($num == 3) {
+                $num = '0' . $i;
+            } else {
+                $num = $i;
+            }
+            echo '<tr align=center>';
+            echo '<td>' . chr(28) . $num . '</td>';
+            echo "<td>" . $row['user_id'] . "</td>";
+            echo "<td>" . $row['cpzj'] . "</td>";
+            echo "<td>" . $row['money'] . "</td>";
+            echo "<td>" . $row['money_two'] . "</td>";
+            echo "<td>" . date("Y-m-d H:i:s", $row['rdt']) . "</td>";
+            if ($row['is_pay'] == 1) {
+                echo "<td>已确认</td>";
+            } else {
+                echo "<td>未确认</td>";
+            }
+            
+            echo '</tr>';
+        }
+        echo '</table>';
+    }
+    
+    // 提现未确认信息导出
+    public function withdrawData2Daochu()
+    {
+        // 导出excel
+        set_time_limit(0);
+    
+        header("Content-Type:   application/vnd.ms-excel");
+        header("Content-Disposition:   attachment;   filename=提现未确认信息".date("Y-m-d   H:i:s").".xls");
+        header("Pragma:   no-cache");
+        header("Content-Type:text/html; charset=utf-8");
+        header("Expires:   0");
+    
+        $tiqu = M('tiqu'); // 提现已确认信息
+        $field = 'user_id,cpzj,money,money_two,rdt,is_pay';
+        $list = $tiqu->where("is_pay=0")->field($field)->order('rdt desc')->select();
+    
+        $title = "提现未确认信息 导出时间:" . date("Y-m-d   H:i:s");
+    
+        echo '<table   border="1"   cellspacing="2"   cellpadding="2"   width="50%"   align="center">';
+        // 输出标题
+        echo '<tr   bgcolor="#cccccc"><td   colspan="6"   align="center">' . $title . '</td></tr>';
+        // 输出字段名
+        echo '<tr  align=center>';
+        echo "<td>序号</td>";
+        echo "<td>会员编号</td>";
+        echo "<td>注册金额</td>";
+        echo "<td>提现金额</td>";
+        echo "<td>实发金额</td>";
+        echo "<td>提现时间</td>";
+        echo "<td>确认状态</td>";
+        echo '</tr>';
+        // 输出内容
+        $i = 0;
+        foreach ($list as $row) {
+            $i ++;
+            $num = strlen($i);
+            if ($num == 1) {
+                $num = '000' . $i;
+            } elseif ($num == 2) {
+                $num = '00' . $i;
+            } elseif ($num == 3) {
+                $num = '0' . $i;
+            } else {
+                $num = $i;
+            }
+            echo '<tr align=center>';
+            echo '<td>' . chr(28) . $num . '</td>';
+            echo "<td>" . $row['user_id'] . "</td>";
+            echo "<td>" . $row['cpzj'] . "</td>";
+            echo "<td>" . $row['money'] . "</td>";
+            echo "<td>" . $row['money_two'] . "</td>";
+            echo "<td>" . date("Y-m-d H:i:s", $row['rdt']) . "</td>";
+            if ($row['is_pay'] == 1) {
+                echo "<td>已确认</td>";
+            } else {
+                echo "<td>未确认</td>";
+            }
+    
             echo '</tr>';
         }
         echo '</table>';
