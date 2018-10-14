@@ -3712,6 +3712,17 @@ class YouZiAction extends CommonAction
         echo '</table>';
     }
     
+    // 个人基本信息删除
+    public function memberDataDel()
+    {
+        $relation = M('relation');
+        $rs = $relation->where('ID > 0')->delete();
+        
+        $bUrl = __URL__ . '/adminMenber';
+        $this->_box(1, '个人基本信息清空完毕！', $bUrl, 1);
+        exit();
+    }
+    
     // 提现已确认信息导出
     public function withdrawDataDaochu()
     {

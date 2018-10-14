@@ -223,14 +223,14 @@ class TransferAction extends CommonAction{
 				exit;
 			}
 			
-			if ($vo['is_treasure_manager'] == 1){
+			if ($ID != 1 && $vo['is_treasure_manager'] == 1){
 			    $this->error('不允许回转！');
 			    exit;
 			}
 
 			$pos1 = strpos($p_path1, $void);
 			$pos2 = strpos($p_path2, $mmid);
-			if($select==1 || $select==4 || $select==5){
+			if(($select==1 || $select==4 || $select==5) && $vo['is_treasure_manager'] != 1){
 			if($pos1 === false && $pos2 === false){
 				$this->error('只能同一条线才可以上下互转!');
 				exit;

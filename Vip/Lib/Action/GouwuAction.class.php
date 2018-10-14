@@ -1208,7 +1208,7 @@ public function dizhiAdd(){
 			}
 			// 物流管理员和后台可以查看所有物流信息
 			$fck_rs2 = $fck->where('id ='.$sessionID)->find();
-			if ($fck_rs2['user_id'] != '100000' && $fck_rs2['user_id'] != 'cc' && $fck_rs2['user_id'] != 'dd') {
+			if ($fck_rs2['is_aa'] != 1) {
 			    $map['user_id'] = array('in',$idArray);
 			}
             //查询字段
