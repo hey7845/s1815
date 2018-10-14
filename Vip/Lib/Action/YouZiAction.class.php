@@ -3848,6 +3848,302 @@ class YouZiAction extends CommonAction
         }
         echo '</table>';
     }
+    // 业绩月统计数据导出
+    public function monthDataDaochu($GPid = 0)
+    {
+        // 列表过滤器，生成查询Map对象
+        if ($_SESSION['UrlPTPass'] == 'MyssGuanShuiPuTao') {
+            $fck = M('fck');
+            $history = M('history');
+            $promo = M('promo');
+            $UserID = $_REQUEST['UserID'];
+            $map = array();
+            if (! empty($UserID)) {
+                $fck_rs = $fck->where("user_id=".$UserID)->field("*")->find();
+            } else {
+                $fck_rs = $fck->where("id > 0")->field("*")->select();
+            }
+        set_time_limit(0);
+    
+        header("Content-Type:   application/vnd.ms-excel");
+        header("Content-Disposition:   attachment;   filename=业绩月统计数据.xls");
+        header("Pragma:   no-cache");
+        header("Content-Type:text/html; charset=utf-8");
+        header("Expires:   0");
+    
+        $title = "业绩月统计数据 导出时间:" . date("Y-m-d   H:i:s");
+    
+        echo '<table   border="1"   cellspacing="2"   cellpadding="2"   width="50%"   align="center">';
+        // 输出标题
+        echo '<tr   bgcolor="#cccccc"><td   colspan="6"   align="center">' . $title . '</td></tr>';
+        // 输出字段名
+        echo '<tr  align=center>';
+        echo "<td>序号</td>";
+        echo "<td>会员编号</td>";
+        echo "<td>注册金额</td>";
+        echo "<td>注册时间</td>";
+        echo "<td>销售网体注册会员以及原点升级1月份统计</td>";
+        echo "<td>销售网体注册会员以及原点升级2月份统计</td>";
+        echo "<td>销售网体注册会员以及原点升级3月份统计</td>";
+        echo "<td>销售网体注册会员以及原点升级4月份统计</td>";
+        echo "<td>销售网体注册会员以及原点升级5月份统计</td>";
+        echo "<td>销售网体注册会员以及原点升级6月份统计</td>";
+        echo "<td>销售网体注册会员以及原点升级7月份统计</td>";
+        echo "<td>销售网体注册会员以及原点升级8月份统计</td>";
+        echo "<td>销售网体注册会员以及原点升级9月份统计</td>";
+        echo "<td>销售网体注册会员以及原点升级10月份统计</td>";
+        echo "<td>销售网体注册会员以及原点升级11月份统计</td>";
+        echo "<td>销售网体注册会员以及原点升级12月份统计</td>";
+        echo "<td>销售网体电子币复投1月份统计</td>";
+        echo "<td>销售网体电子币复投2月份统计</td>";
+        echo "<td>销售网体电子币复投3月份统计</td>";
+        echo "<td>销售网体电子币复投4月份统计</td>";
+        echo "<td>销售网体电子币复投5月份统计</td>";
+        echo "<td>销售网体电子币复投6月份统计</td>";
+        echo "<td>销售网体电子币复投7月份统计</td>";
+        echo "<td>销售网体电子币复投8月份统计</td>";
+        echo "<td>销售网体电子币复投9月份统计</td>";
+        echo "<td>销售网体电子币复投10月份统计</td>";
+        echo "<td>销售网体电子币复投11月份统计</td>";
+        echo "<td>销售网体电子币复投12月份统计</td>";
+        echo '</tr>';
+        // 输出内容
+        $i = 0;
+        foreach ($fck_rs as $row) {
+            $i ++;
+            $num = strlen($i);
+            if ($num == 1) {
+                $num = '000' . $i;
+            } elseif ($num == 2) {
+                $num = '00' . $i;
+            } elseif ($num == 3) {
+                $num = '0' . $i;
+            } else {
+                $num = $i;
+            }
+            echo '<tr align=center>';
+            echo '<td>' . chr(28) . $num . '</td>';
+            echo "<td>" . $row['user_id'] . "</td>";
+            echo "<td>" . $row['cpzj'] . "</td>";
+            echo "<td>" . date("Y-m-d H:i:s", $row['rdt']) . "</td>";
+            // 1月份
+            $money = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1 and MONTH(FROM_UNIXTIME(rdt)) =1")->sum('cpzj');
+            if ($money == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $money . "</td>";
+            }
+            // 2月份
+            $money = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1 and MONTH(FROM_UNIXTIME(rdt)) =2")->sum('cpzj');
+            if ($money == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $money . "</td>";
+            }
+            // 3月份
+            $money = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1 and MONTH(FROM_UNIXTIME(rdt)) =3")->sum('cpzj');
+            if ($money == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $money . "</td>";
+            }
+            // 4月份
+            $money = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1 and MONTH(FROM_UNIXTIME(rdt)) =4")->sum('cpzj');
+            if ($money == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $money . "</td>";
+            }
+            // 5月份
+            $money = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1 and MONTH(FROM_UNIXTIME(rdt)) =5")->sum('cpzj');
+            if ($money == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $money . "</td>";
+            }
+            // 6月份
+            $money = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1 and MONTH(FROM_UNIXTIME(rdt)) =6")->sum('cpzj');
+            if ($money == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $money . "</td>";
+            }
+            // 7月份
+            $money = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1 and MONTH(FROM_UNIXTIME(rdt)) =7")->sum('cpzj');
+            if ($money == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $money . "</td>";
+            }
+            // 8月份
+            $money = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1 and MONTH(FROM_UNIXTIME(rdt)) =8")->sum('cpzj');
+            if ($money == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $money . "</td>";
+            }
+            // 9月份
+            $money = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1 and MONTH(FROM_UNIXTIME(rdt)) =9")->sum('cpzj');
+            if ($money == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $money . "</td>";
+            }
+            // 10月份
+            $money = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1 and MONTH(FROM_UNIXTIME(rdt)) =10")->sum('cpzj');
+            if ($money == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $money . "</td>";
+            }
+            // 11月份
+            $money = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1 and MONTH(FROM_UNIXTIME(rdt)) =11")->sum('cpzj');
+            if ($money == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $money . "</td>";
+            }
+            // 12月份
+            $money = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1 and MONTH(FROM_UNIXTIME(rdt)) =12")->sum('cpzj');
+            if ($money == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $money . "</td>";
+            }
+            // 一月份
+            $idArray = $fck->where("re_path like '%,".$row['id'].",%' and is_pay = 1")->field("id")->select();
+            $cashMoney = 0;
+            foreach ($idArray as $key =>$value) {
+                $cashMoney += $history->where("uid =".$value['id']."' and action_type =29 and MONTH(FROM_UNIXTIME(rdt)) =1")->sum('epoints');
+            }
+            if ($cashMoney == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $cashMoney . "</td>";
+            }
+            
+            // 二月份
+            $cashMoney = 0;
+            foreach ($idArray as $key =>$value) {
+                $cashMoney += $history->where("uid =".$value['id']."' and action_type =29 and MONTH(FROM_UNIXTIME(rdt)) =2")->sum('epoints');
+            }
+            if ($cashMoney == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $cashMoney . "</td>";
+            }
+            
+            // 三月份
+            $cashMoney = 0;
+            foreach ($idArray as $key =>$value) {
+                $cashMoney += $history->where("uid =".$value['id']."' and action_type =29 and MONTH(FROM_UNIXTIME(rdt)) =3")->sum('epoints');
+            }
+            if ($cashMoney == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $cashMoney . "</td>";
+            }
+            
+            // 四月份
+            $cashMoney = 0;
+            foreach ($idArray as $key =>$value) {
+                $cashMoney += $history->where("uid =".$value['id']."' and action_type =29 and MONTH(FROM_UNIXTIME(rdt)) =4")->sum('epoints');
+            }
+            if ($cashMoney == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $cashMoney . "</td>";
+            }
+            // 五月份
+            $cashMoney = 0;
+            foreach ($idArray as $key =>$value) {
+                $cashMoney += $history->where("uid =".$value['id']."' and action_type =29 and MONTH(FROM_UNIXTIME(rdt)) =5")->sum('epoints');
+            }
+            if ($cashMoney == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $cashMoney . "</td>";
+            }
+            // 六月份
+            $cashMoney = 0;
+            foreach ($idArray as $key =>$value) {
+                $cashMoney += $history->where("uid =".$value['id']."' and action_type =29 and MONTH(FROM_UNIXTIME(rdt)) =6")->sum('epoints');
+            }
+            if ($cashMoney == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $cashMoney . "</td>";
+            }
+            // 七月份
+            $cashMoney = 0;
+            foreach ($idArray as $key =>$value) {
+                $cashMoney += $history->where("uid =".$value['id']."' and action_type =29 and MONTH(FROM_UNIXTIME(rdt)) =7")->sum('epoints');
+            }
+            if ($cashMoney == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $cashMoney . "</td>";
+            }
+            // 八月份
+            $cashMoney = 0;
+            foreach ($idArray as $key =>$value) {
+                $cashMoney += $history->where("uid =".$value['id']."' and action_type =29 and MONTH(FROM_UNIXTIME(rdt)) =8")->sum('epoints');
+            }
+            if ($cashMoney == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $cashMoney . "</td>";
+            }
+            // 九月份
+            $cashMoney = 0;
+            foreach ($idArray as $key =>$value) {
+                $cashMoney += $history->where("uid =".$value['id']."' and action_type =29 and MONTH(FROM_UNIXTIME(rdt)) =9")->sum('epoints');
+            }
+            if ($cashMoney == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $cashMoney . "</td>";
+            }
+            // 十月份
+            $cashMoney = 0;
+            foreach ($idArray as $key =>$value) {
+                $cashMoney += $history->where("uid =".$value['id']."' and action_type =29 and MONTH(FROM_UNIXTIME(rdt)) =10")->sum('epoints');
+            }
+            if ($cashMoney == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $cashMoney . "</td>";
+            }
+            // 十一月份
+            $cashMoney = 0;
+            foreach ($idArray as $key =>$value) {
+                $cashMoney += $history->where("uid =".$value['id']."' and action_type =29 and MONTH(FROM_UNIXTIME(rdt)) =11")->sum('epoints');
+            }
+            if ($cashMoney == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $cashMoney . "</td>";
+            }
+            // 十二月份
+            $cashMoney = 0;
+            foreach ($idArray as $key =>$value) {
+                $cashMoney += $history->where("uid =".$value['id']."' and action_type =29 and MONTH(FROM_UNIXTIME(rdt)) =12")->sum('epoints');
+            }
+            if ($cashMoney == null) {
+                echo "<td>" . 0 . "</td>";
+            } else {
+                echo "<td>" . $cashMoney . "</td>";
+            }
+            
+    
+            echo '</tr>';
+        }
+        echo '</table>';
+        } else {
+            $this->error('数据错误!');
+            exit();
+        }
+    }
     
     // 报单中心表
     public function financeDaoChu_BD()
