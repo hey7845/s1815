@@ -1058,6 +1058,8 @@ class YouZiAction extends CommonAction
                 $data['re_pathb'] = $r_id . ','; // 开通路径
                                                // 开通会员
                 $result = $fck->where('id=' . $voo['id'])->save($data);
+                //统计单数
+                $fck->xiangJiao($voo['id'], 1);
                 unset($data, $varray);
                 
                 $data = array();
