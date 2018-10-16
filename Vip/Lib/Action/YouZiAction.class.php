@@ -3736,10 +3736,13 @@ class YouZiAction extends CommonAction
         header("Pragma:   no-cache");
         header("Content-Type:text/html; charset=utf-8");
         header("Expires:   0");
-    
+        
+        $fck = M('fck'); // 会员表
         $tiqu = M('tiqu'); // 提现已确认信息
-        $field = 'user_id,cpzj,money,money_two,rdt,is_pay';
-        $list = $tiqu->where("is_pay=1")->field($field)->order('rdt desc')->select();
+        $field = 'user_id,money,money_two,rdt,is_pay';
+        $map = array();
+        $map['is_pay'] = array('eq',1);
+        $list = $tiqu->where($map)->field($field)->order('rdt desc')->select();
     
         $title = "提现已确认信息 导出时间:" . date("Y-m-d   H:i:s");
     
@@ -3773,7 +3776,8 @@ class YouZiAction extends CommonAction
             echo '<tr align=center>';
             echo '<td>' . chr(28) . $num . '</td>';
             echo "<td>" . $row['user_id'] . "</td>";
-            echo "<td>" . $row['cpzj'] . "</td>";
+            $fck_rs = $fck->where("user_id = '".$row['user_id']."'")->find();
+            echo "<td>" . $fck_rs['cpzj'] . "</td>";
             echo "<td>" . $row['money'] . "</td>";
             echo "<td>" . $row['money_two'] . "</td>";
             echo "<td>" . date("Y-m-d H:i:s", $row['rdt']) . "</td>";
@@ -3800,9 +3804,12 @@ class YouZiAction extends CommonAction
         header("Content-Type:text/html; charset=utf-8");
         header("Expires:   0");
     
+        $fck = M('fck'); // 会员表
         $tiqu = M('tiqu'); // 提现已确认信息
-        $field = 'user_id,cpzj,money,money_two,rdt,is_pay';
-        $list = $tiqu->where("is_pay=0")->field($field)->order('rdt desc')->select();
+        $field = 'user_id,money,money_two,rdt,is_pay';
+        $map = array();
+        $map['is_pay'] = array('eq',0);
+        $list = $tiqu->field($field)->where($map)->order('rdt desc')->select();
     
         $title = "提现未确认信息 导出时间:" . date("Y-m-d   H:i:s");
     
@@ -3836,7 +3843,8 @@ class YouZiAction extends CommonAction
             echo '<tr align=center>';
             echo '<td>' . chr(28) . $num . '</td>';
             echo "<td>" . $row['user_id'] . "</td>";
-            echo "<td>" . $row['cpzj'] . "</td>";
+            $fck_rs = $fck->where("user_id = '".$row['user_id']."'")->find();
+            echo "<td>" . $fck_rs['cpzj'] . "</td>";
             echo "<td>" . $row['money'] . "</td>";
             echo "<td>" . $row['money_two'] . "</td>";
             echo "<td>" . date("Y-m-d H:i:s", $row['rdt']) . "</td>";
