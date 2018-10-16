@@ -137,15 +137,15 @@ class UplevelAction extends CommonAction{
 		    $time = date('G');
 		    if($week==0 || $week==6) {
 		        $status = 2;
-		    } else if($time>=9 && $time < 17) {
+		    } else if($time>=8 && $time <= 21) {
 		        $status = 0;
 		    } else {
 		        $status = 1;
 		    }
-// 		    if($status!=0){
-// 		        $this->error('只能在9时至17时的上班时间升级会员，节假日及休息时间不能升级会员！');
-// 		        exit;
-// 		    }
+		    if($status!=0){
+		        $this->error('只能在8时至21时升级会员，节假日及休息时间不能升级会员！');
+		        exit;
+		    }
 			// 加单金额
 			$jiadanMoney = $_REQUEST['cpzj'];
             // 当前用户ID

@@ -327,13 +327,13 @@ class AgentAction extends CommonAction
             $time = date('G');
             if($week==0 || $week==6) {
                 $status = 2;
-            } else if($time>=9 && $time < 17) {
+            } else if($time>=8 && $time <= 21) {
                 $status = 0;
             } else {
                 $status = 1;
             }
             if($status!=0){
-                $this->error('只能在9时至17时的上班时间兑换产品，节假日及休息时间不能兑换产品！');
+                $this->error('只能在8时至21时兑换产品，节假日及休息时间不能兑换产品！');
                 exit;
             }
             // 网络类型
@@ -420,13 +420,13 @@ class AgentAction extends CommonAction
             $time = date('G');
             if($week==0 || $week==6) {
                 $status = 2;
-            } else if($time>=9 && $time < 17) {
+            } else if($time>=8 && $time <= 21) {
                 $status = 0;
             } else {
                 $status = 1;
             }
             if($status!=0){
-                $this->error('只能在9时至17时的上班时间申请新网络，节假日及休息时间不能申请新网络！');
+                $this->error('只能在8时至21时申请新网络，节假日及休息时间不能申请新网络！');
                 exit;
             }
             // 当前用户ID
@@ -703,15 +703,15 @@ class AgentAction extends CommonAction
         $time = date('G');
         if($week==0 || $week==6) {
             $status = 2;
-        } else if($time>=9 && $time < 17) {
+        } else if($time>=8 && $time <= 21) {
             $status = 0;
         } else {
             $status = 1;
         }
-//         if($status!=0){
-//             $this->error('只能在9时至17时的上班时间复投，节假日及休息时间不能复投！');
-//             exit;
-//         }
+        if($status!=0){
+            $this->error('只能在8时至21时复投，节假日及休息时间不能复投！');
+            exit;
+        }
         
         $content = $_POST['content'];
         $agentMax = $_POST['agentMax'];

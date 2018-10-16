@@ -186,15 +186,15 @@ class RegAction extends CommonAction{
 		$time = date('G');
 		if($week==0 || $week==6) {
 		    $status = 2;
-		} else if($time>=9 && $time < 17) {
+		} else if($time>=8 && $time <= 21) {
 		    $status = 0;
 		} else {
 		    $status = 1;
 		}
-// 		if($status!=0){
-// 		    $this->error('只能在9时至17时的上班时间注册，节假日及休息时间不能注册！');
-// 		    exit;
-// 		}
+		if($status!=0){
+		    $this->error('只能在8时至21时注册，节假日及休息时间不能注册！');
+		    exit;
+		}
 // 		if (strlen($_POST['UserID'])<1){
 // 			$this->error('会员编号不能少！');
 // 			exit;
@@ -1001,15 +1001,15 @@ class RegAction extends CommonAction{
 		$time = date('G');
 		if($week==0 || $week==6) {
 		    $status = 2;
-		} else if($time>=9 && $time < 17) {
+		} else if($time>=8 && $time <= 21) {
 		    $status = 0;
 		} else {
 		    $status = 1;
 		}
-// 		if($status!=0){
-// 		    $this->error('只能在9时至17时的上班时间注册，节假日及休息时间不能注册！');
-// 		    exit;
-// 		}
+		if($status!=0){
+		    $this->error('只能在8时至21时注册，节假日及休息时间不能注册！');
+		    exit;
+		}
 
 // 		if (strlen($_POST['UserID'])<1){
 // 			$this->error('会员编号不能少！');
