@@ -1872,6 +1872,12 @@ class YouZiAction extends CommonAction
             case '关闭奖金':
                 $this->_Lockfenh($PTid);
                 break;
+            case '开启分红':
+                $this->_isDayActiveOpen($PTid);
+                break;
+            case '关闭分红':
+                $this->_isDayActiveLock($PTid);
+                break;
             case '设为转账管理员':
                 $this->_treasureManager($PTid);
                 break;
@@ -2263,7 +2269,7 @@ class YouZiAction extends CommonAction
                 'in',
                 $PTid
             );
-            $where['is_pay'] = array(
+            $where['is_fenh'] = array(
                 'gt',
                 0
             );
@@ -2282,21 +2288,14 @@ class YouZiAction extends CommonAction
             exit();
         }
     }
-
+    
     private function _Lockfenh($PTid = 0)
     {
-        // 锁定会员
+        // 关闭奖金
         if ($_SESSION['UrlPTPass'] == 'MyssGuanShuiPuTao') {
             $fck = M('fck');
-            $where['is_pay'] = array(
-                'egt',
-                1
-            );
-            $where['_string'] = 'id>1';
-            $where['id'] = array(
-                'in',
-                $PTid
-            );
+            $where['is_fenh'] = array('eq',0);
+            $where['id'] = array('in',$PTid);
             $rs = $fck->where($where)->setField('is_fenh', '1');
             
             if ($rs) {
@@ -2306,6 +2305,51 @@ class YouZiAction extends CommonAction
             } else {
                 $bUrl = __URL__ . '/adminMenber';
                 $this->_box(0, '关闭奖金失败！', $bUrl, 1);
+                exit();
+            }
+        } else {
+            $this->error('错误!');
+        }
+    }
+    // 开启分红
+    private function _isDayActiveOpen($PTid = 0)
+    {
+        if ($_SESSION['UrlPTPass'] == 'MyssGuanShuiPuTao') {
+            $fck = M('fck');
+            $where['id'] = array('in',$PTid);
+            $where['is_day_active'] = array('gt',0);
+            $rs = $fck->where($where)->setField('is_day_active', '0');
+            if ($rs) {
+                $bUrl = __URL__ . '/adminMenber';
+                $this->_box(1, '开启分红成功！', $bUrl, 1);
+                exit();
+            } else {
+                $bUrl = __URL__ . '/adminMenber';
+                $this->_box(0, '开启分红失败！', $bUrl, 1);
+                exit();
+            }
+        } else {
+            $this->error('错误！');
+            exit();
+        }
+    }
+    // 关闭分红
+    private function _isDayActiveLock($PTid = 0)
+    {
+        // 锁定会员
+        if ($_SESSION['UrlPTPass'] == 'MyssGuanShuiPuTao') {
+            $fck = M('fck');
+            $where['is_day_active'] = array( 'eq',0);
+            $where['id'] = array('in',$PTid);
+            $rs = $fck->where($where)->setField('is_day_active', '1');
+    
+            if ($rs) {
+                $bUrl = __URL__ . '/adminMenber';
+                $this->_box(1, '关闭分红成功！', $bUrl, 1);
+                exit();
+            } else {
+                $bUrl = __URL__ . '/adminMenber';
+                $this->_box(0, '关闭分红失败！', $bUrl, 1);
                 exit();
             }
         } else {

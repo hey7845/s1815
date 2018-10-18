@@ -26,6 +26,7 @@
          <th><span>复投单数</span></th>
         <th><span>提现总额</span></th>
         <th><span>状态</span></th>
+        <th><span>是否开启分红</span></th>
         <th><span>是否开启奖金</span></th>
         <th><span>是否锁定现金积分</span></th>
         </tr>
@@ -55,7 +56,7 @@
         <td>{$vo['is_cc']}</td>
         <td>{$vo['shang_ach']}</td>
         <td><eq name="vo['is_lock']" value='0'><span style="color: #FF0000;">未锁定</span><else />已锁定</eq><eq name="vo['is_pay']" value='2'>[空单]</eq></td>
-        <!--<td><eq name="vo['is_aa']" value='0'><span style="color: #FF0000;">正常</span><else />出局</eq></td>-->
+        <td><eq name="vo['is_day_active']" value='0'><span style="color: #FF0000;">已开启</span><else />已关闭</eq></td>
         <td><eq name="vo['is_fenh']" value='0'><span style="color: #FF0000;">已开启</span><else />已关闭</eq></td>
         <td><eq name="vo['is_lock_use']" value='0'><span style="color: #FF0000;">已开启</span><else />已锁定</eq></td>
         </tr>
@@ -77,6 +78,8 @@
       <input type="submit" name="action" value="删除会员" class="btn-xs btn-danger" onclick="{if(confirm('确定要删除会员吗?')){return true;}return false;}">&nbsp;&nbsp;
 	  <input type="submit" name="action" value="开启奖金" class="btn-xs btn-success" onclick="{if(confirm('确定要开启奖金吗?')){return true;}return false;}">&nbsp;&nbsp;
 	  <input type="submit" name="action" value="关闭奖金" class="btn-xs btn-default" onclick="{if(confirm('确定要关闭奖金吗?')){return true;}return false;}">&nbsp;&nbsp;
+	  <input type="submit" name="action" value="开启分红" class="btn-xs btn-success" onclick="{if(confirm('确定要开启分红吗?')){return true;}return false;}">&nbsp;&nbsp;
+	  <input type="submit" name="action" value="关闭分红" class="btn-xs btn-default" onclick="{if(confirm('确定要关闭分红吗?')){return true;}return false;}">&nbsp;&nbsp;
 	  <input type="submit" name="action" value="设为转账管理员" class="btn-xs btn-success" onclick="{if(confirm('确定要设为转账管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
 	  <input type="submit" name="action" value="解除转账管理员" class="btn-xs btn-default" onclick="{if(confirm('确定要解除转账管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
   	  <input type="submit" name="action" value="设为物流管理员" class="btn-xs btn-success" onclick="{if(confirm('确定要设为物流管理员吗?')){return true;}return false;}">&nbsp;&nbsp;
