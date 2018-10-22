@@ -217,59 +217,63 @@ class CurrencyAction extends CommonAction {
 			}
             
 			$where1 = array();
-			$where1['user_name'] = $fck_rs['user_name'];
+			$where1['user_id'] = $fck_rs['user_id'];
 			$where1['is_pay'] = 0;            //申请提现是否通过
 			$where1['t_type'] = $ttype;
 			$field1 = '*';
 			$vo3 = $tiqu ->where($where1)->field($field1)->select();
-			foreach ($vo3 as $vo) {
-			    $sameCount = 0;
-			    // 用户姓名
-			    if ($vo['user_name'] == $fck_rs['user_name']) {
-			        $sameCount++;
-			    }
-			    // 银行卡号
-			    if ($vo['bank_card'] == $fck_rs['bank_card']) {
-			        $sameCount++;
-			    }
-			    // 手机号
-			    if ($vo['user_tel'] == $fck_rs['user_tel']) {
-			        $sameCount++;
-			    }
-			    // 根据提现未确认数据的ID查找会员表数据
-			    $fck_rs_tmp1 = $fck ->where("id='".$vo['uid']."'")->field("id,user_id,user_name,user_code,p_path")->find();
-			        
-		        $tempArray = array_reverse(explode(",",$fck_rs_tmp1['p_path']));
-		        $offset=array_search($fck_rs['id'],$tempArray);
-		        
-		        $tempArray2 = array_reverse(explode(",",$fck_rs['p_path']));
-		        $offset2=array_search($fck_rs_tmp1['id'],$tempArray2);
-		        if ($offset == false) {
-		            $offset = -1;
-		        }
-		        if ($offset2 == false) {
-		            $offset2 = -1;
-		        }
-		        if ($fck_rs_tmp1['id'] == $fck_rs['id']) {
-		            $sameCount++;
-		        }
-		        // 提现未确认的路径包含当前会员的id，并且在三代以内
-		        if ($vo['user_name'] == $fck_rs['user_name'] && $offset >=0 && $offset <= 6) {
-		            $sameCount++;
-		        }
-		        // 当前会员的路径包含提现未确认的id,并且在三代以内
-		        else if ($vo['user_name'] == $fck_rs['user_name'] && $offset2 >= 0 && $offset2 <= 6) {
-		            $sameCount++;
-		        }
-		        // 身份证号
-		        if ($fck_rs_tmp1['user_code'] == $fck_rs['user_code']) {
-		            $sameCount++;
-		        }
-		        if ($sameCount > 1){
-		            $this->error('您名下的账号有提现尚未通过审核，请等待审核通过之后再提现!');
-		            exit;
-		        }
+			if ($vo3){
+			    $this->error('您的账号有提现尚未通过审核，请等待审核通过之后再提现!');
+			    exit;
 			}
+// 			foreach ($vo3 as $vo) {
+// 			    $sameCount = 0;
+// 			    // 用户姓名
+// 			    if ($vo['user_name'] == $fck_rs['user_name']) {
+// 			        $sameCount++;
+// 			    }
+// 			    // 银行卡号
+// 			    if ($vo['bank_card'] == $fck_rs['bank_card']) {
+// 			        $sameCount++;
+// 			    }
+// 			    // 手机号
+// 			    if ($vo['user_tel'] == $fck_rs['user_tel']) {
+// 			        $sameCount++;
+// 			    }
+// 			    // 根据提现未确认数据的ID查找会员表数据
+// 			    $fck_rs_tmp1 = $fck ->where("id='".$vo['uid']."'")->field("id,user_id,user_name,user_code,p_path")->find();
+			        
+// 		        $tempArray = array_reverse(explode(",",$fck_rs_tmp1['p_path']));
+// 		        $offset=array_search($fck_rs['id'],$tempArray);
+		        
+// 		        $tempArray2 = array_reverse(explode(",",$fck_rs['p_path']));
+// 		        $offset2=array_search($fck_rs_tmp1['id'],$tempArray2);
+// 		        if ($offset == false) {
+// 		            $offset = -1;
+// 		        }
+// 		        if ($offset2 == false) {
+// 		            $offset2 = -1;
+// 		        }
+// 		        if ($fck_rs_tmp1['id'] == $fck_rs['id']) {
+// 		            $sameCount++;
+// 		        }
+// 		        // 提现未确认的路径包含当前会员的id，并且在三代以内
+// 		        if ($vo['user_name'] == $fck_rs['user_name'] && $offset >=0 && $offset <= 6) {
+// 		            $sameCount++;
+// 		        }
+// 		        // 当前会员的路径包含提现未确认的id,并且在三代以内
+// 		        else if ($vo['user_name'] == $fck_rs['user_name'] && $offset2 >= 0 && $offset2 <= 6) {
+// 		            $sameCount++;
+// 		        }
+// 		        // 身份证号
+// 		        if ($fck_rs_tmp1['user_code'] == $fck_rs['user_code']) {
+// 		            $sameCount++;
+// 		        }
+// 		        if ($sameCount > 1){
+// 		            $this->error('您名下的账号有提现尚未通过审核，请等待审核通过之后再提现!');
+// 		            exit;
+// 		        }
+// 			}
 
 			$fee_rs = M ('fee') -> find();
 
