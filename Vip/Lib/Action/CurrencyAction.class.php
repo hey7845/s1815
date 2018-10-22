@@ -211,10 +211,20 @@ class CurrencyAction extends CommonAction {
 			$where2['rdt'] = array(array('egt',$s_nowd),array('lt',$e_nowd));
 			$field1 = 'id';
 			$vo5 = $tiqu ->where($where2)->sum("money");
-			if ($vo5>10000 || $ePoints > 5000){
-				$this->error('每个账户每天最高提现 5000 元!');
-				exit;
+			$fee = M ('fee');
+			$fee_rs = $fee ->field("*")->find();
+			if ($fck_rs['is_agent'] == 2) {
+			    if ($ePoints > $fee_rs['str26']){
+			        $this->error("每个账户每天最高提现 ".$fee_rs['str26']." 元!");
+			        exit;
+			    }
+			} else {
+			    if ($ePoints > $fee_rs['str20']){
+			        $this->error("每个账户每天最高提现 ".$fee_rs['str20']." 元!");
+			        exit;
+			    }
 			}
+			
             
 			$where1 = array();
 			$where1['user_id'] = $fck_rs['user_id'];

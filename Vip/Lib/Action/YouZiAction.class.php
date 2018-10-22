@@ -4621,12 +4621,14 @@ class YouZiAction extends CommonAction
             $fee_str17 = $fee_rs['str17'];
             $fee_str18 = $fee_rs['str18'];
             $fee_str19 = $fee_rs['str19'];
+            $fee_str20 = $fee_rs['str20'];
             
             $fee_str21 = $fee_rs['str21'];
             $fee_str22 = $fee_rs['str22'];
             $fee_str23 = $fee_rs['str23'];
             $fee_str24 = $fee_rs['str24'];
             $fee_str25 = $fee_rs['str25'];
+            $fee_str26 = $fee_rs['str26'];
             
             $fee_str27 = $fee_rs['str27'];
             $fee_str28 = $fee_rs['str28'];
@@ -4681,13 +4683,14 @@ class YouZiAction extends CommonAction
             $this->assign('fee_str17', $fee_str17);
             $this->assign('fee_str18', $fee_str18);
             $this->assign('fee_str19', $fee_str19);
+            $this->assign('fee_str20', $fee_str20);
             
             $this->assign('fee_str21', $fee_str21);
             $this->assign('fee_str22', $fee_str22);
             $this->assign('fee_str23', $fee_str23);
             $this->assign('fee_str24', $fee_str24);
             $this->assign('fee_str25', $fee_str25);
-            
+            $this->assign('fee_str26', $fee_str26);
             $this->assign('fee_str27', $fee_str27);
             $this->assign('fee_str28', $fee_str28);
             $this->assign('fee_str29', $fee_str29);
