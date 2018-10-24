@@ -848,7 +848,7 @@ class RegAction extends CommonAction{
 		
 		$temp_Uid=$fck->where("user_id='".$new_userid."'")->field("id")->find();
 		$data1['uid']                 = $temp_Uid['id'];
-		$data1['user_id']             = $_POST['UserID'];
+		$data1['user_id']             = $new_userid;
 		$data1['user_id_encrypt']     = $new_userid;
 		$data1['bank_name']           = $_POST['BankName'];             //银行名称
 		$data1['bank_card']           = $_POST['BankCard'];             //帐户卡号
@@ -1313,7 +1313,7 @@ class RegAction extends CommonAction{
 		$relation    = M ('relation');  //对应关系表
 		$temp_Uid=$fck->where("user_id='".$new_userid."'")->field("id")->find();
 		$data1['uid']                 = $temp_Uid['id'];
-		$data1['user_id']             = $_POST['UserID'];
+		$data1['user_id']             = $new_userid;
 		$data1['user_id_encrypt']     = $new_userid;
 		$data1['bank_name']           = $_POST['BankName'];             //银行名称
 		$data1['bank_card']           = $_POST['BankCard'];             //帐户卡号
