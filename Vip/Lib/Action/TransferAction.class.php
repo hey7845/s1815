@@ -358,6 +358,7 @@ class TransferAction extends CommonAction{
 			// }
 	
 			$nowdate = time();
+			$rsss = $fck->where("id = ".$ID)->find();
 			$data = array();
 			$data['uid']           = $ID;          //转出会员ID
 			$data['user_id']       = $UserID;
@@ -369,6 +370,10 @@ class TransferAction extends CommonAction{
 			$data['allp']          = 0;
 			$data['bz']            = $zz_content;     //备注
 			$data['type']          = 1;   		   //1转帐
+			$data['agent_use'] = $rsss['agent_use'];
+			$data['agent_cash'] = $rsss['agent_cash'];
+			$data['agent_xf'] = $rsss['agent_xf'];
+			$data['agent_active'] = $rsss['agent_active'];
 			$history->create();
 			$rs2=$history->add($data);
 			unset($data);
