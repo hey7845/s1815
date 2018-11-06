@@ -183,6 +183,7 @@ if (mysqli_num_rows($history_result) < 1) {
                             $data['type'] = 0;
                             $times_InsertSql = "insert into xt_times (shangqi, benqi,is_count_b,is_count_c,is_count,type) VALUES ({$rs3['benqi']},{$nowdate},0,0,0,0)";
                             mysqli_query($con,$times_InsertSql);
+                            $boid = mysqli_insert_id($con);
                             $rc += mysqli_affected_rows($con);
                         } else {
                             // 如果存在以前的时间记录，也就是新纪录
@@ -192,6 +193,7 @@ if (mysqli_num_rows($history_result) < 1) {
                             $data['type'] = 0;
                             $times_InsertSql = "insert into xt_times (shangqi, benqi,is_count_b,is_count_c,is_count,type) VALUES ({$data['shangqi']},{$nowdate},0,0,0,0)";
                             mysqli_query($con,$times_InsertSql);
+                            $boid = mysqli_insert_id($con);
                             $rc += mysqli_affected_rows($con);
                         }
                         $shangqi = $data['shangqi'];

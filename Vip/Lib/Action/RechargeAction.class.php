@@ -544,6 +544,17 @@ public function aixinAC(){
 							$data['bz']           = '30';
 							$history->create();
 							$rs1 = $history->add($data);
+					}else if($stype==3){
+							$data['uid']          = $vo['uid'];
+							$data['user_id']      = $vo['user_id'];
+							$data['action_type']  = 31;
+							$data['pdt']          = $nowdate;
+							$data['epoints']      = $vo['epoint'];
+							$data['did']          = 0;
+							$data['allp']         = 0;
+							$data['bz']           = '31';
+							$history->create();
+							$rs1 = $history->add($data);
 					}
 					if ($rs1){
 						$is_agent = $rsss['is_agent'];
@@ -560,6 +571,9 @@ public function aixinAC(){
 						}else if($stype==2){
 							
 							$fck->execute("UPDATE __TABLE__ set `agent_active`=agent_active+". $cz_money. "  where `id`=". $vo['uid']);
+						}else if($stype==3){
+							
+							$fck->execute("UPDATE __TABLE__ set `agent_xf`=agent_xf+". $cz_money. "  where `id`=". $vo['uid']);
 						}
 						$chongzhi->execute("UPDATE __TABLE__ set `is_pay`=1 ,`pdt`=$nowdate  where `id`=". $vo['id']);
 						$fck->commit();

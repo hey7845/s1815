@@ -231,7 +231,7 @@ class TransferAction extends CommonAction{
 			$pos1 = strpos($p_path1, $void);
 			$pos2 = strpos($p_path2, $mmid);
 			if(($select==1 || $select==4 || $select==5) && $mmrs['is_treasure_manager'] != 1){
-			if($pos1 === false && $pos2 === false){
+			if($mmrs['id'] != $vo['id'] && $pos1 === false && $pos2 === false){
 				$this->error('只能同一条线才可以上下互转!');
 				exit;
 			}
